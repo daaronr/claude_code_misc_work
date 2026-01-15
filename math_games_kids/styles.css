@@ -1,0 +1,447 @@
+/* Math Estimator - Kid-Friendly Styles */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #22c55e;
+    --accent: #f59e0b;
+    --danger: #ef4444;
+    --background: #f0f9ff;
+    --surface: #ffffff;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --bullseye: #22c55e;
+    --close: #3b82f6;
+    --neighborhood: #f59e0b;
+    --far: #ef4444;
+}
+
+html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+#app {
+    height: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Screens */
+.screen {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* ============ START SCREEN ============ */
+#start-screen {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%);
+}
+
+#start-screen h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-shadow: 2px 2px 0 rgba(99, 102, 241, 0.2);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    margin-top: -20px;
+}
+
+.level-select {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.level-select h2 {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+}
+
+.level-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.level-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.level-btn:active {
+    transform: translateY(0);
+}
+
+.level-icon {
+    font-size: 1.8rem;
+}
+
+.level-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.level-desc {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-left: auto;
+}
+
+.stats-preview {
+    display: flex;
+    gap: 24px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.stats-preview span {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* ============ GAME SCREEN ============ */
+#game-screen {
+    gap: 16px;
+    background: var(--background);
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.icon-btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.icon-btn:hover {
+    background: #f1f5f9;
+}
+
+.score-display {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.streak-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#streak-icon {
+    font-size: 1.3rem;
+}
+
+#streak-icon.fire {
+    animation: pulse 0.5s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* Problem Display */
+.game-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+}
+
+.problem-container {
+    text-align: center;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.problem-type {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.problem {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* Number Line */
+.number-line-container {
+    padding: 16px 8px;
+}
+
+.number-line-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.number-line {
+    position: relative;
+    padding: 20px 16px;
+}
+
+.number-line-track {
+    position: relative;
+    height: 12px;
+    background: linear-gradient(90deg, #e0e7ff, #c7d2fe, #a5b4fc);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.slider-thumb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    border: 4px solid var(--surface);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+    cursor: grab;
+    transition: transform 0.1s, box-shadow 0.2s;
+    z-index: 2;
+}
+
+.slider-thumb:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.slider-thumb.active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
+}
+
+.answer-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 28px;
+    background: var(--secondary);
+    border-radius: 4px;
+    z-index: 1;
+    transition: opacity 0.3s;
+}
+
+.answer-marker.hidden {
+    opacity: 0;
+}
+
+.answer-marker::after {
+    content: '✓';
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    color: var(--secondary);
+}
+
+.tick-marks {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.tick {
+    width: 2px;
+    height: 8px;
+    background: #cbd5e1;
+    border-radius: 1px;
+}
+
+.estimate-display {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-top: 8px;
+}
+
+#estimate-value {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.3rem;
+}
+
+/* Feedback */
+.feedback {
+    text-align: center;
+    padding: 20px;
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    animation: slideIn 0.3s ease;
+}
+
+.feedback.hidden {
+    display: none;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feedback-emoji {
+    font-size: 3rem;
+    margin-bottom: 8px;
+}
+
+.feedback-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.feedback.bullseye .feedback-text { color: var(--bullseye); }
+.feedback.close .feedback-text { color: var(--close); }
+.feedback.neighborhood .feedback-text { color: var(--neighborhood); }
+.feedback.far .feedback-text { color: var(--far); }
+
+.feedback-details {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.feedback-details span {
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Footer */
+.game-footer {
+    padding: 16px 0;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 18px 32px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.primary-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.primary-btn:active {
+    transform: translateY(0);
+}
+
+.primary-btn.hidden {
+    display: none;
+}
+
+/* Responsive */
+@media (max-height: 600px) {
+    .problem {
+        font-size: 1.6rem;
+    }
+
+    .problem-container {
+        padding: 16px;
+    }
+
+    .feedback-emoji {
+        font-size: 2rem;
+    }
+
+    .game-main {
+        gap: 16px;
+    }
+}
+
+@media (min-width: 500px) {
+    #start-screen h1 {
+        font-size: 3rem;
+    }
+
+    .problem {
+        font-size: 2.4rem;
+    }
+}

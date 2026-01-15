@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="description" content="A fun math estimation game for kids to practice multiplication, division, fractions, and decimals">
+    <title>Math Estimator</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1>Math Estimator</h1>
+            <p class="subtitle">How close can you guess?</p>
+
+            <div class="level-select">
+                <h2>Choose Your Level</h2>
+                <button class="level-btn" data-level="easy">
+                    <span class="level-icon">🌱</span>
+                    <span class="level-name">Easy</span>
+                    <span class="level-desc">Ages 6-8</span>
+                </button>
+                <button class="level-btn" data-level="medium">
+                    <span class="level-icon">🌿</span>
+                    <span class="level-name">Medium</span>
+                    <span class="level-desc">Ages 8-10</span>
+                </button>
+                <button class="level-btn" data-level="hard">
+                    <span class="level-icon">🌳</span>
+                    <span class="level-name">Hard</span>
+                    <span class="level-desc">Ages 10-12</span>
+                </button>
+            </div>
+
+            <div class="stats-preview">
+                <p>Best Streak: <span id="best-streak-display">0</span></p>
+                <p>Total Points: <span id="total-points-display">0</span></p>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <header class="game-header">
+                <button id="back-btn" class="icon-btn" aria-label="Back to menu">←</button>
+                <div class="score-display">
+                    <span id="current-score">0</span> pts
+                </div>
+                <div class="streak-display">
+                    <span id="streak-icon">🔥</span>
+                    <span id="current-streak">0</span>
+                </div>
+            </header>
+
+            <main class="game-main">
+                <div class="problem-container">
+                    <div id="problem-type" class="problem-type">Multiplication</div>
+                    <div id="problem" class="problem">12 × 8 ≈ ?</div>
+                </div>
+
+                <div class="number-line-container">
+                    <div class="number-line-labels">
+                        <span id="min-label">0</span>
+                        <span id="max-label">100</span>
+                    </div>
+                    <div class="number-line">
+                        <div class="number-line-track">
+                            <div id="answer-marker" class="answer-marker hidden"></div>
+                            <div id="slider-thumb" class="slider-thumb"></div>
+                        </div>
+                        <div class="tick-marks">
+                            <span class="tick"></span>
+                            <span class="tick"></span>
+                            <span class="tick"></span>
+                            <span class="tick"></span>
+                            <span class="tick"></span>
+                        </div>
+                    </div>
+                    <div id="estimate-display" class="estimate-display">
+                        Your estimate: <span id="estimate-value">50</span>
+                    </div>
+                </div>
+
+                <div id="feedback" class="feedback hidden">
+                    <div id="feedback-emoji" class="feedback-emoji">🎯</div>
+                    <div id="feedback-text" class="feedback-text">Spot on!</div>
+                    <div id="feedback-details" class="feedback-details">
+                        Answer: <span id="actual-answer">96</span> |
+                        You guessed: <span id="your-guess">95</span> |
+                        Points: <span id="points-earned">+100</span>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="game-footer">
+                <button id="submit-btn" class="primary-btn">Check My Estimate</button>
+                <button id="next-btn" class="primary-btn hidden">Next Problem</button>
+            </footer>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
