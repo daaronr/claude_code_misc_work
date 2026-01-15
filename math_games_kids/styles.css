@@ -634,16 +634,18 @@ html, body {
 }
 
 .baby-visual {
-    font-size: 3.5rem;
-    line-height: 1.4;
-    letter-spacing: 8px;
+    font-size: 3rem;
+    line-height: 1.6;
+    letter-spacing: 6px;
     margin-bottom: 16px;
+    white-space: pre-line;
 }
 
 .baby-question {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     color: var(--text-light);
-    font-weight: 500;
+    font-weight: 600;
+    margin-top: 8px;
 }
 
 .baby-choices {
@@ -668,6 +670,20 @@ html, body {
     transition: all 0.2s ease;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     color: var(--text);
+    padding: 8px;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+/* Visual choices (emoji groups) - smaller font, wrap */
+.baby-choice-btn.visual-choice {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+}
+
+/* Numeral choices - big bold numbers */
+.baby-choice-btn.numeral-choice {
+    font-size: 3.5rem;
 }
 
 .baby-choice-btn:hover {
@@ -747,19 +763,28 @@ html, body {
 /* Responsive for smaller screens */
 @media (max-height: 600px) {
     .baby-visual {
-        font-size: 2.5rem;
+        font-size: 2rem;
+        letter-spacing: 4px;
     }
 
     .baby-choice-btn {
         font-size: 2rem;
     }
 
+    .baby-choice-btn.visual-choice {
+        font-size: 1.4rem;
+    }
+
     .baby-problem {
-        padding: 20px 28px;
+        padding: 16px 20px;
     }
 
     .baby-feedback-emoji {
         font-size: 5rem;
+    }
+
+    .baby-question {
+        font-size: 1.1rem;
     }
 }
 
@@ -770,7 +795,11 @@ html, body {
         gap: 20px;
     }
 
-    .baby-choice-btn {
-        font-size: 3.5rem;
+    .baby-choice-btn.numeral-choice {
+        font-size: 4rem;
+    }
+
+    .baby-choice-btn.visual-choice {
+        font-size: 2rem;
     }
 }

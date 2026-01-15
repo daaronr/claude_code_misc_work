@@ -497,16 +497,80 @@ function generateQuickAdd(config) {
 
 // ============ BABY MODE GENERATORS ============
 function generateBabyProblem() {
-    const problemType = randChoice(['counting', 'addVisual']);
+    // Weight problem types - more variety
+    const problemTypes = [
+        'countingVisual',    // Count items, visual choices
+        'countingNumeral',   // Count items, numeral choices (for learning numbers)
+        'additionVisual',    // Visual addition with visual choices
+        'subtraction',       // Visual subtraction
+        'whichMore',         // Which group has more?
+        'whichLess',         // Which group has less?
+        'groups'             // Simple multiplication (groups of items)
+    ];
 
-    if (problemType === 'counting') {
-        return generateBabyCounting();
-    } else {
-        return generateBabyAddition();
+    const problemType = randChoice(problemTypes);
+
+    switch (problemType) {
+        case 'countingVisual':
+            return generateBabyCountingVisual();
+        case 'countingNumeral':
+            return generateBabyCountingNumeral();
+        case 'additionVisual':
+            return generateBabyAdditionVisual();
+        case 'subtraction':
+            return generateBabySubtraction();
+        case 'whichMore':
+            return generateBabyComparison('more');
+        case 'whichLess':
+            return generateBabyComparison('less');
+        case 'groups':
+            return generateBabyGroups();
+        default:
+            return generateBabyCountingVisual();
     }
 }
 
-function generateBabyCounting() {
+// Helper to create visual choice (emoji repeated n times)
+function makeVisualChoice(emoji, count) {
+    if (count === 0) return '🚫'; // Empty/none symbol
+    return Array(count).fill(emoji).join('');
+}
+
+// Counting with VISUAL answer choices (no numerals needed)
+function generateBabyCountingVisual() {
+    const count = randInt(1, 4);
+    const emoji = randChoice(BABY_ITEMS);
+    const items = Array(count).fill(emoji).join(' ');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(1, 5);
+        if (wrong !== count && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    // Create visual choices (show emoji quantities)
+    const allAnswers = [count, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
+        display: makeVisualChoice(emoji, n),
+        isVisual: true
+    }));
+
+    return {
+        type: 'countingVisual',
+        visual: items,
+        question: 'How many?',
+        answer: count,
+        choices: choices,
+        choiceType: 'visual'
+    };
+}
+
+// Counting with NUMERAL choices (for learning numbers)
+function generateBabyCountingNumeral() {
     const count = randInt(1, 5);
     const emoji = randChoice(BABY_ITEMS);
     const items = Array(count).fill(emoji).join(' ');
@@ -520,20 +584,27 @@ function generateBabyCounting() {
         }
     }
 
-    // Shuffle choices
-    const choices = [count, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const allAnswers = [count, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
+        display: n.toString(),
+        isVisual: false
+    }));
 
     return {
-        type: 'counting',
+        type: 'countingNumeral',
         visual: items,
+        question: 'How many?',
         answer: count,
-        choices: choices
+        choices: choices,
+        choiceType: 'numeral'
     };
 }
 
-function generateBabyAddition() {
+// Visual addition with VISUAL answer choices
+function generateBabyAdditionVisual() {
     const num1 = randInt(1, 3);
-    const num2 = randInt(1, 3);
+    const num2 = randInt(1, 2);
     const emoji = randChoice(BABY_ITEMS);
     const answer = num1 + num2;
 
@@ -543,19 +614,143 @@ function generateBabyAddition() {
     // Generate wrong answers
     const wrongAnswers = [];
     while (wrongAnswers.length < 2) {
-        const wrong = randInt(1, 7);
+        const wrong = randInt(1, 6);
         if (wrong !== answer && !wrongAnswers.includes(wrong)) {
             wrongAnswers.push(wrong);
         }
     }
 
-    const choices = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const allAnswers = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
+        display: makeVisualChoice(emoji, n),
+        isVisual: true
+    }));
 
     return {
-        type: 'addition',
+        type: 'additionVisual',
         visual: `${visual1}  +  ${visual2}`,
+        question: 'How many together?',
         answer: answer,
-        choices: choices
+        choices: choices,
+        choiceType: 'visual'
+    };
+}
+
+// Visual subtraction
+function generateBabySubtraction() {
+    const total = randInt(3, 5);
+    const subtract = randInt(1, total - 1);
+    const answer = total - subtract;
+    const emoji = randChoice(BABY_ITEMS);
+
+    // Show items with some crossed out
+    const remaining = Array(answer).fill(emoji).join(' ');
+    const crossed = Array(subtract).fill('❌').join(' ');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(1, 5);
+        if (wrong !== answer && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    const allAnswers = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
+        display: makeVisualChoice(emoji, n),
+        isVisual: true
+    }));
+
+    return {
+        type: 'subtraction',
+        visual: `${remaining} ${crossed}`,
+        question: 'How many left?',
+        answer: answer,
+        choices: choices,
+        choiceType: 'visual'
+    };
+}
+
+// Which has more / Which has less
+function generateBabyComparison(compareType) {
+    const emoji1 = randChoice(BABY_ITEMS);
+    let emoji2 = randChoice(BABY_ITEMS);
+    while (emoji2 === emoji1) {
+        emoji2 = randChoice(BABY_ITEMS);
+    }
+
+    const count1 = randInt(1, 4);
+    let count2 = randInt(1, 4);
+    while (count2 === count1) {
+        count2 = randInt(1, 4);
+    }
+
+    const group1 = Array(count1).fill(emoji1).join(' ');
+    const group2 = Array(count2).fill(emoji2).join(' ');
+
+    // Determine correct answer based on comparison type
+    let answer, wrongAnswer;
+    if (compareType === 'more') {
+        answer = count1 > count2 ? 1 : 2;
+        wrongAnswer = count1 > count2 ? 2 : 1;
+    } else {
+        answer = count1 < count2 ? 1 : 2;
+        wrongAnswer = count1 < count2 ? 2 : 1;
+    }
+
+    const choices = [
+        { value: 1, display: group1, isVisual: true, label: 'A' },
+        { value: 2, display: group2, isVisual: true, label: 'B' }
+    ].sort(() => Math.random() - 0.5);
+
+    return {
+        type: 'comparison',
+        visual: `${group1}\n\n${group2}`,
+        question: compareType === 'more' ? 'Which has MORE?' : 'Which has LESS?',
+        answer: answer,
+        choices: choices,
+        choiceType: 'visual',
+        isComparison: true
+    };
+}
+
+// Groups (simple multiplication concept)
+function generateBabyGroups() {
+    const numGroups = randInt(2, 3);
+    const perGroup = randInt(2, 3);
+    const answer = numGroups * perGroup;
+    const emoji = randChoice(BABY_ITEMS);
+
+    // Visual: show groups separated
+    const group = Array(perGroup).fill(emoji).join('');
+    const visual = Array(numGroups).fill(`[${group}]`).join('  ');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(2, 9);
+        if (wrong !== answer && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    const allAnswers = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
+        display: makeVisualChoice(emoji, n),
+        isVisual: true
+    }));
+
+    return {
+        type: 'groups',
+        visual: visual,
+        question: 'How many in all?',
+        answer: answer,
+        choices: choices,
+        choiceType: 'visual'
     };
 }
 
@@ -574,18 +769,23 @@ function startBabyMode() {
 
 function nextBabyProblem() {
     state.currentProblem = generateBabyProblem();
+    const problem = state.currentProblem;
 
-    // Render the visual problem
+    // Render the visual problem with question
     elements.babyProblem.innerHTML = `
-        <div class="baby-visual">${state.currentProblem.visual}</div>
+        <div class="baby-visual">${problem.visual}</div>
+        <div class="baby-question">${problem.question}</div>
     `;
 
-    // Render the choice buttons
-    elements.babyChoices.innerHTML = state.currentProblem.choices.map(choice => `
-        <button class="baby-choice-btn" data-value="${choice}">
-            ${choice}
-        </button>
-    `).join('');
+    // Render the choice buttons (now handles both visual and numeral choices)
+    elements.babyChoices.innerHTML = problem.choices.map(choice => {
+        const btnClass = choice.isVisual ? 'baby-choice-btn visual-choice' : 'baby-choice-btn numeral-choice';
+        return `
+            <button class="${btnClass}" data-value="${choice.value}">
+                ${choice.display}
+            </button>
+        `;
+    }).join('');
 
     // Add click listeners to choices
     document.querySelectorAll('.baby-choice-btn').forEach(btn => {
@@ -599,12 +799,13 @@ function nextBabyProblem() {
 function handleBabyChoice(choice) {
     const correct = choice === state.currentProblem.answer;
 
-    // Disable all buttons
+    // Disable all buttons and highlight correct/wrong
     document.querySelectorAll('.baby-choice-btn').forEach(btn => {
         btn.disabled = true;
-        if (parseInt(btn.dataset.value) === state.currentProblem.answer) {
+        const btnValue = parseInt(btn.dataset.value);
+        if (btnValue === state.currentProblem.answer) {
             btn.classList.add('correct');
-        } else if (parseInt(btn.dataset.value) === choice && !correct) {
+        } else if (btnValue === choice && !correct) {
             btn.classList.add('wrong');
         }
     });

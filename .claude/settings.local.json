@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.trulia.com)",
+      "WebFetch(domain:www.zillow.com)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(gh api:*)"
+    ]
+  }
+}
