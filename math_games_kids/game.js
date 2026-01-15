@@ -2,10 +2,10 @@
 
 // ============ CONFIGURATION ============
 const LEVELS = {
-    // Kids Mode Levels
+    // Numbers Mode Levels
     easy: {
         name: 'Easy',
-        mode: 'kids',
+        mode: 'numbers',
         tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.20 },
         problems: [
             { type: 'multiplication', range: [2, 9], label: 'Multiplication' },
@@ -14,7 +14,7 @@ const LEVELS = {
     },
     medium: {
         name: 'Medium',
-        mode: 'kids',
+        mode: 'numbers',
         tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.15 },
         problems: [
             { type: 'multiplication', range: [10, 30], range2: [2, 9], label: 'Multiplication' },
@@ -25,13 +25,22 @@ const LEVELS = {
     },
     hard: {
         name: 'Hard',
-        mode: 'kids',
+        mode: 'numbers',
         tolerance: { bullseye: 0.03, close: 0.07, neighborhood: 0.10 },
         problems: [
             { type: 'multiplication', range: [20, 99], range2: [10, 30], label: 'Multiplication' },
             { type: 'division', range: [100, 500], range2: [5, 15], label: 'Division' },
             { type: 'decimal', range: [5, 20], label: 'Decimals' },
             { type: 'fractionAdd', label: 'Fraction Addition' }
+        ]
+    },
+    // Baby Mode (single level - visual only)
+    baby: {
+        name: 'Baby Mode',
+        mode: 'baby',
+        problems: [
+            { type: 'counting', maxCount: 5 },
+            { type: 'addVisual', maxNum: 3 }
         ]
     },
     // Shopping Mode Levels
@@ -63,6 +72,9 @@ const LEVELS = {
         problems: [{ type: 'quickAdd', label: 'Quick Add' }]
     }
 };
+
+// Baby Mode visual items
+const BABY_ITEMS = ['🍎', '🌟', '🐶', '🎈', '🌸', '🐱', '🍪', '🦋', '🚗', '⚽'];
 
 // Shopping product data
 const PRODUCTS = [
@@ -105,7 +117,7 @@ const FEEDBACK = {
 
 // ============ GAME STATE ============
 let state = {
-    mode: 'kids',
+    mode: 'numbers',
     level: null,
     currentProblem: null,
     estimate: 50,
@@ -116,13 +128,25 @@ let state = {
     minValue: 0,
     maxValue: 100,
     isDragging: false,
-    shoppingItems: [] // For basket display
+    shoppingItems: [], // For basket display
+    // Baby mode state
+    babyCorrect: 0,
+    babyAnswer: null
 };
 
 // ============ DOM ELEMENTS ============
 const elements = {
-    startScreen: document.getElementById('start-screen'),
+    // Screens
+    modeScreen: document.getElementById('mode-screen'),
+    levelScreen: document.getElementById('level-screen'),
     gameScreen: document.getElementById('game-screen'),
+    babyScreen: document.getElementById('baby-screen'),
+    // Level screen
+    levelScreenTitle: document.getElementById('level-screen-title'),
+    numbersLevels: document.getElementById('numbers-levels'),
+    shoppingLevels: document.getElementById('shopping-levels'),
+    backToModeBtn: document.getElementById('back-to-mode-btn'),
+    // Game screen
     problem: document.getElementById('problem'),
     problemType: document.getElementById('problem-type'),
     sliderThumb: document.getElementById('slider-thumb'),
@@ -145,12 +169,15 @@ const elements = {
     bestStreakDisplay: document.getElementById('best-streak-display'),
     totalPointsDisplay: document.getElementById('total-points-display'),
     numberLineTrack: document.querySelector('.number-line-track'),
-    // Mode selection
-    kidsLevels: document.getElementById('kids-levels'),
-    shoppingLevels: document.getElementById('shopping-levels'),
     // Shopping display
     shoppingDisplay: document.getElementById('shopping-display'),
-    shoppingItems: document.getElementById('shopping-items')
+    shoppingItems: document.getElementById('shopping-items'),
+    // Baby mode
+    babyProblem: document.getElementById('baby-problem'),
+    babyChoices: document.getElementById('baby-choices'),
+    babyFeedback: document.getElementById('baby-feedback'),
+    babyStars: document.getElementById('baby-stars'),
+    babyBackBtn: document.getElementById('baby-back-btn')
 };
 
 // ============ UTILITY FUNCTIONS ============
@@ -468,6 +495,163 @@ function generateQuickAdd(config) {
     };
 }
 
+// ============ BABY MODE GENERATORS ============
+function generateBabyProblem() {
+    const problemType = randChoice(['counting', 'addVisual']);
+
+    if (problemType === 'counting') {
+        return generateBabyCounting();
+    } else {
+        return generateBabyAddition();
+    }
+}
+
+function generateBabyCounting() {
+    const count = randInt(1, 5);
+    const emoji = randChoice(BABY_ITEMS);
+    const items = Array(count).fill(emoji).join(' ');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(1, 6);
+        if (wrong !== count && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    // Shuffle choices
+    const choices = [count, ...wrongAnswers].sort(() => Math.random() - 0.5);
+
+    return {
+        type: 'counting',
+        visual: items,
+        answer: count,
+        choices: choices
+    };
+}
+
+function generateBabyAddition() {
+    const num1 = randInt(1, 3);
+    const num2 = randInt(1, 3);
+    const emoji = randChoice(BABY_ITEMS);
+    const answer = num1 + num2;
+
+    const visual1 = Array(num1).fill(emoji).join(' ');
+    const visual2 = Array(num2).fill(emoji).join(' ');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(1, 7);
+        if (wrong !== answer && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    const choices = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+
+    return {
+        type: 'addition',
+        visual: `${visual1}  +  ${visual2}`,
+        answer: answer,
+        choices: choices
+    };
+}
+
+// ============ BABY MODE GAME LOGIC ============
+function startBabyMode() {
+    state.mode = 'baby';
+    state.level = 'baby';
+    state.babyCorrect = 0;
+
+    elements.modeScreen.classList.remove('active');
+    elements.babyScreen.classList.add('active');
+
+    updateBabyStars();
+    nextBabyProblem();
+}
+
+function nextBabyProblem() {
+    state.currentProblem = generateBabyProblem();
+
+    // Render the visual problem
+    elements.babyProblem.innerHTML = `
+        <div class="baby-visual">${state.currentProblem.visual}</div>
+    `;
+
+    // Render the choice buttons
+    elements.babyChoices.innerHTML = state.currentProblem.choices.map(choice => `
+        <button class="baby-choice-btn" data-value="${choice}">
+            ${choice}
+        </button>
+    `).join('');
+
+    // Add click listeners to choices
+    document.querySelectorAll('.baby-choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleBabyChoice(parseInt(btn.dataset.value)));
+    });
+
+    // Hide feedback
+    elements.babyFeedback.classList.add('hidden');
+}
+
+function handleBabyChoice(choice) {
+    const correct = choice === state.currentProblem.answer;
+
+    // Disable all buttons
+    document.querySelectorAll('.baby-choice-btn').forEach(btn => {
+        btn.disabled = true;
+        if (parseInt(btn.dataset.value) === state.currentProblem.answer) {
+            btn.classList.add('correct');
+        } else if (parseInt(btn.dataset.value) === choice && !correct) {
+            btn.classList.add('wrong');
+        }
+    });
+
+    // Show feedback
+    elements.babyFeedback.querySelector('.baby-feedback-emoji').textContent = correct ? '🎉' : '💪';
+    elements.babyFeedback.classList.remove('hidden');
+    elements.babyFeedback.classList.toggle('correct', correct);
+    elements.babyFeedback.classList.toggle('wrong', !correct);
+
+    if (correct) {
+        state.babyCorrect++;
+        state.streak++;
+        if (state.streak > state.bestStreak) {
+            state.bestStreak = state.streak;
+        }
+        state.totalPoints += 50;
+        saveProgress();
+    } else {
+        state.streak = 0;
+    }
+
+    updateBabyStars();
+
+    // Auto-advance after delay
+    setTimeout(() => {
+        nextBabyProblem();
+    }, correct ? 1200 : 1800);
+}
+
+function updateBabyStars() {
+    const stars = Math.min(state.babyCorrect, 10);
+    elements.babyStars.textContent = '⭐'.repeat(stars) || '🌟';
+}
+
+function goToModeScreen() {
+    // Hide all screens
+    elements.modeScreen.classList.remove('active');
+    elements.levelScreen.classList.remove('active');
+    elements.gameScreen.classList.remove('active');
+    elements.babyScreen.classList.remove('active');
+
+    // Show mode screen
+    elements.modeScreen.classList.add('active');
+    loadProgress();
+}
+
 // ============ SLIDER LOGIC ============
 function initSlider() {
     const track = elements.numberLineTrack;
@@ -543,7 +727,8 @@ function startGame(level) {
     state.score = 0;
     state.streak = 0;
 
-    elements.startScreen.classList.remove('active');
+    // Hide level screen, show game screen
+    elements.levelScreen.classList.remove('active');
     elements.gameScreen.classList.add('active');
 
     updateScoreDisplay();
@@ -700,7 +885,7 @@ function updateScoreDisplay() {
 
 function goToMenu() {
     elements.gameScreen.classList.remove('active');
-    elements.startScreen.classList.add('active');
+    elements.modeScreen.classList.add('active');
     loadProgress();
 }
 
@@ -743,23 +928,23 @@ function registerServiceWorker() {
 
 // ============ EVENT LISTENERS ============
 function initEventListeners() {
-    // Mode selection (Kids vs Shopping)
-    document.querySelectorAll('.mode-btn').forEach(btn => {
+    // Mode card selection (Stage 1)
+    document.querySelectorAll('.mode-card').forEach(btn => {
         btn.addEventListener('click', () => {
-            // Update active state
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
             const mode = btn.dataset.mode;
-            if (mode === 'kids') {
-                elements.kidsLevels.classList.remove('hidden');
-                elements.shoppingLevels.classList.add('hidden');
+
+            if (mode === 'baby') {
+                // Baby mode goes directly to game
+                startBabyMode();
             } else {
-                elements.kidsLevels.classList.add('hidden');
-                elements.shoppingLevels.classList.remove('hidden');
+                // Numbers and Shopping go to level selection
+                showLevelScreen(mode);
             }
         });
     });
+
+    // Back to mode selection from level screen
+    elements.backToModeBtn.addEventListener('click', goToModeScreen);
 
     // Level selection (both modes)
     document.querySelectorAll('.level-btn').forEach(btn => {
@@ -774,6 +959,9 @@ function initEventListeners() {
     elements.nextBtn.addEventListener('click', nextProblem);
     elements.backBtn.addEventListener('click', goToMenu);
 
+    // Baby mode back button
+    elements.babyBackBtn.addEventListener('click', goToModeScreen);
+
     // Keyboard support
     document.addEventListener('keydown', (e) => {
         if (elements.gameScreen.classList.contains('active')) {
@@ -787,6 +975,25 @@ function initEventListeners() {
             }
         }
     });
+}
+
+function showLevelScreen(mode) {
+    // Hide all screens
+    elements.modeScreen.classList.remove('active');
+
+    // Show level screen
+    elements.levelScreen.classList.add('active');
+
+    // Update title based on mode
+    if (mode === 'numbers') {
+        elements.levelScreenTitle.textContent = 'Choose Difficulty';
+        elements.numbersLevels.classList.remove('hidden');
+        elements.shoppingLevels.classList.add('hidden');
+    } else {
+        elements.levelScreenTitle.textContent = 'Choose Challenge';
+        elements.numbersLevels.classList.add('hidden');
+        elements.shoppingLevels.classList.remove('hidden');
+    }
 }
 
 // ============ INITIALIZATION ============

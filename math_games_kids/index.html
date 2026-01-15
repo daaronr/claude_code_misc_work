@@ -12,45 +12,63 @@
 </head>
 <body>
     <div id="app">
-        <!-- Start Screen -->
-        <div id="start-screen" class="screen active">
+        <!-- Mode Select Screen (Stage 1) -->
+        <div id="mode-screen" class="screen active">
             <h1>Math Estimator</h1>
             <p class="subtitle">How close can you guess?</p>
 
-            <div class="mode-select">
-                <button class="mode-btn active" data-mode="kids">
-                    <span class="mode-icon">🎓</span>
-                    <span class="mode-name">Kids Mode</span>
+            <div class="mode-cards">
+                <button class="mode-card" data-mode="baby">
+                    <span class="mode-card-icon">🧒</span>
+                    <span class="mode-card-name">Baby Mode</span>
+                    <span class="mode-card-desc">Visual only</span>
                 </button>
-                <button class="mode-btn" data-mode="shopping">
-                    <span class="mode-icon">🛒</span>
-                    <span class="mode-name">Shopping Mode</span>
+                <button class="mode-card" data-mode="numbers">
+                    <span class="mode-card-icon">🔢</span>
+                    <span class="mode-card-name">Numbers</span>
+                    <span class="mode-card-desc">Math estimation</span>
+                </button>
+                <button class="mode-card" data-mode="shopping">
+                    <span class="mode-card-icon">🛒</span>
+                    <span class="mode-card-name">Shopping</span>
+                    <span class="mode-card-desc">Real-world prices</span>
                 </button>
             </div>
 
-            <!-- Kids Mode Levels -->
-            <div id="kids-levels" class="level-select">
-                <h2>Choose Your Level</h2>
+            <div class="stats-preview">
+                <p>Best Streak: <span id="best-streak-display">0</span></p>
+                <p>Total Points: <span id="total-points-display">0</span></p>
+            </div>
+        </div>
+
+        <!-- Level Select Screen (Stage 2) -->
+        <div id="level-screen" class="screen">
+            <header class="level-header">
+                <button id="back-to-mode-btn" class="icon-btn" aria-label="Back">←</button>
+                <h2 id="level-screen-title">Choose Difficulty</h2>
+            </header>
+
+            <!-- Numbers Mode Levels -->
+            <div id="numbers-levels" class="level-select hidden">
                 <button class="level-btn" data-level="easy">
                     <span class="level-icon">🌱</span>
                     <span class="level-name">Easy</span>
-                    <span class="level-desc">Ages 6-8</span>
+                    <span class="level-desc">Getting started</span>
                 </button>
                 <button class="level-btn" data-level="medium">
                     <span class="level-icon">🌿</span>
                     <span class="level-name">Medium</span>
-                    <span class="level-desc">Ages 8-10</span>
+                    <span class="level-desc">Building skills</span>
                 </button>
                 <button class="level-btn" data-level="hard">
                     <span class="level-icon">🌳</span>
                     <span class="level-name">Hard</span>
-                    <span class="level-desc">Ages 10-12</span>
+                    <span class="level-desc">Challenge mode</span>
                 </button>
             </div>
 
             <!-- Shopping Mode Levels -->
             <div id="shopping-levels" class="level-select hidden">
-                <h2>Choose a Challenge</h2>
                 <button class="level-btn shopping-btn" data-level="deals">
                     <span class="level-icon">🏷️</span>
                     <span class="level-name">Better Deals</span>
@@ -72,11 +90,28 @@
                     <span class="level-desc">Speed round</span>
                 </button>
             </div>
+        </div>
 
-            <div class="stats-preview">
-                <p>Best Streak: <span id="best-streak-display">0</span></p>
-                <p>Total Points: <span id="total-points-display">0</span></p>
-            </div>
+        <!-- Baby Mode Game Screen -->
+        <div id="baby-screen" class="screen">
+            <header class="game-header">
+                <button id="baby-back-btn" class="icon-btn" aria-label="Back">←</button>
+                <div class="baby-stars" id="baby-stars">⭐⭐⭐</div>
+            </header>
+
+            <main class="baby-main">
+                <div id="baby-problem" class="baby-problem">
+                    <!-- Visual problem will be rendered here -->
+                </div>
+
+                <div id="baby-choices" class="baby-choices">
+                    <!-- Large tap buttons will be rendered here -->
+                </div>
+
+                <div id="baby-feedback" class="baby-feedback hidden">
+                    <span class="baby-feedback-emoji">🎉</span>
+                </div>
+            </main>
         </div>
 
         <!-- Game Screen -->
