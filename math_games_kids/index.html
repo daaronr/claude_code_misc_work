@@ -17,7 +17,19 @@
             <h1>Math Estimator</h1>
             <p class="subtitle">How close can you guess?</p>
 
-            <div class="level-select">
+            <div class="mode-select">
+                <button class="mode-btn active" data-mode="kids">
+                    <span class="mode-icon">🎓</span>
+                    <span class="mode-name">Kids Mode</span>
+                </button>
+                <button class="mode-btn" data-mode="shopping">
+                    <span class="mode-icon">🛒</span>
+                    <span class="mode-name">Shopping Mode</span>
+                </button>
+            </div>
+
+            <!-- Kids Mode Levels -->
+            <div id="kids-levels" class="level-select">
                 <h2>Choose Your Level</h2>
                 <button class="level-btn" data-level="easy">
                     <span class="level-icon">🌱</span>
@@ -33,6 +45,31 @@
                     <span class="level-icon">🌳</span>
                     <span class="level-name">Hard</span>
                     <span class="level-desc">Ages 10-12</span>
+                </button>
+            </div>
+
+            <!-- Shopping Mode Levels -->
+            <div id="shopping-levels" class="level-select hidden">
+                <h2>Choose a Challenge</h2>
+                <button class="level-btn shopping-btn" data-level="deals">
+                    <span class="level-icon">🏷️</span>
+                    <span class="level-name">Better Deals</span>
+                    <span class="level-desc">Compare prices</span>
+                </button>
+                <button class="level-btn shopping-btn" data-level="basket">
+                    <span class="level-icon">🧺</span>
+                    <span class="level-name">Basket Total</span>
+                    <span class="level-desc">Estimate totals</span>
+                </button>
+                <button class="level-btn shopping-btn" data-level="tips">
+                    <span class="level-icon">💵</span>
+                    <span class="level-name">Tips & Discounts</span>
+                    <span class="level-desc">Calculate savings</span>
+                </button>
+                <button class="level-btn shopping-btn" data-level="quick">
+                    <span class="level-icon">⚡</span>
+                    <span class="level-name">Quick Totals</span>
+                    <span class="level-desc">Speed round</span>
                 </button>
             </div>
 
@@ -59,6 +96,11 @@
                 <div class="problem-container">
                     <div id="problem-type" class="problem-type">Multiplication</div>
                     <div id="problem" class="problem">12 × 8 ≈ ?</div>
+                </div>
+
+                <!-- Shopping items display (hidden by default) -->
+                <div id="shopping-display" class="shopping-display hidden">
+                    <div id="shopping-items" class="shopping-items"></div>
                 </div>
 
                 <div class="number-line-container">

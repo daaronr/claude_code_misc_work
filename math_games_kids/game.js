@@ -2,8 +2,10 @@
 
 // ============ CONFIGURATION ============
 const LEVELS = {
+    // Kids Mode Levels
     easy: {
         name: 'Easy',
+        mode: 'kids',
         tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.20 },
         problems: [
             { type: 'multiplication', range: [2, 9], label: 'Multiplication' },
@@ -12,6 +14,7 @@ const LEVELS = {
     },
     medium: {
         name: 'Medium',
+        mode: 'kids',
         tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.15 },
         problems: [
             { type: 'multiplication', range: [10, 30], range2: [2, 9], label: 'Multiplication' },
@@ -22,6 +25,7 @@ const LEVELS = {
     },
     hard: {
         name: 'Hard',
+        mode: 'kids',
         tolerance: { bullseye: 0.03, close: 0.07, neighborhood: 0.10 },
         problems: [
             { type: 'multiplication', range: [20, 99], range2: [10, 30], label: 'Multiplication' },
@@ -29,8 +33,60 @@ const LEVELS = {
             { type: 'decimal', range: [5, 20], label: 'Decimals' },
             { type: 'fractionAdd', label: 'Fraction Addition' }
         ]
+    },
+    // Shopping Mode Levels
+    deals: {
+        name: 'Better Deals',
+        mode: 'shopping',
+        tolerance: { bullseye: 0.03, close: 0.08, neighborhood: 0.15 },
+        problems: [{ type: 'unitPrice', label: 'Unit Price' }]
+    },
+    basket: {
+        name: 'Basket Total',
+        mode: 'shopping',
+        tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.15 },
+        problems: [{ type: 'basketTotal', label: 'Basket Total' }]
+    },
+    tips: {
+        name: 'Tips & Discounts',
+        mode: 'shopping',
+        tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.15 },
+        problems: [
+            { type: 'tipCalc', label: 'Tip Calculator' },
+            { type: 'discount', label: 'Discount' }
+        ]
+    },
+    quick: {
+        name: 'Quick Totals',
+        mode: 'shopping',
+        tolerance: { bullseye: 0.03, close: 0.08, neighborhood: 0.12 },
+        problems: [{ type: 'quickAdd', label: 'Quick Add' }]
     }
 };
+
+// Shopping product data
+const PRODUCTS = [
+    { name: 'Milk', emoji: '🥛', basePrice: 4.49, unit: 'gal' },
+    { name: 'Bread', emoji: '🍞', basePrice: 3.99, unit: 'loaf' },
+    { name: 'Eggs', emoji: '🥚', basePrice: 5.99, unit: 'dozen' },
+    { name: 'Cheese', emoji: '🧀', basePrice: 6.49, unit: 'lb' },
+    { name: 'Apples', emoji: '🍎', basePrice: 4.99, unit: 'lb' },
+    { name: 'Bananas', emoji: '🍌', basePrice: 0.69, unit: 'lb' },
+    { name: 'Chicken', emoji: '🍗', basePrice: 8.99, unit: 'lb' },
+    { name: 'Rice', emoji: '🍚', basePrice: 3.49, unit: 'lb' },
+    { name: 'Pasta', emoji: '🍝', basePrice: 2.29, unit: 'box' },
+    { name: 'Cereal', emoji: '🥣', basePrice: 4.79, unit: 'box' },
+    { name: 'Orange Juice', emoji: '🧃', basePrice: 5.49, unit: 'half gal' },
+    { name: 'Coffee', emoji: '☕', basePrice: 9.99, unit: 'bag' },
+    { name: 'Butter', emoji: '🧈', basePrice: 5.29, unit: 'lb' },
+    { name: 'Yogurt', emoji: '🥛', basePrice: 1.29, unit: 'cup' },
+    { name: 'Chips', emoji: '🥔', basePrice: 3.99, unit: 'bag' },
+    { name: 'Soda', emoji: '🥤', basePrice: 2.49, unit: '2L' },
+    { name: 'Ice Cream', emoji: '🍦', basePrice: 5.99, unit: 'pint' },
+    { name: 'Tomatoes', emoji: '🍅', basePrice: 3.49, unit: 'lb' },
+    { name: 'Onions', emoji: '🧅', basePrice: 1.99, unit: 'lb' },
+    { name: 'Carrots', emoji: '🥕', basePrice: 2.49, unit: 'lb' }
+];
 
 const POINTS = {
     bullseye: 100,
@@ -49,6 +105,7 @@ const FEEDBACK = {
 
 // ============ GAME STATE ============
 let state = {
+    mode: 'kids',
     level: null,
     currentProblem: null,
     estimate: 50,
@@ -58,7 +115,8 @@ let state = {
     totalPoints: 0,
     minValue: 0,
     maxValue: 100,
-    isDragging: false
+    isDragging: false,
+    shoppingItems: [] // For basket display
 };
 
 // ============ DOM ELEMENTS ============
@@ -86,7 +144,13 @@ const elements = {
     backBtn: document.getElementById('back-btn'),
     bestStreakDisplay: document.getElementById('best-streak-display'),
     totalPointsDisplay: document.getElementById('total-points-display'),
-    numberLineTrack: document.querySelector('.number-line-track')
+    numberLineTrack: document.querySelector('.number-line-track'),
+    // Mode selection
+    kidsLevels: document.getElementById('kids-levels'),
+    shoppingLevels: document.getElementById('shopping-levels'),
+    // Shopping display
+    shoppingDisplay: document.getElementById('shopping-display'),
+    shoppingItems: document.getElementById('shopping-items')
 };
 
 // ============ UTILITY FUNCTIONS ============
@@ -236,6 +300,174 @@ function calculateScale(answer) {
     return { min: 0, max: Math.ceil(answer * 1.5 / 1000) * 1000 };
 }
 
+// ============ SHOPPING PROBLEM GENERATORS ============
+function formatPrice(num) {
+    return '$' + num.toFixed(2);
+}
+
+function generateShoppingProblem(level) {
+    const config = LEVELS[level];
+    const problemConfig = randChoice(config.problems);
+
+    switch (problemConfig.type) {
+        case 'unitPrice':
+            return generateUnitPrice(problemConfig);
+        case 'basketTotal':
+            return generateBasketTotal(problemConfig);
+        case 'tipCalc':
+            return generateTipCalc(problemConfig);
+        case 'discount':
+            return generateDiscount(problemConfig);
+        case 'quickAdd':
+            return generateQuickAdd(problemConfig);
+        default:
+            return generateBasketTotal(problemConfig);
+    }
+}
+
+function generateUnitPrice(config) {
+    // Generate two options with different sizes/prices
+    const product = randChoice(PRODUCTS);
+    const size1 = randChoice([8, 10, 12, 16]);
+    const size2 = randChoice([18, 20, 24, 32]);
+
+    // Make prices realistic (the larger one should be better deal ~70% of time)
+    const pricePerOz1 = (product.basePrice / 10) * (0.8 + Math.random() * 0.4);
+    const pricePerOz2 = pricePerOz1 * (0.7 + Math.random() * 0.5);
+
+    const price1 = roundNice(size1 * pricePerOz1);
+    const price2 = roundNice(size2 * pricePerOz2);
+
+    const unitPrice1 = price1 / size1;
+    const unitPrice2 = price2 / size2;
+    const betterDeal = unitPrice1 < unitPrice2 ? 1 : 2;
+    const answer = Math.min(unitPrice1, unitPrice2);
+
+    // Store items for display
+    state.shoppingItems = [
+        { emoji: product.emoji, name: `${size1}oz`, price: price1 },
+        { emoji: product.emoji, name: `${size2}oz`, price: price2 }
+    ];
+
+    return {
+        text: `Which is cheaper per oz?\nEstimate the better price/oz`,
+        answer: roundNice(answer * 100) / 100,
+        min: 0,
+        max: Math.ceil(Math.max(unitPrice1, unitPrice2) * 1.5 * 100) / 100,
+        label: config.label,
+        showItems: true,
+        feedbackExtra: `Option ${betterDeal} wins at ${formatPrice(answer)}/oz`
+    };
+}
+
+function generateBasketTotal(config) {
+    // Pick 4-6 random products with varied prices
+    const numItems = randInt(4, 6);
+    const items = [];
+    const usedProducts = new Set();
+
+    let total = 0;
+    for (let i = 0; i < numItems; i++) {
+        let product;
+        do {
+            product = randChoice(PRODUCTS);
+        } while (usedProducts.has(product.name));
+        usedProducts.add(product.name);
+
+        // Vary the price slightly
+        const price = roundNice(product.basePrice * (0.8 + Math.random() * 0.4));
+        items.push({
+            emoji: product.emoji,
+            name: product.name,
+            price: price
+        });
+        total += price;
+    }
+
+    state.shoppingItems = items;
+
+    return {
+        text: `Estimate your basket total`,
+        answer: roundNice(total),
+        min: 0,
+        max: Math.ceil(total * 1.5 / 5) * 5,
+        label: config.label,
+        showItems: true,
+        feedbackExtra: `Items: ${items.map(i => formatPrice(i.price)).join(' + ')}`
+    };
+}
+
+function generateTipCalc(config) {
+    // Generate a bill amount
+    const bill = roundNice(randInt(20, 120) + randInt(0, 99) / 100);
+    const tipPercent = randChoice([15, 18, 20, 25]);
+    const answer = roundNice(bill * tipPercent / 100);
+
+    state.shoppingItems = [];
+
+    return {
+        text: `Your bill is ${formatPrice(bill)}\nEstimate a ${tipPercent}% tip`,
+        answer: answer,
+        min: 0,
+        max: Math.ceil(answer * 2),
+        label: config.label,
+        showItems: false,
+        feedbackExtra: `${tipPercent}% of ${formatPrice(bill)} = ${formatPrice(answer)}`
+    };
+}
+
+function generateDiscount(config) {
+    // Generate original price and discount
+    const originalPrice = randInt(20, 150);
+    const discountPercent = randChoice([10, 15, 20, 25, 30, 40, 50]);
+    const discountAmount = originalPrice * discountPercent / 100;
+    const answer = roundNice(originalPrice - discountAmount);
+
+    state.shoppingItems = [];
+
+    return {
+        text: `${discountPercent}% off ${formatPrice(originalPrice)}\nWhat do you pay?`,
+        answer: answer,
+        min: 0,
+        max: originalPrice,
+        label: config.label,
+        showItems: false,
+        feedbackExtra: `Save ${formatPrice(discountAmount)}, pay ${formatPrice(answer)}`
+    };
+}
+
+function generateQuickAdd(config) {
+    // Generate 3-4 prices that look like real store prices
+    const numPrices = randInt(3, 4);
+    const prices = [];
+    let total = 0;
+
+    for (let i = 0; i < numPrices; i++) {
+        // Generate prices like $X.99, $X.49, $X.29
+        const dollars = randInt(2, 25);
+        const cents = randChoice([0.29, 0.49, 0.79, 0.99]);
+        const price = dollars + cents;
+        prices.push(price);
+        total += price;
+    }
+
+    state.shoppingItems = prices.map((p, i) => ({
+        emoji: '💰',
+        name: `Item ${i + 1}`,
+        price: p
+    }));
+
+    return {
+        text: `Quick! Add these up:\n${prices.map(p => formatPrice(p)).join(' + ')}`,
+        answer: roundNice(total),
+        min: 0,
+        max: Math.ceil(total * 1.3 / 5) * 5,
+        label: config.label,
+        showItems: false,
+        feedbackExtra: `Total: ${formatPrice(total)}`
+    };
+}
+
 // ============ SLIDER LOGIC ============
 function initSlider() {
     const track = elements.numberLineTrack;
@@ -291,7 +523,11 @@ function updateSliderPosition(percent) {
 }
 
 function updateEstimateDisplay() {
-    elements.estimateValue.textContent = formatNumber(roundNice(state.estimate));
+    if (state.mode === 'shopping') {
+        elements.estimateValue.textContent = formatPrice(roundNice(state.estimate));
+    } else {
+        elements.estimateValue.textContent = formatNumber(roundNice(state.estimate));
+    }
 }
 
 function setSliderToMiddle() {
@@ -303,6 +539,7 @@ function setSliderToMiddle() {
 // ============ GAME LOGIC ============
 function startGame(level) {
     state.level = level;
+    state.mode = LEVELS[level].mode;
     state.score = 0;
     state.streak = 0;
 
@@ -314,15 +551,36 @@ function startGame(level) {
 }
 
 function nextProblem() {
-    state.currentProblem = generateProblem(state.level);
+    // Generate problem based on mode
+    if (state.mode === 'shopping') {
+        state.currentProblem = generateShoppingProblem(state.level);
+    } else {
+        state.currentProblem = generateProblem(state.level);
+    }
+
     state.minValue = state.currentProblem.min;
     state.maxValue = state.currentProblem.max;
 
     // Update UI
     elements.problem.textContent = state.currentProblem.text;
     elements.problemType.textContent = state.currentProblem.label;
-    elements.minLabel.textContent = formatNumber(state.minValue);
-    elements.maxLabel.textContent = formatNumber(state.maxValue);
+
+    // Format labels for shopping mode (show $ for money)
+    if (state.mode === 'shopping') {
+        elements.minLabel.textContent = formatPrice(state.minValue);
+        elements.maxLabel.textContent = formatPrice(state.maxValue);
+    } else {
+        elements.minLabel.textContent = formatNumber(state.minValue);
+        elements.maxLabel.textContent = formatNumber(state.maxValue);
+    }
+
+    // Show/hide shopping items display
+    if (state.currentProblem.showItems && state.shoppingItems.length > 0) {
+        renderShoppingItems();
+        elements.shoppingDisplay.classList.remove('hidden');
+    } else {
+        elements.shoppingDisplay.classList.add('hidden');
+    }
 
     // Reset slider
     setSliderToMiddle();
@@ -334,6 +592,17 @@ function nextProblem() {
     // Show submit, hide next
     elements.submitBtn.classList.remove('hidden');
     elements.nextBtn.classList.add('hidden');
+}
+
+function renderShoppingItems() {
+    const container = elements.shoppingItems;
+    container.innerHTML = state.shoppingItems.map(item => `
+        <div class="shopping-item">
+            <span class="item-emoji">${item.emoji}</span>
+            <span class="item-name">${item.name}</span>
+            <span class="item-price">${formatPrice(item.price)}</span>
+        </div>
+    `).join('');
 }
 
 function checkEstimate() {
@@ -395,8 +664,15 @@ function showFeedback(result, answer, estimate, points) {
     const fb = FEEDBACK[result];
     elements.feedbackEmoji.textContent = fb.emoji;
     elements.feedbackText.textContent = fb.text;
-    elements.actualAnswer.textContent = formatNumber(answer);
-    elements.yourGuess.textContent = formatNumber(estimate);
+
+    // Format answer/estimate based on mode
+    if (state.mode === 'shopping') {
+        elements.actualAnswer.textContent = formatPrice(answer);
+        elements.yourGuess.textContent = formatPrice(estimate);
+    } else {
+        elements.actualAnswer.textContent = formatNumber(answer);
+        elements.yourGuess.textContent = formatNumber(estimate);
+    }
     elements.pointsEarned.textContent = `+${points}`;
 
     elements.feedback.classList.remove('hidden');
@@ -467,7 +743,25 @@ function registerServiceWorker() {
 
 // ============ EVENT LISTENERS ============
 function initEventListeners() {
-    // Level selection
+    // Mode selection (Kids vs Shopping)
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const mode = btn.dataset.mode;
+            if (mode === 'kids') {
+                elements.kidsLevels.classList.remove('hidden');
+                elements.shoppingLevels.classList.add('hidden');
+            } else {
+                elements.kidsLevels.classList.add('hidden');
+                elements.shoppingLevels.classList.remove('hidden');
+            }
+        });
+    });
+
+    // Level selection (both modes)
     document.querySelectorAll('.level-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const level = btn.dataset.level;
