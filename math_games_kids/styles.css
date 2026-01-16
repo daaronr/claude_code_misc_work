@@ -50,6 +50,11 @@ html, body {
     display: flex;
 }
 
+/* General hidden class */
+.hidden {
+    display: none !important;
+}
+
 /* ============ START SCREEN ============ */
 #start-screen {
     justify-content: center;

@@ -806,15 +806,19 @@ function calculateCollegeScale(answer) {
 
 // ============ BABY MODE GENERATORS ============
 function generateBabyProblem() {
-    // Weight problem types - more variety
+    // Mostly visual problem types - minimize numerals
     const problemTypes = [
-        'countingVisual',    // Count items, visual choices
-        'countingNumeral',   // Count items, numeral choices (for learning numbers)
-        'additionVisual',    // Visual addition with visual choices
-        'subtraction',       // Visual subtraction
+        'countingVisual',    // Count items, visual choices (most common)
+        'countingVisual',    // Double weight
+        'additionVisual',    // Visual addition with + symbol
+        'additionVisual',    // Double weight
+        'takeAway',          // Visual subtraction with hand taking away
+        'takeAway',          // Double weight
         'whichMore',         // Which group has more?
         'whichLess',         // Which group has less?
-        'groups'             // Simple multiplication (groups of items)
+        'sharing',           // Divide into equal groups (pie concept)
+        'groups',            // Simple multiplication (groups of items)
+        'countingNumeral'    // Occasional numeral practice (reduced)
     ];
 
     const problemType = randChoice(problemTypes);
@@ -826,12 +830,14 @@ function generateBabyProblem() {
             return generateBabyCountingNumeral();
         case 'additionVisual':
             return generateBabyAdditionVisual();
-        case 'subtraction':
-            return generateBabySubtraction();
+        case 'takeAway':
+            return generateBabyTakeAway();
         case 'whichMore':
             return generateBabyComparison('more');
         case 'whichLess':
             return generateBabyComparison('less');
+        case 'sharing':
+            return generateBabySharing();
         case 'groups':
             return generateBabyGroups();
         default:
@@ -910,15 +916,15 @@ function generateBabyCountingNumeral() {
     };
 }
 
-// Visual addition with VISUAL answer choices
+// Visual addition with VISUAL answer choices and clear + symbol
 function generateBabyAdditionVisual() {
     const num1 = randInt(1, 3);
     const num2 = randInt(1, 2);
     const emoji = randChoice(BABY_ITEMS);
     const answer = num1 + num2;
 
-    const visual1 = Array(num1).fill(emoji).join(' ');
-    const visual2 = Array(num2).fill(emoji).join(' ');
+    const visual1 = Array(num1).fill(emoji).join('');
+    const visual2 = Array(num2).fill(emoji).join('');
 
     // Generate wrong answers
     const wrongAnswers = [];
@@ -938,29 +944,29 @@ function generateBabyAdditionVisual() {
 
     return {
         type: 'additionVisual',
-        visual: `${visual1}  +  ${visual2}`,
-        question: 'How many together?',
+        visual: `${visual1} ➕ ${visual2}`,
+        question: 'Put together?',
         answer: answer,
         choices: choices,
         choiceType: 'visual'
     };
 }
 
-// Visual subtraction
-function generateBabySubtraction() {
+// Visual take away with hand grabbing symbol
+function generateBabyTakeAway() {
     const total = randInt(3, 5);
-    const subtract = randInt(1, total - 1);
-    const answer = total - subtract;
+    const takeAway = randInt(1, total - 1);
+    const answer = total - takeAway;
     const emoji = randChoice(BABY_ITEMS);
 
-    // Show items with some crossed out
-    const remaining = Array(answer).fill(emoji).join(' ');
-    const crossed = Array(subtract).fill('❌').join(' ');
+    // Show items with hand taking some away
+    const allItems = Array(total).fill(emoji).join('');
+    const takenItems = Array(takeAway).fill(emoji).join('');
 
     // Generate wrong answers
     const wrongAnswers = [];
     while (wrongAnswers.length < 2) {
-        const wrong = randInt(1, 5);
+        const wrong = randInt(0, 5);
         if (wrong !== answer && !wrongAnswers.includes(wrong)) {
             wrongAnswers.push(wrong);
         }
@@ -969,15 +975,52 @@ function generateBabySubtraction() {
     const allAnswers = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
     const choices = allAnswers.map(n => ({
         value: n,
+        display: n === 0 ? '🚫' : makeVisualChoice(emoji, n),
+        isVisual: true
+    }));
+
+    return {
+        type: 'takeAway',
+        visual: `${allItems}\n✋➡️${takenItems}`,
+        question: 'How many stay?',
+        answer: answer,
+        choices: choices,
+        choiceType: 'visual'
+    };
+}
+
+// Sharing/division - splitting into equal groups
+function generateBabySharing() {
+    const numPeople = randInt(2, 3);
+    const perPerson = randInt(1, 3);
+    const total = numPeople * perPerson;
+    const emoji = randChoice(BABY_ITEMS);
+
+    // Show total items and people
+    const allItems = Array(total).fill(emoji).join('');
+    const people = Array(numPeople).fill('👤').join(' ');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(1, 4);
+        if (wrong !== perPerson && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    const allAnswers = [perPerson, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
         display: makeVisualChoice(emoji, n),
         isVisual: true
     }));
 
     return {
-        type: 'subtraction',
-        visual: `${remaining} ${crossed}`,
-        question: 'How many left?',
-        answer: answer,
+        type: 'sharing',
+        visual: `${allItems}\n🍽️ ${people}`,
+        question: 'Each person gets?',
+        answer: perPerson,
         choices: choices,
         choiceType: 'visual'
     };
