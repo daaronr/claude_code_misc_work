@@ -1592,9 +1592,12 @@ function updateEstimateDisplay() {
     }
 }
 
-function setSliderToMiddle() {
-    state.estimate = (state.minValue + state.maxValue) / 2;
-    updateSliderPosition(0.5);
+function setSliderToRandomPosition() {
+    // Start slider at a random position (avoiding the exact middle)
+    // Use a random position between 20% and 80% of the range
+    const randomPercent = 0.2 + Math.random() * 0.6;
+    state.estimate = state.minValue + randomPercent * (state.maxValue - state.minValue);
+    updateSliderPosition(randomPercent);
     updateEstimateDisplay();
 }
 
@@ -1665,8 +1668,8 @@ function nextProblem() {
         elements.shoppingDisplay.classList.add('hidden');
     }
 
-    // Reset slider
-    setSliderToMiddle();
+    // Reset slider to random position
+    setSliderToRandomPosition();
 
     // Hide feedback and answer marker
     elements.feedback.classList.add('hidden');
