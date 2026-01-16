@@ -112,8 +112,10 @@ const LEVELS = {
     }
 };
 
-// Baby Mode visual items
-const BABY_ITEMS = ['🍎', '🌟', '🐶', '🎈', '🌸', '🐱', '🍪', '🦋', '🚗', '⚽'];
+// Baby Mode visual items - separated for appropriate contexts
+const BABY_FOOD_ITEMS = ['🍎', '🍪', '🍕', '🧁', '🍩', '🍓', '🍌', '🍇', '🥕', '🍬'];
+const BABY_TOY_ITEMS = ['🌟', '🎈', '⚽', '🚗', '🎨', '🧸', '🎁', '🔵', '💎', '🎯'];
+const BABY_ITEMS = [...BABY_FOOD_ITEMS, ...BABY_TOY_ITEMS]; // All items for counting
 
 // Shopping product data
 const PRODUCTS = [
@@ -170,7 +172,16 @@ let state = {
     shoppingItems: [], // For basket display
     // Baby mode state
     babyCorrect: 0,
-    babyAnswer: null
+    babyAnswer: null,
+    // Tracking for credits reminder
+    problemCount: 0,
+    // Timer/performance tracking
+    timerEnabled: true,
+    problemStartTime: null,
+    lastProblemTime: 0,
+    totalTime: 0,
+    problemsSolved: 0,
+    timerInterval: null
 };
 
 // ============ DOM ELEMENTS ============
@@ -218,7 +229,11 @@ const elements = {
     babyChoices: document.getElementById('baby-choices'),
     babyFeedback: document.getElementById('baby-feedback'),
     babyStars: document.getElementById('baby-stars'),
-    babyBackBtn: document.getElementById('baby-back-btn')
+    babyBackBtn: document.getElementById('baby-back-btn'),
+    // Timer
+    timerDisplay: document.getElementById('timer-display'),
+    timerValue: document.getElementById('timer-value'),
+    timerToggle: document.getElementById('timer-toggle')
 };
 
 // ============ UTILITY FUNCTIONS ============
@@ -236,6 +251,25 @@ function roundNice(num) {
     return Math.round(num * 100) / 100;
 }
 
+// Smart rounding based on problem scale - no decimals for large numbers!
+function smartRound(num, maxScale) {
+    // For very large scales (college mode, etc), round to significant figures
+    if (maxScale >= 1000000) {
+        const magnitude = Math.pow(10, Math.floor(Math.log10(Math.max(num, 1))) - 1);
+        return Math.round(num / magnitude) * magnitude;
+    }
+    // For large scales (100+), round to whole numbers
+    if (maxScale >= 100) {
+        return Math.round(num);
+    }
+    // For medium scales (10-100), round to 1 decimal
+    if (maxScale >= 10) {
+        return Math.round(num * 10) / 10;
+    }
+    // For small scales (fractions, decimals), keep 2 decimals
+    return Math.round(num * 100) / 100;
+}
+
 function formatNumber(num) {
     if (Number.isInteger(num)) return num.toString();
     return num.toFixed(num < 10 ? 2 : 1);
@@ -244,6 +278,63 @@ function formatNumber(num) {
 function parseFraction(str) {
     const [num, denom] = str.split('/').map(Number);
     return num / denom;
+}
+
+// ============ TIMER FUNCTIONS ============
+function startTimer() {
+    if (!state.timerEnabled) return;
+
+    state.problemStartTime = Date.now();
+    if (state.timerInterval) clearInterval(state.timerInterval);
+
+    state.timerInterval = setInterval(() => {
+        const elapsed = (Date.now() - state.problemStartTime) / 1000;
+        updateTimerDisplay(elapsed);
+    }, 100);
+}
+
+function stopTimer() {
+    if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+    }
+
+    if (state.problemStartTime) {
+        state.lastProblemTime = (Date.now() - state.problemStartTime) / 1000;
+        state.totalTime += state.lastProblemTime;
+        state.problemsSolved++;
+    }
+}
+
+function updateTimerDisplay(seconds) {
+    if (elements.timerValue) {
+        elements.timerValue.textContent = seconds.toFixed(1) + 's';
+    }
+}
+
+function resetTimerDisplay() {
+    if (elements.timerValue) {
+        elements.timerValue.textContent = '0.0s';
+    }
+}
+
+function getAverageTime() {
+    if (state.problemsSolved === 0) return 0;
+    return state.totalTime / state.problemsSolved;
+}
+
+function formatTimeForFeedback(seconds) {
+    if (seconds < 10) return seconds.toFixed(1) + 's';
+    return Math.round(seconds) + 's';
+}
+
+function toggleTimer(enabled) {
+    state.timerEnabled = enabled;
+    if (elements.timerDisplay) {
+        elements.timerDisplay.classList.toggle('hidden', !enabled);
+    }
+    // Save preference
+    saveProgress();
 }
 
 // ============ PROBLEM GENERATORS ============
@@ -510,6 +601,10 @@ function generateUnitPrice(config) {
         { emoji: product.emoji, name: `${size2}oz`, price: price2 }
     ];
 
+    // Visual comparison: size bars
+    const size1Bars = Math.ceil(size1 / 4);
+    const size2Bars = Math.ceil(size2 / 4);
+
     return {
         text: `Which is cheaper per oz?\nEstimate the better price/oz`,
         answer: roundNice(answer * 100) / 100,
@@ -517,6 +612,7 @@ function generateUnitPrice(config) {
         max: Math.ceil(Math.max(unitPrice1, unitPrice2) * 1.5 * 100) / 100,
         label: config.label,
         showItems: true,
+        visual: `📦 A: ${'▓'.repeat(size1Bars)} ${size1}oz ${formatPrice(price1)}\n📦 B: ${'▓'.repeat(size2Bars)} ${size2}oz ${formatPrice(price2)}`,
         feedbackExtra: `Option ${betterDeal} wins at ${formatPrice(answer)}/oz`
     };
 }
@@ -573,6 +669,11 @@ function generateBasketTotal(config) {
 
     state.shoppingItems = items;
 
+    // Create visual summary of items in basket
+    const visualItems = items.map(item => {
+        return item.quantity > 1 ? `${item.emoji}×${item.quantity}` : item.emoji;
+    }).join(' ');
+
     return {
         text: `Estimate your basket total`,
         answer: roundNice(total),
@@ -580,6 +681,7 @@ function generateBasketTotal(config) {
         max: Math.ceil(total * 1.5 / 5) * 5,
         label: config.label,
         showItems: true,
+        visual: `🛒 ${visualItems}`,
         feedbackExtra: `Actual total: ${formatPrice(total)}`
     };
 }
@@ -592,6 +694,11 @@ function generateTipCalc(config) {
 
     state.shoppingItems = [];
 
+    // Visual: show a receipt-like representation
+    const filledBlocks = Math.round(tipPercent / 5);
+    const emptyBlocks = 20 - filledBlocks;
+    const tipBar = '🟩'.repeat(filledBlocks) + '⬜'.repeat(Math.max(0, 5 - filledBlocks));
+
     return {
         text: `Your bill is ${formatPrice(bill)}\nEstimate a ${tipPercent}% tip`,
         answer: answer,
@@ -599,6 +706,7 @@ function generateTipCalc(config) {
         max: Math.ceil(answer * 2),
         label: config.label,
         showItems: false,
+        visual: `🧾 ${formatPrice(bill)} → 💵 ${tipBar} (${tipPercent}%)`,
         feedbackExtra: `${tipPercent}% of ${formatPrice(bill)} = ${formatPrice(answer)}`
     };
 }
@@ -612,6 +720,11 @@ function generateDiscount(config) {
 
     state.shoppingItems = [];
 
+    // Visual: show price being crossed out with discount
+    const payBlocks = Math.round((100 - discountPercent) / 10);
+    const discountBlocks = Math.round(discountPercent / 10);
+    const priceBar = '🟩'.repeat(payBlocks) + '🟥'.repeat(discountBlocks);
+
     return {
         text: `${discountPercent}% off ${formatPrice(originalPrice)}\nWhat do you pay?`,
         answer: answer,
@@ -619,6 +732,7 @@ function generateDiscount(config) {
         max: originalPrice,
         label: config.label,
         showItems: false,
+        visual: `🏷️ ${priceBar}\n💰 ${formatPrice(originalPrice)} → 🟥 -${discountPercent}%`,
         feedbackExtra: `Save ${formatPrice(discountAmount)}, pay ${formatPrice(answer)}`
     };
 }
@@ -628,6 +742,13 @@ function generateQuickAdd(config) {
     const numPrices = randInt(3, 4);
     const prices = [];
     let total = 0;
+
+    // Pick random product emojis for visual
+    const itemEmojis = ['🍎', '🥛', '🍞', '🧀', '🥚', '🍌', '☕', '🍕', '🍩', '🧁'];
+    const selectedEmojis = [];
+    for (let i = 0; i < numPrices; i++) {
+        selectedEmojis.push(randChoice(itemEmojis));
+    }
 
     for (let i = 0; i < numPrices; i++) {
         // Generate prices like $X.99, $X.49, $X.29
@@ -639,18 +760,22 @@ function generateQuickAdd(config) {
     }
 
     state.shoppingItems = prices.map((p, i) => ({
-        emoji: '💰',
+        emoji: selectedEmojis[i],
         name: `Item ${i + 1}`,
         price: p
     }));
 
+    // Visual: show items with price tags
+    const visualItems = prices.map((p, i) => `${selectedEmojis[i]}${formatPrice(p)}`).join(' + ');
+
     return {
-        text: `Quick! Add these up:\n${prices.map(p => formatPrice(p)).join(' + ')}`,
+        text: `Quick! Add these up:`,
         answer: roundNice(total),
         min: 0,
         max: Math.ceil(total * 1.3 / 5) * 5,
         label: config.label,
         showItems: false,
+        visual: `🧮 ${visualItems}`,
         feedbackExtra: `Total: ${formatPrice(total)}`
     };
 }
@@ -906,7 +1031,7 @@ function calculateCollegeScale(answer) {
 function generateBabyProblem() {
     // Mostly visual problem types - minimize numerals
     const problemTypes = [
-        'countingVisual',    // Count items, visual choices (most common)
+        'countingVisual',    // Count items, visual choices
         'countingVisual',    // Double weight
         'additionVisual',    // Visual addition with + symbol
         'additionVisual',    // Double weight
@@ -914,8 +1039,11 @@ function generateBabyProblem() {
         'takeAway',          // Double weight
         'whichMore',         // Which group has more?
         'whichLess',         // Which group has less?
-        'sharing',           // Divide into equal groups (pie concept)
+        'sharing',           // Divide FOOD into equal groups
         'groups',            // Simple multiplication (groups of items)
+        'grid',              // Count items in a grid/rectangle
+        'grid',              // Double weight
+        'cube',              // Count items in 3D layers
         'countingNumeral'    // Occasional numeral practice (reduced)
     ];
 
@@ -938,6 +1066,10 @@ function generateBabyProblem() {
             return generateBabySharing();
         case 'groups':
             return generateBabyGroups();
+        case 'grid':
+            return generateBabyGrid();
+        case 'cube':
+            return generateBabyCube();
         default:
             return generateBabyCountingVisual();
     }
@@ -975,7 +1107,7 @@ function generateBabyCountingVisual() {
     return {
         type: 'countingVisual',
         visual: items,
-        question: 'How many?',
+        question: '= ❓',  // Visual: equals what?
         answer: count,
         choices: choices,
         choiceType: 'visual'
@@ -1007,7 +1139,7 @@ function generateBabyCountingNumeral() {
     return {
         type: 'countingNumeral',
         visual: items,
-        question: 'How many?',
+        question: '= ❓',  // Visual: equals what number?
         answer: count,
         choices: choices,
         choiceType: 'numeral'
@@ -1043,7 +1175,7 @@ function generateBabyAdditionVisual() {
     return {
         type: 'additionVisual',
         visual: `${visual1} ➕ ${visual2}`,
-        question: 'Put together?',
+        question: '= ❓',  // Visual: equals what?
         answer: answer,
         choices: choices,
         choiceType: 'visual'
@@ -1080,28 +1212,28 @@ function generateBabyTakeAway() {
     return {
         type: 'takeAway',
         visual: `${allItems}\n✋➡️${takenItems}`,
-        question: 'How many stay?',
+        question: '= ❓',  // Visual: what's left?
         answer: answer,
         choices: choices,
         choiceType: 'visual'
     };
 }
 
-// Sharing/division - splitting into equal groups
+// Sharing/division - splitting FOOD into equal groups (no animals!)
 function generateBabySharing() {
     const numPeople = randInt(2, 4);
     const perPerson = randInt(2, 4);
     const total = numPeople * perPerson;
-    const emoji = randChoice(BABY_ITEMS);
+    const emoji = randChoice(BABY_FOOD_ITEMS); // Only food items!
 
-    // Show total items and people
+    // Show total items above plates with people
     const allItems = Array(total).fill(emoji).join('');
-    const people = Array(numPeople).fill('👤').join(' ');
+    const plates = Array(numPeople).fill('🍽️').join(' ');
 
     // Generate wrong answers
     const wrongAnswers = [];
     while (wrongAnswers.length < 2) {
-        const wrong = randInt(1, 4);
+        const wrong = randInt(1, 5);
         if (wrong !== perPerson && !wrongAnswers.includes(wrong)) {
             wrongAnswers.push(wrong);
         }
@@ -1114,10 +1246,11 @@ function generateBabySharing() {
         isVisual: true
     }));
 
+    // Visual only - show items → plates (no text question)
     return {
         type: 'sharing',
-        visual: `${allItems}\n🍽️ ${people}`,
-        question: 'Each person gets?',
+        visual: `${allItems}\n⬇️\n${plates}`,
+        question: '🍽️ = ❓',  // Visual question: what goes on each plate?
         answer: perPerson,
         choices: choices,
         choiceType: 'visual'
@@ -1159,7 +1292,7 @@ function generateBabyComparison(compareType) {
     return {
         type: 'comparison',
         visual: `${group1}\n\n${group2}`,
-        question: compareType === 'more' ? 'Which has MORE?' : 'Which has LESS?',
+        question: compareType === 'more' ? '📈 ❓' : '📉 ❓',  // Visual: which is bigger/smaller?
         answer: answer,
         choices: choices,
         choiceType: 'visual',
@@ -1197,7 +1330,93 @@ function generateBabyGroups() {
     return {
         type: 'groups',
         visual: visual,
-        question: 'How many in all?',
+        question: '= ❓',  // Visual: total?
+        answer: answer,
+        choices: choices,
+        choiceType: 'visual'
+    };
+}
+
+// Grid to line - count items in a rectangle/square
+function generateBabyGrid() {
+    const rows = randInt(2, 4);
+    const cols = randInt(2, 4);
+    const answer = rows * cols;
+    const emoji = randChoice(BABY_TOY_ITEMS);
+
+    // Show items in a grid
+    const grid = [];
+    for (let r = 0; r < rows; r++) {
+        grid.push(Array(cols).fill(emoji).join(''));
+    }
+    const visual = grid.join('\n');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(2, 16);
+        if (wrong !== answer && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    const allAnswers = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
+        display: makeVisualChoice(emoji, n),
+        isVisual: true
+    }));
+
+    return {
+        type: 'grid',
+        visual: `📦\n${visual}`,
+        question: '= ❓',
+        answer: answer,
+        choices: choices,
+        choiceType: 'visual'
+    };
+}
+
+// 3D concept - layers of grids (simplified cube visualization)
+function generateBabyCube() {
+    const size = randInt(2, 3); // Small cube
+    const answer = size * size * size;
+    const emoji = randChoice(BABY_TOY_ITEMS);
+
+    // Show multiple layers to suggest 3D
+    const layer = [];
+    for (let r = 0; r < size; r++) {
+        layer.push(Array(size).fill(emoji).join(''));
+    }
+    const layerStr = layer.join('\n');
+
+    // Show layers with separators
+    const layers = [];
+    for (let l = 0; l < size; l++) {
+        layers.push(layerStr);
+    }
+    const visual = layers.join('\n➖➖\n');
+
+    // Generate wrong answers
+    const wrongAnswers = [];
+    while (wrongAnswers.length < 2) {
+        const wrong = randInt(4, 30);
+        if (wrong !== answer && !wrongAnswers.includes(wrong)) {
+            wrongAnswers.push(wrong);
+        }
+    }
+
+    const allAnswers = [answer, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    const choices = allAnswers.map(n => ({
+        value: n,
+        display: makeVisualChoice(emoji, n),
+        isVisual: true
+    }));
+
+    return {
+        type: 'cube',
+        visual: `📦📦📦\n${visual}`,
+        question: '= ❓',
         answer: answer,
         choices: choices,
         choiceType: 'visual'
@@ -1358,12 +1577,18 @@ function updateSliderPosition(percent) {
 }
 
 function updateEstimateDisplay() {
+    const rounded = smartRound(state.estimate, state.maxValue);
     if (state.mode === 'shopping') {
-        elements.estimateValue.textContent = formatPrice(roundNice(state.estimate));
+        elements.estimateValue.textContent = formatPrice(rounded);
     } else if (state.mode === 'college') {
-        elements.estimateValue.textContent = formatCollegeNumber(roundNice(state.estimate));
+        elements.estimateValue.textContent = formatCollegeNumber(rounded);
     } else {
-        elements.estimateValue.textContent = formatNumber(roundNice(state.estimate));
+        // Format based on whether we're dealing with whole numbers or not
+        if (state.maxValue >= 100) {
+            elements.estimateValue.textContent = Math.round(rounded).toLocaleString();
+        } else {
+            elements.estimateValue.textContent = formatNumber(rounded);
+        }
     }
 }
 
@@ -1450,6 +1675,10 @@ function nextProblem() {
     // Show submit, hide next
     elements.submitBtn.classList.remove('hidden');
     elements.nextBtn.classList.add('hidden');
+
+    // Start timer
+    resetTimerDisplay();
+    startTimer();
 }
 
 function renderShoppingItems() {
@@ -1480,17 +1709,22 @@ function renderShoppingItems() {
 }
 
 function checkEstimate() {
+    // Stop timer first
+    stopTimer();
+
     const problem = state.currentProblem;
     const tolerance = LEVELS[state.level].tolerance;
     const answer = problem.answer;
-    const estimate = roundNice(state.estimate);
+    const estimate = smartRound(state.estimate, state.maxValue);
 
     // Calculate error as percentage of answer (handle zero case)
     const error = answer === 0 ? Math.abs(estimate) : Math.abs(estimate - answer) / Math.abs(answer);
 
-    // Determine result
+    // Determine result - Bullseye ONLY for exact matches!
     let result, points;
-    if (error <= tolerance.bullseye) {
+    const isExactMatch = estimate === answer || Math.abs(estimate - answer) < 0.001;
+
+    if (isExactMatch) {
         result = 'bullseye';
         points = POINTS.bullseye;
     } else if (error <= tolerance.close) {
@@ -1552,8 +1786,30 @@ function showFeedback(result, answer, estimate, points) {
     }
     elements.pointsEarned.textContent = `+${points}`;
 
+    // Add time info if timer enabled
+    const timeInfoEl = document.getElementById('time-info');
+    if (timeInfoEl && state.timerEnabled && state.lastProblemTime > 0) {
+        const avgTime = getAverageTime();
+        timeInfoEl.innerHTML = `⏱️ ${formatTimeForFeedback(state.lastProblemTime)}` +
+            (state.problemsSolved > 1 ? ` (avg: ${formatTimeForFeedback(avgTime)})` : '');
+        timeInfoEl.classList.remove('hidden');
+    } else if (timeInfoEl) {
+        timeInfoEl.classList.add('hidden');
+    }
+
     elements.feedback.classList.remove('hidden');
     elements.feedback.className = `feedback ${result}`;
+
+    // Show periodic credits reminder (every 6 problems)
+    state.problemCount++;
+    const creditsEl = document.getElementById('credits-reminder');
+    if (creditsEl) {
+        if (state.problemCount % 6 === 0) {
+            creditsEl.classList.remove('hidden');
+        } else {
+            creditsEl.classList.add('hidden');
+        }
+    }
 }
 
 function showAnswerMarker(answer) {
@@ -1585,7 +1841,8 @@ function goToMenu() {
 function saveProgress() {
     const data = {
         bestStreak: state.bestStreak,
-        totalPoints: state.totalPoints
+        totalPoints: state.totalPoints,
+        timerEnabled: state.timerEnabled
     };
     localStorage.setItem('mathEstimatorProgress', JSON.stringify(data));
 }
@@ -1596,6 +1853,7 @@ function loadProgress() {
         if (data) {
             state.bestStreak = data.bestStreak || 0;
             state.totalPoints = data.totalPoints || 0;
+            state.timerEnabled = data.timerEnabled !== false; // Default to true
         }
     } catch (e) {
         console.log('No saved progress found');
@@ -1603,6 +1861,14 @@ function loadProgress() {
 
     elements.bestStreakDisplay.textContent = state.bestStreak;
     elements.totalPointsDisplay.textContent = state.totalPoints;
+
+    // Apply timer preference
+    if (elements.timerToggle) {
+        elements.timerToggle.checked = state.timerEnabled;
+    }
+    if (elements.timerDisplay) {
+        elements.timerDisplay.classList.toggle('hidden', !state.timerEnabled);
+    }
 }
 
 // ============ SERVICE WORKER ============
@@ -1653,6 +1919,13 @@ function initEventListeners() {
 
     // Baby mode back button
     elements.babyBackBtn.addEventListener('click', goToModeScreen);
+
+    // Timer toggle
+    if (elements.timerToggle) {
+        elements.timerToggle.addEventListener('change', (e) => {
+            toggleTimer(e.target.checked);
+        });
+    }
 
     // Keyboard support
     document.addEventListener('keydown', (e) => {

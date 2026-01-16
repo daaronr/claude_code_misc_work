@@ -142,6 +142,96 @@ html, body {
     color: var(--primary);
 }
 
+/* Timer toggle on mode screen */
+.timer-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #cbd5e1;
+    border-radius: 26px;
+    transition: 0.3s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--primary);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(22px);
+}
+
+.toggle-label {
+    font-size: 0.95rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* Timer display in game header */
+.timer-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    padding: 4px 8px;
+    background: var(--surface);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.timer-display.hidden {
+    display: none;
+}
+
+#timer-icon {
+    font-size: 1.1rem;
+}
+
+#timer-value {
+    font-family: 'Courier New', monospace;
+    min-width: 48px;
+    color: var(--primary);
+}
+
 .credits {
     margin-top: 20px;
     font-size: 0.95rem;
@@ -422,6 +512,40 @@ html, body {
 .feedback-details span {
     font-weight: 600;
     color: var(--text);
+}
+
+/* Time info in feedback */
+.time-info {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.time-info.hidden {
+    display: none;
+}
+
+/* Credits reminder in feedback */
+.credits-reminder {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.credits-reminder.hidden {
+    display: none;
+}
+
+.credits-reminder a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.credits-reminder a:hover {
+    text-decoration: underline;
 }
 
 /* Footer */

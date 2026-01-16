@@ -45,6 +45,14 @@
                 <p>Total Points: <span id="total-points-display">0</span></p>
             </div>
 
+            <div class="timer-toggle">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="timer-toggle" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">⏱️ Show Timer</span>
+            </div>
+
             <div class="credits">
                 <p>Idea: <a href="https://www.linkedin.com/in/nesimsisa" target="_blank">Nesim Sisa</a></p>
                 <p>Orchestrated by: <a href="https://www.davidreinstein.org/" target="_blank">David Reinstein</a>, founder of <a href="https://unjournal.org" target="_blank">Unjournal.org</a></p>
@@ -152,6 +160,10 @@
         <div id="game-screen" class="screen">
             <header class="game-header">
                 <button id="back-btn" class="icon-btn" aria-label="Back to menu">←</button>
+                <div id="timer-display" class="timer-display">
+                    <span id="timer-icon">⏱️</span>
+                    <span id="timer-value">0.0s</span>
+                </div>
                 <div class="score-display">
                     <span id="current-score">0</span> pts
                 </div>
@@ -203,6 +215,11 @@
                         Answer: <span id="actual-answer">96</span> |
                         You guessed: <span id="your-guess">95</span> |
                         Points: <span id="points-earned">+100</span>
+                    </div>
+                    <div id="time-info" class="time-info hidden"></div>
+                    <div id="credits-reminder" class="credits-reminder hidden">
+                        <a href="https://www.linkedin.com/in/nesimsisa" target="_blank">Nesim Sisa</a> ✦
+                        <a href="https://www.davidreinstein.org/" target="_blank">David Reinstein</a>
                     </div>
                 </div>
             </main>
