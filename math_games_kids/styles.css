@@ -143,8 +143,8 @@ html, body {
 }
 
 .credits {
-    margin-top: 16px;
-    font-size: 0.8rem;
+    margin-top: 20px;
+    font-size: 0.95rem;
     color: var(--text-light);
     text-align: center;
 }
