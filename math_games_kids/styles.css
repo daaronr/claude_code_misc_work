@@ -142,6 +142,26 @@ html, body {
     color: var(--primary);
 }
 
+.credits {
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.credits p {
+    margin: 4px 0;
+}
+
+.credits a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.credits a:hover {
+    text-decoration: underline;
+}
+
 /* ============ GAME SCREEN ============ */
 #game-screen {
     gap: 16px;
