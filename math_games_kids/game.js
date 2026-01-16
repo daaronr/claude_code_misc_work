@@ -70,6 +70,41 @@ const LEVELS = {
         mode: 'shopping',
         tolerance: { bullseye: 0.03, close: 0.08, neighborhood: 0.12 },
         problems: [{ type: 'quickAdd', label: 'Quick Add' }]
+    },
+    // College Level Mode
+    sciNotation: {
+        name: 'Scientific Notation',
+        mode: 'college',
+        tolerance: { bullseye: 0.1, close: 0.25, neighborhood: 0.5 }, // More lenient - order of magnitude
+        problems: [
+            { type: 'sciMultiply', label: 'Scientific Notation' },
+            { type: 'sciDivide', label: 'Scientific Notation' }
+        ]
+    },
+    economics: {
+        name: 'Economics & Scale',
+        mode: 'college',
+        tolerance: { bullseye: 0.1, close: 0.25, neighborhood: 0.5 },
+        problems: [
+            { type: 'perCapita', label: 'Per Capita' },
+            { type: 'percentLarge', label: 'Large Percentages' },
+            { type: 'ratioScale', label: 'Scale Ratios' }
+        ]
+    },
+    fermi: {
+        name: 'Fermi Estimation',
+        mode: 'college',
+        tolerance: { bullseye: 0.3, close: 0.5, neighborhood: 1.0 }, // Order of magnitude scoring
+        problems: [{ type: 'fermi', label: 'Fermi Problem' }]
+    },
+    compound: {
+        name: 'Growth & Interest',
+        mode: 'college',
+        tolerance: { bullseye: 0.05, close: 0.15, neighborhood: 0.25 },
+        problems: [
+            { type: 'compoundInterest', label: 'Compound Interest' },
+            { type: 'exponentialGrowth', label: 'Exponential Growth' }
+        ]
     }
 };
 
@@ -145,6 +180,7 @@ const elements = {
     levelScreenTitle: document.getElementById('level-screen-title'),
     numbersLevels: document.getElementById('numbers-levels'),
     shoppingLevels: document.getElementById('shopping-levels'),
+    collegeLevels: document.getElementById('college-levels'),
     backToModeBtn: document.getElementById('back-to-mode-btn'),
     // Game screen
     problem: document.getElementById('problem'),
@@ -388,8 +424,8 @@ function generateUnitPrice(config) {
 }
 
 function generateBasketTotal(config) {
-    // Pick 4-6 random products with varied prices
-    const numItems = randInt(4, 6);
+    // Pick 3-5 random products with quantities and possible discounts
+    const numItems = randInt(3, 5);
     const items = [];
     const usedProducts = new Set();
 
@@ -401,14 +437,40 @@ function generateBasketTotal(config) {
         } while (usedProducts.has(product.name));
         usedProducts.add(product.name);
 
-        // Vary the price slightly
-        const price = roundNice(product.basePrice * (0.8 + Math.random() * 0.4));
+        // Random quantity (1-3)
+        const quantity = randInt(1, 3);
+
+        // Base price with slight variation
+        const unitPrice = roundNice(product.basePrice * (0.8 + Math.random() * 0.4));
+
+        // Maybe apply a discount (30% chance)
+        let discount = null;
+        let itemTotal = unitPrice * quantity;
+
+        if (Math.random() < 0.3 && quantity > 1) {
+            const discountTypes = ['percent', 'bogo'];
+            const discountType = randChoice(discountTypes);
+
+            if (discountType === 'percent') {
+                const percentOff = randChoice([10, 15, 20, 25]);
+                discount = `${percentOff}% off`;
+                itemTotal = itemTotal * (1 - percentOff / 100);
+            } else if (discountType === 'bogo' && quantity >= 2) {
+                discount = 'Buy 2 Get 1 Free';
+                const freeItems = Math.floor(quantity / 2);
+                itemTotal = unitPrice * (quantity - freeItems);
+            }
+        }
+
         items.push({
             emoji: product.emoji,
             name: product.name,
-            price: price
+            unitPrice: unitPrice,
+            quantity: quantity,
+            discount: discount,
+            itemTotal: roundNice(itemTotal)
         });
-        total += price;
+        total += itemTotal;
     }
 
     state.shoppingItems = items;
@@ -420,7 +482,7 @@ function generateBasketTotal(config) {
         max: Math.ceil(total * 1.5 / 5) * 5,
         label: config.label,
         showItems: true,
-        feedbackExtra: `Items: ${items.map(i => formatPrice(i.price)).join(' + ')}`
+        feedbackExtra: `Actual total: ${formatPrice(total)}`
     };
 }
 
@@ -493,6 +555,253 @@ function generateQuickAdd(config) {
         showItems: false,
         feedbackExtra: `Total: ${formatPrice(total)}`
     };
+}
+
+// ============ COLLEGE LEVEL GENERATORS ============
+
+// Real-world data for college problems
+const COLLEGE_DATA = {
+    countries: [
+        { name: 'USA', pop: 330e6, gdp: 25e12 },
+        { name: 'China', pop: 1.4e9, gdp: 18e12 },
+        { name: 'Japan', pop: 125e6, gdp: 4.2e12 },
+        { name: 'Germany', pop: 83e6, gdp: 4.1e12 },
+        { name: 'UK', pop: 67e6, gdp: 3.1e12 },
+        { name: 'India', pop: 1.4e9, gdp: 3.4e12 },
+        { name: 'France', pop: 67e6, gdp: 2.8e12 },
+        { name: 'Brazil', pop: 215e6, gdp: 1.9e12 }
+    ],
+    scales: [
+        { name: 'Earth\'s diameter', value: 12742, unit: 'km' },
+        { name: 'Moon\'s diameter', value: 3474, unit: 'km' },
+        { name: 'Sun\'s diameter', value: 1.4e6, unit: 'km' },
+        { name: 'Earth-Moon distance', value: 384400, unit: 'km' },
+        { name: 'Speed of light', value: 3e8, unit: 'm/s' },
+        { name: 'Speed of sound', value: 343, unit: 'm/s' }
+    ],
+    fermiProblems: [
+        { q: 'Piano tuners in Chicago', answer: 100, hint: 'Pop ~2.7M, ~10% own pianos, tuned yearly, 4 tunings/day' },
+        { q: 'Golf balls that fit in a school bus', answer: 500000, hint: 'Bus ~2000 cu ft, ball ~2.5 cu in' },
+        { q: 'Gas stations in the USA', answer: 150000, hint: '330M people, ~250M cars, each station serves ~1700 cars' },
+        { q: 'Hair on a human head', answer: 100000, hint: '~120-150K typical, varies by hair color' },
+        { q: 'Heartbeats in a lifetime (80 yrs)', answer: 3e9, hint: '~70 bpm × 60 × 24 × 365 × 80' }
+    ]
+};
+
+function formatSciNotation(num) {
+    if (num === 0) return '0';
+    const exp = Math.floor(Math.log10(Math.abs(num)));
+    const mantissa = num / Math.pow(10, exp);
+    if (exp === 0) return num.toFixed(1);
+    return `${mantissa.toFixed(1)} × 10^${exp}`;
+}
+
+function formatLargeNumber(num) {
+    if (num >= 1e12) return `$${(num / 1e12).toFixed(1)} trillion`;
+    if (num >= 1e9) return `${(num / 1e9).toFixed(1)} billion`;
+    if (num >= 1e6) return `${(num / 1e6).toFixed(1)} million`;
+    if (num >= 1e3) return `${(num / 1e3).toFixed(0)}K`;
+    return num.toFixed(0);
+}
+
+function formatCollegeNumber(num) {
+    if (num >= 1e12) return `${(num / 1e12).toFixed(1)}T`;
+    if (num >= 1e9) return `${(num / 1e9).toFixed(1)}B`;
+    if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`;
+    if (num >= 1e3) return `${(num / 1e3).toFixed(0)}K`;
+    if (num >= 100) return Math.round(num).toLocaleString();
+    return num.toFixed(1);
+}
+
+function generateCollegeProblem(level) {
+    const config = LEVELS[level];
+    const problemConfig = randChoice(config.problems);
+
+    switch (problemConfig.type) {
+        case 'sciMultiply':
+            return generateSciMultiply(problemConfig);
+        case 'sciDivide':
+            return generateSciDivide(problemConfig);
+        case 'perCapita':
+            return generatePerCapita(problemConfig);
+        case 'percentLarge':
+            return generatePercentLarge(problemConfig);
+        case 'ratioScale':
+            return generateRatioScale(problemConfig);
+        case 'fermi':
+            return generateFermiProblem(problemConfig);
+        case 'compoundInterest':
+            return generateCompoundInterest(problemConfig);
+        case 'exponentialGrowth':
+            return generateExponentialGrowth(problemConfig);
+        default:
+            return generateSciMultiply(problemConfig);
+    }
+}
+
+function generateSciMultiply(config) {
+    // e.g., 3.2 × 10^6 × 4.1 × 10^3
+    const m1 = roundNice(1 + Math.random() * 8);
+    const e1 = randInt(3, 7);
+    const m2 = roundNice(1 + Math.random() * 8);
+    const e2 = randInt(2, 5);
+
+    const num1 = m1 * Math.pow(10, e1);
+    const num2 = m2 * Math.pow(10, e2);
+    const answer = num1 * num2;
+
+    const answerExp = Math.floor(Math.log10(answer));
+    const scale = calculateCollegeScale(answer);
+
+    return {
+        text: `(${m1} × 10^${e1}) × (${m2} × 10^${e2}) ≈ ?`,
+        answer: answer,
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `≈ ${formatSciNotation(answer)}`
+    };
+}
+
+function generateSciDivide(config) {
+    const m1 = roundNice(1 + Math.random() * 8);
+    const e1 = randInt(8, 12);
+    const m2 = roundNice(1 + Math.random() * 8);
+    const e2 = randInt(3, 6);
+
+    const num1 = m1 * Math.pow(10, e1);
+    const num2 = m2 * Math.pow(10, e2);
+    const answer = num1 / num2;
+
+    const scale = calculateCollegeScale(answer);
+
+    return {
+        text: `(${m1} × 10^${e1}) ÷ (${m2} × 10^${e2}) ≈ ?`,
+        answer: answer,
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `≈ ${formatSciNotation(answer)}`
+    };
+}
+
+function generatePerCapita(config) {
+    const country = randChoice(COLLEGE_DATA.countries);
+    const answer = country.gdp / country.pop;
+    const scale = calculateCollegeScale(answer);
+
+    return {
+        text: `${country.name}'s GDP (${formatLargeNumber(country.gdp)})\n÷ population (${formatLargeNumber(country.pop)})\n= GDP per capita?`,
+        answer: roundNice(answer),
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `≈ $${formatLargeNumber(answer)} per person`
+    };
+}
+
+function generatePercentLarge(config) {
+    // e.g., 0.3% of 2.4 million
+    const base = randChoice([1e6, 2.5e6, 10e6, 100e6, 1e9]);
+    const percent = randChoice([0.1, 0.25, 0.5, 1, 2, 5]);
+    const answer = base * percent / 100;
+
+    const scale = calculateCollegeScale(answer);
+
+    return {
+        text: `${percent}% of ${formatLargeNumber(base)} = ?`,
+        answer: roundNice(answer),
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `= ${formatLargeNumber(answer)}`
+    };
+}
+
+function generateRatioScale(config) {
+    const items = COLLEGE_DATA.scales;
+    const item1 = randChoice(items);
+    let item2 = randChoice(items);
+    while (item2.name === item1.name) {
+        item2 = randChoice(items);
+    }
+
+    const larger = item1.value > item2.value ? item1 : item2;
+    const smaller = item1.value > item2.value ? item2 : item1;
+    const answer = larger.value / smaller.value;
+
+    const scale = calculateCollegeScale(answer);
+
+    return {
+        text: `${larger.name}\n÷ ${smaller.name}\n= ratio?`,
+        answer: roundNice(answer),
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `${larger.value.toLocaleString()} ÷ ${smaller.value.toLocaleString()} ≈ ${answer.toFixed(1)}`
+    };
+}
+
+function generateFermiProblem(config) {
+    const problem = randChoice(COLLEGE_DATA.fermiProblems);
+    const answer = problem.answer;
+    const scale = calculateCollegeScale(answer);
+
+    return {
+        text: `Estimate:\n${problem.q}`,
+        answer: answer,
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `≈ ${formatLargeNumber(answer)}\n(${problem.hint})`
+    };
+}
+
+function generateCompoundInterest(config) {
+    const principal = randChoice([1000, 5000, 10000, 50000]);
+    const rate = randChoice([3, 4, 5, 6, 7, 8]) / 100;
+    const years = randChoice([5, 10, 15, 20]);
+
+    const answer = principal * Math.pow(1 + rate, years);
+    const scale = { min: principal, max: Math.ceil(answer * 1.5 / 1000) * 1000 };
+
+    return {
+        text: `$${principal.toLocaleString()} at ${(rate * 100)}%/year\nfor ${years} years = ?`,
+        answer: roundNice(answer),
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `= $${answer.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+    };
+}
+
+function generateExponentialGrowth(config) {
+    const start = randChoice([100, 500, 1000]);
+    const doublingTime = randChoice([2, 3, 5, 7]);
+    const days = doublingTime * randInt(2, 5);
+
+    const doublings = days / doublingTime;
+    const answer = start * Math.pow(2, doublings);
+    const scale = calculateCollegeScale(answer);
+
+    return {
+        text: `Starts at ${start}, doubles every ${doublingTime} days.\nAfter ${days} days = ?`,
+        answer: roundNice(answer),
+        min: start,
+        max: scale.max,
+        label: config.label,
+        feedbackExtra: `${doublings} doublings: ${start} × 2^${doublings} = ${answer.toLocaleString()}`
+    };
+}
+
+function calculateCollegeScale(answer) {
+    if (answer <= 100) return { min: 0, max: Math.ceil(answer * 2 / 10) * 10 };
+    if (answer <= 1000) return { min: 0, max: Math.ceil(answer * 1.5 / 100) * 100 };
+    if (answer <= 10000) return { min: 0, max: Math.ceil(answer * 1.5 / 1000) * 1000 };
+    if (answer <= 100000) return { min: 0, max: Math.ceil(answer * 1.5 / 10000) * 10000 };
+    if (answer <= 1e6) return { min: 0, max: Math.ceil(answer * 1.5 / 100000) * 100000 };
+    if (answer <= 1e9) return { min: 0, max: Math.ceil(answer * 1.5 / 1e6) * 1e6 };
+    return { min: 0, max: Math.ceil(answer * 1.5 / 1e9) * 1e9 };
 }
 
 // ============ BABY MODE GENERATORS ============
@@ -910,6 +1219,8 @@ function updateSliderPosition(percent) {
 function updateEstimateDisplay() {
     if (state.mode === 'shopping') {
         elements.estimateValue.textContent = formatPrice(roundNice(state.estimate));
+    } else if (state.mode === 'college') {
+        elements.estimateValue.textContent = formatCollegeNumber(roundNice(state.estimate));
     } else {
         elements.estimateValue.textContent = formatNumber(roundNice(state.estimate));
     }
@@ -932,6 +1243,14 @@ function startGame(level) {
     elements.levelScreen.classList.remove('active');
     elements.gameScreen.classList.add('active');
 
+    // Add mode class for styling
+    elements.gameScreen.classList.remove('shopping-mode', 'college-mode');
+    if (state.mode === 'shopping') {
+        elements.gameScreen.classList.add('shopping-mode');
+    } else if (state.mode === 'college') {
+        elements.gameScreen.classList.add('college-mode');
+    }
+
     updateScoreDisplay();
     nextProblem();
 }
@@ -940,6 +1259,8 @@ function nextProblem() {
     // Generate problem based on mode
     if (state.mode === 'shopping') {
         state.currentProblem = generateShoppingProblem(state.level);
+    } else if (state.mode === 'college') {
+        state.currentProblem = generateCollegeProblem(state.level);
     } else {
         state.currentProblem = generateProblem(state.level);
     }
@@ -951,10 +1272,13 @@ function nextProblem() {
     elements.problem.textContent = state.currentProblem.text;
     elements.problemType.textContent = state.currentProblem.label;
 
-    // Format labels for shopping mode (show $ for money)
+    // Format labels based on mode
     if (state.mode === 'shopping') {
         elements.minLabel.textContent = formatPrice(state.minValue);
         elements.maxLabel.textContent = formatPrice(state.maxValue);
+    } else if (state.mode === 'college') {
+        elements.minLabel.textContent = formatCollegeNumber(state.minValue);
+        elements.maxLabel.textContent = formatCollegeNumber(state.maxValue);
     } else {
         elements.minLabel.textContent = formatNumber(state.minValue);
         elements.maxLabel.textContent = formatNumber(state.maxValue);
@@ -982,13 +1306,29 @@ function nextProblem() {
 
 function renderShoppingItems() {
     const container = elements.shoppingItems;
-    container.innerHTML = state.shoppingItems.map(item => `
-        <div class="shopping-item">
-            <span class="item-emoji">${item.emoji}</span>
-            <span class="item-name">${item.name}</span>
-            <span class="item-price">${formatPrice(item.price)}</span>
-        </div>
-    `).join('');
+    container.innerHTML = state.shoppingItems.map(item => {
+        // Handle new format with quantities/discounts or old simple format
+        if (item.quantity !== undefined) {
+            const qtyDisplay = item.quantity > 1 ? `×${item.quantity}` : '';
+            const discountDisplay = item.discount ? `<span class="item-discount">${item.discount}</span>` : '';
+            return `
+                <div class="shopping-item${item.discount ? ' has-discount' : ''}">
+                    <span class="item-emoji">${item.emoji}</span>
+                    <span class="item-name">${item.name} ${qtyDisplay}</span>
+                    <span class="item-price">${formatPrice(item.unitPrice)}</span>
+                    ${discountDisplay}
+                </div>
+            `;
+        } else {
+            return `
+                <div class="shopping-item">
+                    <span class="item-emoji">${item.emoji}</span>
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">${formatPrice(item.price)}</span>
+                </div>
+            `;
+        }
+    }).join('');
 }
 
 function checkEstimate() {
@@ -1055,6 +1395,9 @@ function showFeedback(result, answer, estimate, points) {
     if (state.mode === 'shopping') {
         elements.actualAnswer.textContent = formatPrice(answer);
         elements.yourGuess.textContent = formatPrice(estimate);
+    } else if (state.mode === 'college') {
+        elements.actualAnswer.textContent = formatCollegeNumber(answer);
+        elements.yourGuess.textContent = formatCollegeNumber(estimate);
     } else {
         elements.actualAnswer.textContent = formatNumber(answer);
         elements.yourGuess.textContent = formatNumber(estimate);
@@ -1185,15 +1528,25 @@ function showLevelScreen(mode) {
     // Show level screen
     elements.levelScreen.classList.add('active');
 
-    // Update title based on mode
+    // Hide all level selectors first
+    elements.numbersLevels.classList.add('hidden');
+    elements.shoppingLevels.classList.add('hidden');
+    if (elements.collegeLevels) {
+        elements.collegeLevels.classList.add('hidden');
+    }
+
+    // Update title and show appropriate levels based on mode
     if (mode === 'numbers') {
         elements.levelScreenTitle.textContent = 'Choose Difficulty';
         elements.numbersLevels.classList.remove('hidden');
-        elements.shoppingLevels.classList.add('hidden');
-    } else {
+    } else if (mode === 'shopping') {
         elements.levelScreenTitle.textContent = 'Choose Challenge';
-        elements.numbersLevels.classList.add('hidden');
         elements.shoppingLevels.classList.remove('hidden');
+    } else if (mode === 'college') {
+        elements.levelScreenTitle.textContent = 'Choose Topic';
+        if (elements.collegeLevels) {
+            elements.collegeLevels.classList.remove('hidden');
+        }
     }
 }
 
