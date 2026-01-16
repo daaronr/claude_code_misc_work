@@ -252,6 +252,21 @@ html, body {
     color: var(--text);
 }
 
+.problem-visual {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    white-space: pre-wrap;
+    letter-spacing: 2px;
+}
+
+.problem-visual:empty {
+    display: none;
+}
+
 /* Number Line */
 .number-line-container {
     padding: 16px 8px;

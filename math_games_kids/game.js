@@ -8,8 +8,9 @@ const LEVELS = {
         mode: 'numbers',
         tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.20 },
         problems: [
-            { type: 'multiplication', range: [2, 9], label: 'Multiplication' },
-            { type: 'fractionOf', range: [10, 50], fractions: ['1/2', '1/4', '3/4'], label: 'Fractions' }
+            { type: 'multiplication', range: [2, 12], label: 'Multiplication', visual: true },
+            { type: 'multiplicationLarge', range: [10, 25], range2: [2, 5], label: 'Multiplication' },
+            { type: 'fractionOf', range: [10, 100], fractions: ['1/2', '1/4', '3/4'], label: 'Fractions', visual: true }
         ]
     },
     medium: {
@@ -17,10 +18,11 @@ const LEVELS = {
         mode: 'numbers',
         tolerance: { bullseye: 0.05, close: 0.10, neighborhood: 0.15 },
         problems: [
-            { type: 'multiplication', range: [10, 30], range2: [2, 9], label: 'Multiplication' },
-            { type: 'division', range: [20, 100], range2: [2, 9], label: 'Division' },
-            { type: 'decimal', range: [2, 10], label: 'Decimals' },
-            { type: 'fractionOf', range: [20, 100], fractions: ['1/2', '1/3', '1/4', '2/3', '3/4'], label: 'Fractions' }
+            { type: 'multiplication', range: [10, 50], range2: [3, 12], label: 'Multiplication', visual: true },
+            { type: 'multiplicationLarge', range: [25, 100], range2: [5, 20], label: 'Big Multiplication' },
+            { type: 'division', range: [50, 200], range2: [3, 12], label: 'Division', visual: true },
+            { type: 'decimal', range: [5, 25], label: 'Decimals' },
+            { type: 'fractionOf', range: [50, 200], fractions: ['1/2', '1/3', '1/4', '2/3', '3/4'], label: 'Fractions' }
         ]
     },
     hard: {
@@ -28,10 +30,12 @@ const LEVELS = {
         mode: 'numbers',
         tolerance: { bullseye: 0.03, close: 0.07, neighborhood: 0.10 },
         problems: [
-            { type: 'multiplication', range: [20, 99], range2: [10, 30], label: 'Multiplication' },
-            { type: 'division', range: [100, 500], range2: [5, 15], label: 'Division' },
-            { type: 'decimal', range: [5, 20], label: 'Decimals' },
-            { type: 'fractionAdd', label: 'Fraction Addition' }
+            { type: 'multiplication', range: [50, 150], range2: [10, 50], label: 'Multiplication' },
+            { type: 'multiplicationLarge', range: [100, 500], range2: [20, 100], label: 'Big Multiplication' },
+            { type: 'division', range: [200, 1000], range2: [5, 25], label: 'Division' },
+            { type: 'decimal', range: [10, 50], label: 'Decimals' },
+            { type: 'fractionAdd', label: 'Fraction Addition' },
+            { type: 'percentOf', range: [100, 500], label: 'Percentages' }
         ]
     },
     // Baby Mode (single level - visual only)
@@ -185,6 +189,7 @@ const elements = {
     // Game screen
     problem: document.getElementById('problem'),
     problemType: document.getElementById('problem-type'),
+    problemVisual: document.getElementById('problem-visual'),
     sliderThumb: document.getElementById('slider-thumb'),
     answerMarker: document.getElementById('answer-marker'),
     estimateValue: document.getElementById('estimate-value'),
@@ -242,6 +247,20 @@ function parseFraction(str) {
 }
 
 // ============ PROBLEM GENERATORS ============
+
+// Visual helpers for number problems
+const NUMBER_VISUALS = ['🔵', '🟢', '🟡', '🔴', '⭐', '🍎', '🎈', '💎'];
+
+function makeVisualGrid(count, emoji, perRow = 10) {
+    if (count > 100) return ''; // Too many to visualize
+    const rows = [];
+    for (let i = 0; i < count; i += perRow) {
+        const rowCount = Math.min(perRow, count - i);
+        rows.push(Array(rowCount).fill(emoji).join(''));
+    }
+    return rows.join('\n');
+}
+
 function generateProblem(level) {
     const config = LEVELS[level];
     const problemConfig = randChoice(config.problems);
@@ -249,6 +268,8 @@ function generateProblem(level) {
     switch (problemConfig.type) {
         case 'multiplication':
             return generateMultiplication(problemConfig);
+        case 'multiplicationLarge':
+            return generateMultiplicationLarge(problemConfig);
         case 'division':
             return generateDivision(problemConfig);
         case 'decimal':
@@ -257,6 +278,8 @@ function generateProblem(level) {
             return generateFractionOf(problemConfig);
         case 'fractionAdd':
             return generateFractionAdd(problemConfig);
+        case 'percentOf':
+            return generatePercentOf(problemConfig);
         default:
             return generateMultiplication(problemConfig);
     }
@@ -268,8 +291,36 @@ function generateMultiplication(config) {
     const answer = a * b;
     const scale = calculateScale(answer);
 
+    // Add visual for smaller numbers
+    let visual = '';
+    if (config.visual && a <= 10 && b <= 10) {
+        const emoji = randChoice(NUMBER_VISUALS);
+        // Show a rows of b items
+        const rows = [];
+        for (let i = 0; i < a; i++) {
+            rows.push(Array(b).fill(emoji).join(''));
+        }
+        visual = rows.join('\n');
+    }
+
     return {
         text: `${a} × ${b} ≈ ?`,
+        answer: answer,
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        visual: visual
+    };
+}
+
+function generateMultiplicationLarge(config) {
+    const a = randInt(config.range[0], config.range[1]);
+    const b = randInt(config.range2[0], config.range2[1]);
+    const answer = a * b;
+    const scale = calculateScale(answer);
+
+    return {
+        text: `${a.toLocaleString()} × ${b.toLocaleString()} ≈ ?`,
         answer: answer,
         min: scale.min,
         max: scale.max,
@@ -283,12 +334,46 @@ function generateDivision(config) {
     const answer = roundNice(dividend / divisor);
     const scale = calculateScale(answer);
 
+    // Add visual for smaller numbers - show items being split into groups
+    let visual = '';
+    if (config.visual && dividend <= 50 && divisor <= 8) {
+        const emoji = randChoice(NUMBER_VISUALS);
+        const perGroup = Math.floor(dividend / divisor);
+        const groups = [];
+        for (let i = 0; i < divisor; i++) {
+            groups.push('[' + Array(perGroup).fill(emoji).join('') + ']');
+        }
+        visual = groups.join(' ');
+    }
+
     return {
         text: `${dividend} ÷ ${divisor} ≈ ?`,
         answer: answer,
         min: scale.min,
         max: scale.max,
-        label: config.label
+        label: config.label,
+        visual: visual
+    };
+}
+
+function generatePercentOf(config) {
+    const base = randInt(config.range[0], config.range[1]);
+    const percent = randChoice([10, 15, 20, 25, 30, 40, 50, 75]);
+    const answer = roundNice(base * percent / 100);
+    const scale = calculateScale(answer);
+
+    // Visual: show a bar representing the percentage
+    const filledBlocks = Math.round(percent / 10);
+    const emptyBlocks = 10 - filledBlocks;
+    const visual = '🟩'.repeat(filledBlocks) + '⬜'.repeat(emptyBlocks) + ` (${percent}%)`;
+
+    return {
+        text: `${percent}% of ${base} ≈ ?`,
+        answer: answer,
+        min: scale.min,
+        max: scale.max,
+        label: config.label,
+        visual: visual
     };
 }
 
@@ -316,12 +401,25 @@ function generateFractionOf(config) {
     const answer = roundNice(parseFraction(fraction) * actualWhole);
     const scale = calculateScale(answer);
 
+    // Visual: show a pie/bar representing the fraction
+    let visual = '';
+    if (config.visual) {
+        const denom = getDenom(fraction);
+        const numer = parseInt(fraction.split('/')[0]);
+        if (denom <= 8) {
+            const filled = '🟦'.repeat(numer);
+            const empty = '⬜'.repeat(denom - numer);
+            visual = filled + empty + ` = ${fraction}`;
+        }
+    }
+
     return {
         text: `${fraction} of ${actualWhole} ≈ ?`,
         answer: answer,
         min: scale.min,
         max: scale.max,
-        label: config.label
+        label: config.label,
+        visual: visual
     };
 }
 
@@ -853,14 +951,14 @@ function makeVisualChoice(emoji, count) {
 
 // Counting with VISUAL answer choices (no numerals needed)
 function generateBabyCountingVisual() {
-    const count = randInt(1, 4);
+    const count = randInt(1, 6);
     const emoji = randChoice(BABY_ITEMS);
     const items = Array(count).fill(emoji).join(' ');
 
     // Generate wrong answers
     const wrongAnswers = [];
     while (wrongAnswers.length < 2) {
-        const wrong = randInt(1, 5);
+        const wrong = randInt(1, 7);
         if (wrong !== count && !wrongAnswers.includes(wrong)) {
             wrongAnswers.push(wrong);
         }
@@ -886,14 +984,14 @@ function generateBabyCountingVisual() {
 
 // Counting with NUMERAL choices (for learning numbers)
 function generateBabyCountingNumeral() {
-    const count = randInt(1, 5);
+    const count = randInt(1, 8);
     const emoji = randChoice(BABY_ITEMS);
     const items = Array(count).fill(emoji).join(' ');
 
     // Generate wrong answers
     const wrongAnswers = [];
     while (wrongAnswers.length < 2) {
-        const wrong = randInt(1, 6);
+        const wrong = randInt(1, 9);
         if (wrong !== count && !wrongAnswers.includes(wrong)) {
             wrongAnswers.push(wrong);
         }
@@ -918,8 +1016,8 @@ function generateBabyCountingNumeral() {
 
 // Visual addition with VISUAL answer choices and clear + symbol
 function generateBabyAdditionVisual() {
-    const num1 = randInt(1, 3);
-    const num2 = randInt(1, 2);
+    const num1 = randInt(1, 5);
+    const num2 = randInt(1, 4);
     const emoji = randChoice(BABY_ITEMS);
     const answer = num1 + num2;
 
@@ -954,7 +1052,7 @@ function generateBabyAdditionVisual() {
 
 // Visual take away with hand grabbing symbol
 function generateBabyTakeAway() {
-    const total = randInt(3, 5);
+    const total = randInt(4, 8);
     const takeAway = randInt(1, total - 1);
     const answer = total - takeAway;
     const emoji = randChoice(BABY_ITEMS);
@@ -991,8 +1089,8 @@ function generateBabyTakeAway() {
 
 // Sharing/division - splitting into equal groups
 function generateBabySharing() {
-    const numPeople = randInt(2, 3);
-    const perPerson = randInt(1, 3);
+    const numPeople = randInt(2, 4);
+    const perPerson = randInt(2, 4);
     const total = numPeople * perPerson;
     const emoji = randChoice(BABY_ITEMS);
 
@@ -1314,6 +1412,13 @@ function nextProblem() {
     // Update UI
     elements.problem.textContent = state.currentProblem.text;
     elements.problemType.textContent = state.currentProblem.label;
+
+    // Show visual if available
+    if (state.currentProblem.visual) {
+        elements.problemVisual.textContent = state.currentProblem.visual;
+    } else {
+        elements.problemVisual.textContent = '';
+    }
 
     // Format labels based on mode
     if (state.mode === 'shopping') {
