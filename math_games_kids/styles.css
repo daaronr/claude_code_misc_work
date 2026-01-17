@@ -388,7 +388,7 @@ html, body {
 .slider-thumb {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 0%; /* Start at 0, JS will set random position */
     transform: translate(-50%, -50%);
     width: 36px;
     height: 36px;
@@ -397,7 +397,7 @@ html, body {
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
     cursor: grab;
-    transition: transform 0.1s, box-shadow 0.2s;
+    transition: box-shadow 0.2s; /* Remove transform transition for snappier feel */
     z-index: 2;
 }
 
@@ -607,6 +607,188 @@ html, body {
 
     .problem {
         font-size: 2.4rem;
+    }
+}
+
+/* Small phone screens */
+@media (max-width: 380px) {
+    .screen {
+        padding: 12px;
+    }
+
+    #mode-screen {
+        gap: 16px;
+    }
+
+    #mode-screen h1 {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        margin-top: -10px;
+    }
+
+    .mode-cards {
+        gap: 10px;
+        max-width: 100%;
+    }
+
+    .mode-card {
+        padding: 14px 12px;
+        border-radius: 14px;
+    }
+
+    .mode-card-icon {
+        font-size: 2rem;
+    }
+
+    .mode-card-name {
+        font-size: 1.1rem;
+    }
+
+    .mode-card-desc {
+        font-size: 0.8rem;
+    }
+
+    .stats-preview {
+        gap: 16px;
+        font-size: 0.8rem;
+    }
+
+    .timer-toggle {
+        padding: 6px 12px;
+        gap: 8px;
+    }
+
+    .toggle-label {
+        font-size: 0.85rem;
+    }
+
+    .credits {
+        font-size: 0.8rem;
+        margin-top: 12px;
+    }
+
+    /* Game screen adjustments */
+    .problem-container {
+        padding: 12px;
+        border-radius: 14px;
+    }
+
+    .problem {
+        font-size: 1.3rem;
+    }
+
+    .problem-visual {
+        font-size: 1rem;
+        letter-spacing: 1px;
+        padding: 6px 8px;
+    }
+
+    .problem-type {
+        font-size: 0.75rem;
+    }
+
+    .number-line-container {
+        padding: 10px 4px;
+    }
+
+    .number-line-labels {
+        font-size: 0.8rem;
+        padding: 0 8px;
+    }
+
+    .slider-thumb {
+        width: 30px;
+        height: 30px;
+        border-width: 3px;
+    }
+
+    .estimate-display {
+        font-size: 0.95rem;
+    }
+
+    #estimate-value {
+        font-size: 1.1rem;
+    }
+
+    .feedback {
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    .feedback-emoji {
+        font-size: 2rem;
+        margin-bottom: 4px;
+    }
+
+    .feedback-text {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .feedback-details {
+        font-size: 0.8rem;
+    }
+
+    .game-header {
+        padding: 4px 0;
+    }
+
+    .timer-display {
+        font-size: 0.85rem;
+        padding: 3px 6px;
+    }
+
+    .score-display {
+        font-size: 1rem;
+    }
+
+    .streak-display {
+        font-size: 0.95rem;
+    }
+
+    .primary-btn {
+        padding: 14px 24px;
+        font-size: 1rem;
+        border-radius: 12px;
+    }
+
+    .game-main {
+        gap: 12px;
+    }
+
+    /* Shopping items on small screens */
+    .shopping-item {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .item-emoji {
+        font-size: 1.2rem;
+    }
+
+    .item-price {
+        padding: 1px 6px;
+        font-size: 0.8rem;
+    }
+
+    /* Level screen */
+    .level-btn {
+        padding: 12px 14px;
+    }
+
+    .level-icon {
+        font-size: 1.5rem;
+    }
+
+    .level-name {
+        font-size: 1rem;
+    }
+
+    .level-desc {
+        font-size: 0.75rem;
     }
 }
 
