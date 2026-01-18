@@ -3233,25 +3233,22 @@ function nextBabyProblem() {
 function handleBabyChoice(choice) {
     const correct = choice === state.currentProblem.answer;
 
-    // Disable all buttons and highlight correct/wrong
-    document.querySelectorAll('.baby-choice-btn').forEach(btn => {
-        btn.disabled = true;
-        const btnValue = parseInt(btn.dataset.value);
-        if (btnValue === state.currentProblem.answer) {
-            btn.classList.add('correct');
-        } else if (btnValue === choice && !correct) {
-            btn.classList.add('wrong');
-        }
-    });
-
-    // Show feedback with clear correct/wrong indication
-    elements.babyFeedback.querySelector('.baby-feedback-emoji').textContent = correct ? '✅' : '❌';
-    elements.babyFeedback.querySelector('.baby-feedback-text').textContent = correct ? 'Great job!' : 'Try again!';
-    elements.babyFeedback.classList.remove('hidden');
-    elements.babyFeedback.classList.toggle('correct', correct);
-    elements.babyFeedback.classList.toggle('wrong', !correct);
-
     if (correct) {
+        // Disable all buttons and highlight correct answer
+        document.querySelectorAll('.baby-choice-btn').forEach(btn => {
+            btn.disabled = true;
+            const btnValue = parseInt(btn.dataset.value);
+            if (btnValue === state.currentProblem.answer) {
+                btn.classList.add('correct');
+            }
+        });
+
+        // Show success feedback
+        elements.babyFeedback.querySelector('.baby-feedback-emoji').textContent = '✅';
+        elements.babyFeedback.querySelector('.baby-feedback-text').textContent = 'Great job!';
+        elements.babyFeedback.classList.remove('hidden', 'wrong');
+        elements.babyFeedback.classList.add('correct');
+
         state.babyCorrect++;
         state.streak++;
         if (state.streak > state.bestStreak) {
@@ -3259,16 +3256,33 @@ function handleBabyChoice(choice) {
         }
         state.totalPoints += 50;
         saveProgress();
+        updateBabyStars();
+
+        // Auto-advance after delay
+        setTimeout(() => {
+            nextBabyProblem();
+        }, 1200);
     } else {
+        // Mark wrong button and keep it disabled
+        const wrongBtn = document.querySelector(`.baby-choice-btn[data-value="${choice}"]`);
+        if (wrongBtn) {
+            wrongBtn.classList.add('wrong');
+            wrongBtn.disabled = true;
+        }
+
+        // Show brief "try again" feedback
+        elements.babyFeedback.querySelector('.baby-feedback-emoji').textContent = '❌';
+        elements.babyFeedback.querySelector('.baby-feedback-text').textContent = '';
+        elements.babyFeedback.classList.remove('hidden', 'correct');
+        elements.babyFeedback.classList.add('wrong');
+
         state.streak = 0;
+
+        // Hide feedback after brief moment - let them try again
+        setTimeout(() => {
+            elements.babyFeedback.classList.add('hidden');
+        }, 800);
     }
-
-    updateBabyStars();
-
-    // Auto-advance after delay
-    setTimeout(() => {
-        nextBabyProblem();
-    }, correct ? 1200 : 1800);
 }
 
 function updateBabyStars() {
