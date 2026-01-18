@@ -3244,8 +3244,9 @@ function handleBabyChoice(choice) {
         }
     });
 
-    // Show feedback
-    elements.babyFeedback.querySelector('.baby-feedback-emoji').textContent = correct ? '🎉' : '💪';
+    // Show feedback with clear correct/wrong indication
+    elements.babyFeedback.querySelector('.baby-feedback-emoji').textContent = correct ? '✅' : '❌';
+    elements.babyFeedback.querySelector('.baby-feedback-text').textContent = correct ? 'Great job!' : 'Try again!';
     elements.babyFeedback.classList.remove('hidden');
     elements.babyFeedback.classList.toggle('correct', correct);
     elements.babyFeedback.classList.toggle('wrong', !correct);
