@@ -3202,21 +3202,19 @@ function generateBabyAdditionVisual() {
 
 // Visual take away with hand grabbing symbol
 function generateBabyTakeAway() {
-    const total = randInt(4, 8);
-    const takeAway = randInt(1, total - 1);
+    const total = randInt(4, 7);
+    const takeAway = randInt(1, Math.min(total - 1, 3)); // Keep numbers small
     const answer = total - takeAway;
     const emoji = randChoice(BABY_ITEMS);
 
-    // Show a clear subtraction story:
-    // Line 1: All original items
-    // Line 2: Someone eating/taking some away
+    // Show clear visual subtraction with minus sign
     const allItems = Array(total).fill(emoji).join('');
-    const eatenItems = Array(takeAway).fill(emoji).join('');
+    const takeItems = Array(takeAway).fill(emoji).join('');
 
     // Generate wrong answers
     const wrongAnswers = [];
     while (wrongAnswers.length < 2) {
-        const wrong = randInt(0, 5);
+        const wrong = randInt(1, 6);
         if (wrong !== answer && !wrongAnswers.includes(wrong)) {
             wrongAnswers.push(wrong);
         }
@@ -3231,7 +3229,7 @@ function generateBabyTakeAway() {
 
     return {
         type: 'takeAway',
-        visual: `${allItems}\n🍴${eatenItems}`,  // Story: all items, then fork/knife eating some
+        visual: `${allItems}\n➖ ${takeItems}`,  // Clear visual: items MINUS items
         question: '= ❓',  // How many left?
         answer: answer,
         choices: choices,
@@ -3397,30 +3395,26 @@ function generateBabyGrid() {
     };
 }
 
-// 3D concept - layers of grids (simplified cube visualization)
+// Simple grid counting - removed confusing 3D cube concept
+// Now just does straightforward grid counting like generateBabyGrid
 function generateBabyCube() {
-    const size = randInt(2, 3); // Small cube
-    const answer = size * size * size;
+    // Just generate a slightly larger grid for variety
+    const rows = randInt(3, 4);
+    const cols = randInt(3, 4);
+    const answer = rows * cols;
     const emoji = randChoice(BABY_TOY_ITEMS);
 
-    // Show multiple layers to suggest 3D
-    const layer = [];
-    for (let r = 0; r < size; r++) {
-        layer.push(Array(size).fill(emoji).join(''));
+    // Show items in a simple grid
+    const grid = [];
+    for (let r = 0; r < rows; r++) {
+        grid.push(Array(cols).fill(emoji).join(''));
     }
-    const layerStr = layer.join('\n');
-
-    // Show layers with separators
-    const layers = [];
-    for (let l = 0; l < size; l++) {
-        layers.push(layerStr);
-    }
-    const visual = layers.join('\n➖➖\n');
+    const visual = grid.join('\n');
 
     // Generate wrong answers
     const wrongAnswers = [];
     while (wrongAnswers.length < 2) {
-        const wrong = randInt(4, 30);
+        const wrong = randInt(6, 20);
         if (wrong !== answer && !wrongAnswers.includes(wrong)) {
             wrongAnswers.push(wrong);
         }
@@ -3435,7 +3429,7 @@ function generateBabyCube() {
 
     return {
         type: 'cube',
-        visual: `📦📦📦\n${visual}`,
+        visual: `📦\n${visual}`,
         question: '= ❓',
         answer: answer,
         choices: choices,
@@ -3512,6 +3506,9 @@ function handleBabyChoice(choice) {
         state.totalPoints += 50;
         saveProgress();
         updateBabyStars();
+
+        // Check for achievements in Baby Mode too!
+        checkAchievements(state.streak, state.totalPoints, false);
 
         // Auto-advance after delay
         setTimeout(() => {
