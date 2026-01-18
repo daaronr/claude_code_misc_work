@@ -281,6 +281,144 @@ const FEEDBACK = {
     far: { emoji: '💪', text: 'Keep Practicing!' }
 };
 
+// ============ INTERNATIONALIZATION ============
+const TRANSLATIONS = {
+    en: {
+        // UI Labels
+        settings: 'Settings',
+        language: 'Language',
+        sounds: 'Sounds',
+        showTimer: 'Show Timer',
+        bestStreak: 'Best Streak',
+        totalPoints: 'Total Points',
+        checkMyEstimate: 'Check My Estimate',
+        nextProblem: 'Next Problem',
+        back: 'Back',
+        chooseDifficulty: 'Choose Difficulty',
+        // Mode names
+        babyMode: 'Baby Mode',
+        numbers: 'Numbers',
+        realWorld: 'Real World',
+        timeDetective: 'Time Detective',
+        bigNumbers: 'Big Numbers',
+        friendsMath: 'Friends Math',
+        shopping: 'Shopping',
+        college: 'College',
+        puzzlers: 'Puzzlers',
+        fallacies: 'Fallacies',
+        aboutMe: 'About Me',
+        // Feedback
+        bullseye: 'Bullseye!',
+        veryClose: 'Very Close!',
+        inNeighborhood: 'In the Neighborhood!',
+        keepPracticing: 'Keep Practicing!',
+        greatJob: 'Great job!',
+        // Baby mode
+        tapBigGroup: '🐘❓',
+        tapSmallGroup: '🐜❓'
+    },
+    es: {
+        // UI Labels
+        settings: 'Ajustes',
+        language: 'Idioma',
+        sounds: 'Sonidos',
+        showTimer: 'Mostrar Tiempo',
+        bestStreak: 'Mejor Racha',
+        totalPoints: 'Puntos Totales',
+        checkMyEstimate: 'Comprobar',
+        nextProblem: 'Siguiente',
+        back: 'Volver',
+        chooseDifficulty: 'Elige Dificultad',
+        // Mode names
+        babyMode: 'Modo Bebé',
+        numbers: 'Números',
+        realWorld: 'Mundo Real',
+        timeDetective: 'Detective del Tiempo',
+        bigNumbers: 'Números Grandes',
+        friendsMath: 'Matemáticas de Amigos',
+        shopping: 'Compras',
+        college: 'Universidad',
+        puzzlers: 'Acertijos',
+        fallacies: 'Falacias',
+        aboutMe: 'Sobre Mí',
+        // Feedback
+        bullseye: '¡Diana!',
+        veryClose: '¡Muy Cerca!',
+        inNeighborhood: '¡Casi!',
+        keepPracticing: '¡Sigue Practicando!',
+        greatJob: '¡Muy bien!',
+        // Baby mode
+        tapBigGroup: '🐘❓',
+        tapSmallGroup: '🐜❓'
+    },
+    zh: {
+        // UI Labels
+        settings: '设置',
+        language: '语言',
+        sounds: '声音',
+        showTimer: '显示计时器',
+        bestStreak: '最佳连胜',
+        totalPoints: '总分',
+        checkMyEstimate: '检查答案',
+        nextProblem: '下一题',
+        back: '返回',
+        chooseDifficulty: '选择难度',
+        // Mode names
+        babyMode: '宝宝模式',
+        numbers: '数字',
+        realWorld: '真实世界',
+        timeDetective: '时间侦探',
+        bigNumbers: '大数字',
+        friendsMath: '朋友数学',
+        shopping: '购物',
+        college: '大学',
+        puzzlers: '谜题',
+        fallacies: '谬误',
+        aboutMe: '关于我',
+        // Feedback
+        bullseye: '正中靶心！',
+        veryClose: '非常接近！',
+        inNeighborhood: '差不多！',
+        keepPracticing: '继续练习！',
+        greatJob: '做得好！',
+        // Baby mode
+        tapBigGroup: '🐘❓',
+        tapSmallGroup: '🐜❓'
+    }
+};
+
+let currentLanguage = localStorage.getItem('mathEstimatorLanguage') || 'en';
+
+function t(key) {
+    return TRANSLATIONS[currentLanguage]?.[key] || TRANSLATIONS.en[key] || key;
+}
+
+function setLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('mathEstimatorLanguage', lang);
+    updateUILanguage();
+}
+
+function updateUILanguage() {
+    // Update all elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[currentLanguage]?.[key]) {
+            el.textContent = TRANSLATIONS[currentLanguage][key];
+        }
+    });
+
+    // Update specific UI elements
+    const checkBtn = document.getElementById('check-btn');
+    if (checkBtn) {
+        const span = checkBtn.querySelector('span');
+        if (span) span.textContent = t('checkMyEstimate');
+    }
+
+    const nextBtn = document.getElementById('next-btn');
+    if (nextBtn) nextBtn.textContent = t('nextProblem');
+}
+
 // ============ GAME STATE ============
 let state = {
     mode: 'numbers',
@@ -379,6 +517,11 @@ const elements = {
     timerDisplay: document.getElementById('timer-display'),
     timerValue: document.getElementById('timer-value'),
     timerToggle: document.getElementById('timer-toggle'),
+    // Settings
+    settingsToggle: document.getElementById('settings-toggle'),
+    settingsPanel: document.getElementById('settings-panel'),
+    languageSelect: document.getElementById('language-select'),
+    soundToggle: document.getElementById('sound-toggle'),
     // Number input (for advanced modes)
     numberInputContainer: document.getElementById('number-input-container'),
     numberLineContainer: document.getElementById('number-line-container'),
@@ -3840,6 +3983,31 @@ function initEventListeners() {
         });
     }
 
+    // Settings toggle
+    if (elements.settingsToggle) {
+        elements.settingsToggle.addEventListener('click', () => {
+            elements.settingsPanel.classList.toggle('hidden');
+        });
+    }
+
+    // Language selector
+    if (elements.languageSelect) {
+        // Set initial value from localStorage
+        elements.languageSelect.value = currentLanguage;
+        elements.languageSelect.addEventListener('change', (e) => {
+            setLanguage(e.target.value);
+        });
+    }
+
+    // Sound toggle (placeholder for future)
+    if (elements.soundToggle) {
+        const soundEnabled = localStorage.getItem('mathEstimatorSound') === 'true';
+        elements.soundToggle.checked = soundEnabled;
+        elements.soundToggle.addEventListener('change', (e) => {
+            localStorage.setItem('mathEstimatorSound', e.target.checked);
+        });
+    }
+
     // Hint button
     if (elements.hintBtn) {
         elements.hintBtn.addEventListener('click', showHint);
@@ -3924,6 +4092,7 @@ function init() {
     loadProgress();
     initSlider();
     initEventListeners();
+    updateUILanguage(); // Apply saved language
     registerServiceWorker();
 }
 

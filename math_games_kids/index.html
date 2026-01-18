@@ -76,8 +76,8 @@
             </div>
 
             <div class="stats-preview">
-                <p>Best Streak: <span id="best-streak-display">0</span></p>
-                <p>Total Points: <span id="total-points-display">0</span></p>
+                <p><span data-i18n="bestStreak">Best Streak</span>: <span id="best-streak-display">0</span></p>
+                <p><span data-i18n="totalPoints">Total Points</span>: <span id="total-points-display">0</span></p>
             </div>
 
             <div class="timer-toggle">
@@ -85,7 +85,27 @@
                     <input type="checkbox" id="timer-toggle" checked>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">⏱️ Show Timer</span>
+                <span class="toggle-label">⏱️ <span data-i18n="showTimer">Show Timer</span></span>
+            </div>
+
+            <button id="settings-toggle" class="settings-toggle">⚙️ <span data-i18n="settings">Settings</span></button>
+
+            <div id="settings-panel" class="settings-panel hidden">
+                <div class="setting-row">
+                    <span class="setting-label">🌐 <span data-i18n="language">Language</span></span>
+                    <select id="language-select" class="setting-select">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="zh">中文</option>
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">🔊 <span data-i18n="sounds">Sounds</span></span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="sound-toggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
             </div>
 
             <div class="credits">
