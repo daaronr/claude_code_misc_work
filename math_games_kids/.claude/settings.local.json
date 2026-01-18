@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:www.quantifiedintuitions.org)",
-      "WebFetch(domain:ourworldindata.org)"
+      "WebFetch(domain:ourworldindata.org)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix Baby Mode bugs: achievements, cube, and takeAway visuals\n\n- Add checkAchievements\\(\\) call in Baby Mode correct answer handler\n- Simplify cube problem to straightforward grid \\(removed confusing 3D layers\\)\n- Replace confusing utensils \\(🍴\\) with clear minus sign \\(➖\\) in takeAway\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
