@@ -1265,7 +1265,7 @@ html, body {
 }
 
 .baby-question {
-    font-size: 1.3rem;
+    font-size: 2.5rem;
     color: var(--text-light);
     font-weight: 600;
     margin-top: 8px;
@@ -1445,7 +1445,7 @@ html, body {
     }
 
     .baby-question {
-        font-size: 1.1rem;
+        font-size: 2rem;
     }
 
     .baby-choices {
@@ -1470,7 +1470,7 @@ html, body {
     }
 
     .baby-question {
-        font-size: 1rem;
+        font-size: 1.8rem;
     }
 
     .baby-choice-btn {
