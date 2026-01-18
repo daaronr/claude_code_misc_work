@@ -1548,12 +1548,121 @@ const MAGNITUDE_COMPARISONS = [
 
 // Magnitude scale - bigger picture with sources
 const MAGNITUDE_SCALE = [
-    { q: 'A million $100 bills weighs how many pounds?', answer: 22, hint: 'Calc: 10,000 bills × 1g each = 22 lbs (US Treasury)', emoji: '💵' },
-    { q: 'A billion seconds ago, what year was it?', answer: 1993, hint: 'Calc: 2025 - 31.7 ≈ 1993', emoji: '📅' },
-    { q: 'If you spent $1/second, days to spend $1 million?', answer: 11.6, hint: 'Calc: 1M ÷ 86,400 sec/day = 11.6 days', emoji: '💸' },
-    { q: 'If you spent $1/second, years to spend $1 billion?', answer: 31.7, hint: 'Calc: 1B ÷ 31.5M sec/year ≈ 32 years!', emoji: '🤯' },
-    { q: 'Stack of 1 million pennies in feet?', answer: 5000, hint: 'Calc: 1M × 0.06" = ~5,000 ft (nearly 1 mile!)', emoji: '🏔️' },
-    { q: 'Grains of rice in a pound?', answer: 29000, hint: '~29,000 grains (long grain rice average)', emoji: '🍚' },
+    {
+        q: 'A million $100 bills weighs how many pounds?',
+        answer: 22,
+        hint: '💡 Think: How much does ONE bill weigh?',
+        breakdown: `💵 STEP-BY-STEP:
+
+1️⃣ One $100 bill weighs ~1 gram
+2️⃣ $1 million = 10,000 bills
+3️⃣ 10,000 grams = 10 kg
+4️⃣ 10 kg ≈ 22 pounds
+
+✅ Answer: ~22 lbs
+
+🤯 A billion dollars in $100s?
+= 22,000 lbs = 11 tons!`,
+        emoji: '💵'
+    },
+    {
+        q: 'A billion seconds ago, what year was it?',
+        answer: 1993,
+        hint: '💡 First figure out: how many years is 1 billion seconds?',
+        breakdown: `📅 STEP-BY-STEP:
+
+1️⃣ Seconds per minute: 60
+2️⃣ Seconds per hour: 60 × 60 = 3,600
+3️⃣ Seconds per day: 3,600 × 24 = 86,400
+4️⃣ Seconds per year: 86,400 × 365 = 31.5 million
+
+5️⃣ Years in 1 billion seconds:
+   1,000,000,000 ÷ 31,500,000 ≈ 31.7 years
+
+6️⃣ 2025 − 32 ≈ 1993
+
+✅ Answer: ~1993`,
+        emoji: '📅'
+    },
+    {
+        q: 'If you spent $1/second, days to spend $1 million?',
+        answer: 11.6,
+        hint: '💡 How many seconds in a day? Then divide!',
+        breakdown: `💸 STEP-BY-STEP:
+
+1️⃣ Seconds per day:
+   60 × 60 × 24 = 86,400
+
+2️⃣ Days to spend $1 million:
+   1,000,000 ÷ 86,400 = 11.6 days
+
+✅ Answer: ~12 days
+
+📊 Perspective:
+• $1 million = less than 2 weeks
+• $1 billion = 31+ YEARS!`,
+        emoji: '💸'
+    },
+    {
+        q: 'If you spent $1/second, years to spend $1 billion?',
+        answer: 31.7,
+        hint: '💡 Seconds per year = 60×60×24×365',
+        breakdown: `🤯 STEP-BY-STEP:
+
+1️⃣ Seconds per year:
+   60 × 60 × 24 × 365 = 31,536,000
+   (about 31.5 million)
+
+2️⃣ Years to spend $1 billion:
+   1,000,000,000 ÷ 31,536,000 = 31.7 years
+
+✅ Answer: ~32 years
+
+🤯 Mind-blowing comparison:
+• $1 million @ $1/sec = 12 days
+• $1 billion @ $1/sec = 32 YEARS
+A billion is 1000× bigger than a million!`,
+        emoji: '🤯'
+    },
+    {
+        q: 'Stack of 1 million pennies in feet?',
+        answer: 5000,
+        hint: '💡 One penny is about 0.06 inches thick',
+        breakdown: `🏔️ STEP-BY-STEP:
+
+1️⃣ Penny thickness: ~0.06 inches
+
+2️⃣ Stack of 1 million pennies:
+   1,000,000 × 0.06" = 60,000 inches
+
+3️⃣ Convert to feet:
+   60,000 ÷ 12 = 5,000 feet
+
+4️⃣ For perspective:
+   5,000 ft ≈ 0.95 miles!
+
+✅ Answer: ~5,000 feet (nearly 1 mile!)`,
+        emoji: '🏔️'
+    },
+    {
+        q: 'Grains of rice in a pound?',
+        answer: 29000,
+        hint: '💡 One grain of rice weighs about 0.02 grams',
+        breakdown: `🍚 STEP-BY-STEP:
+
+1️⃣ One grain of long rice: ~0.02g
+
+2️⃣ Grams in a pound: ~454g
+
+3️⃣ Grains per pound:
+   454 ÷ 0.02 ≈ 29,000 grains
+
+✅ Answer: ~29,000 grains
+
+🍚 Fun fact: Short grain rice is heavier,
+so fewer grains per pound (~20,000)`,
+        emoji: '🍚'
+    }
 ];
 
 // Policy & Science comparisons - real world numbers with sources
@@ -1686,8 +1795,8 @@ function generateMagnitudeProblem(level) {
                 max: scale.max,
                 label: 'Big Numbers',
                 visual: `${problem.emoji} Million vs Billion`,
-                hint: problem.context || 'Think about the scale...',
-                feedbackExtra: problem.hint
+                hint: problem.hint || 'Think about the scale...',
+                feedbackExtra: problem.breakdown || problem.hint
             };
         }
     }
@@ -2841,9 +2950,13 @@ function generateBabyTakeAway() {
     const answer = total - takeAway;
     const emoji = randChoice(BABY_ITEMS);
 
-    // Show items with hand taking some away
-    const allItems = Array(total).fill(emoji).join('');
+    // Show items clearly: remaining items, then crossed-out items being taken
+    const remainingItems = Array(answer).fill(emoji).join('');
     const takenItems = Array(takeAway).fill(emoji).join('');
+
+    // Create a clear visual: items that stay vs items that go away
+    // Use strikethrough/faded look for items being removed
+    const crossedOutItems = Array(takeAway).fill('❌').join('');
 
     // Generate wrong answers
     const wrongAnswers = [];
@@ -2863,8 +2976,8 @@ function generateBabyTakeAway() {
 
     return {
         type: 'takeAway',
-        visual: `${allItems}\n✋➡️${takenItems}`,
-        question: '= ❓',  // Visual: what's left?
+        visual: `${remainingItems} ${crossedOutItems}`,
+        question: `${takeAway} gone! How many left?`,
         answer: answer,
         choices: choices,
         choiceType: 'visual'
