@@ -599,15 +599,15 @@ html, body {
 /* Explanation in feedback - for showing formulas and visual breakdowns */
 .feedback-explanation {
     margin-top: 8px;
-    padding: 10px;
+    padding: 12px;
     background: rgba(99, 102, 241, 0.08);
     border-radius: 10px;
-    font-size: 0.8rem;
+    font-size: 1rem;
     color: var(--text);
     text-align: left;
     white-space: pre-line;
-    line-height: 1.4;
-    max-height: 120px;
+    line-height: 1.5;
+    max-height: 180px;
     overflow-y: auto;
 }
 
