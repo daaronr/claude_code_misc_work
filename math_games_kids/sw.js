@@ -1,4 +1,4 @@
-const CACHE_NAME = 'math-estimator-v2';
+const CACHE_NAME = 'math-estimator-v13';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',

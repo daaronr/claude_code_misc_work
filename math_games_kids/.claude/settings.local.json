@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.quantifiedintuitions.org)",
+      "WebFetch(domain:ourworldindata.org)"
+    ]
+  }
+}

@@ -132,9 +132,9 @@ html, body {
 
 .stats-preview {
     display: flex;
-    gap: 24px;
+    gap: 20px;
     color: var(--text-light);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .stats-preview span {
@@ -147,17 +147,17 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    padding: 8px 16px;
+    gap: 8px;
+    padding: 6px 12px;
     background: var(--surface);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .toggle-switch {
     position: relative;
-    width: 48px;
-    height: 26px;
+    width: 40px;
+    height: 22px;
 }
 
 .toggle-switch input {
@@ -174,15 +174,15 @@ html, body {
     right: 0;
     bottom: 0;
     background: #cbd5e1;
-    border-radius: 26px;
+    border-radius: 22px;
     transition: 0.3s;
 }
 
 .toggle-slider:before {
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
+    height: 16px;
+    width: 16px;
     left: 3px;
     bottom: 3px;
     background: white;
@@ -195,11 +195,11 @@ html, body {
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
-    transform: translateX(22px);
+    transform: translateX(18px);
 }
 
 .toggle-label {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--text);
     font-weight: 500;
 }
@@ -233,14 +233,14 @@ html, body {
 }
 
 .credits {
-    margin-top: 20px;
-    font-size: 0.95rem;
+    margin-top: 8px;
+    font-size: 0.75rem;
     color: var(--text-light);
     text-align: center;
 }
 
 .credits p {
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 .credits a {
@@ -254,8 +254,9 @@ html, body {
 
 /* ============ GAME SCREEN ============ */
 #game-screen {
-    gap: 16px;
+    gap: 8px;
     background: var(--background);
+    overflow: hidden;
 }
 
 .game-header {
@@ -316,15 +317,17 @@ html, body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 24px;
+    justify-content: flex-start;
+    gap: 12px;
+    overflow-y: auto;
+    padding-bottom: 10px;
 }
 
 .problem-container {
     text-align: center;
-    padding: 24px;
+    padding: 16px;
     background: var(--surface);
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
@@ -359,7 +362,7 @@ html, body {
 
 /* Number Line */
 .number-line-container {
-    padding: 16px 8px;
+    padding: 10px 8px;
 }
 
 .number-line-labels {
@@ -514,6 +517,37 @@ html, body {
     color: var(--text);
 }
 
+/* Explanation in feedback - for showing formulas and visual breakdowns */
+.feedback-explanation {
+    margin-top: 8px;
+    padding: 10px;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: var(--text);
+    text-align: left;
+    white-space: pre-line;
+    line-height: 1.4;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.feedback-explanation.hidden {
+    display: none;
+}
+
+.feedback-explanation a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.feedback-explanation a:hover {
+    color: var(--primary-dark, #4f46e5);
+    text-decoration: underline;
+}
+
 /* Time info in feedback */
 .time-info {
     margin-top: 10px;
@@ -550,12 +584,13 @@ html, body {
 
 /* Footer */
 .game-footer {
-    padding: 16px 0;
+    padding: 8px 0;
+    flex-shrink: 0;
 }
 
 .primary-btn {
     width: 100%;
-    padding: 18px 32px;
+    padding: 16px 28px;
     background: var(--primary);
     color: white;
     border: none;
@@ -565,6 +600,84 @@ html, body {
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Direct number input (for advanced modes) */
+.number-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+}
+
+.number-input-container.hidden {
+    display: none;
+}
+
+.number-input {
+    width: 100%;
+    max-width: 200px;
+    padding: 16px 20px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    border: 3px solid #e2e8f0;
+    border-radius: 16px;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color 0.2s;
+}
+
+.number-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.number-input::placeholder {
+    color: #cbd5e1;
+    font-size: 1.2rem;
+}
+
+/* Hint button */
+.hint-btn {
+    padding: 8px 16px;
+    background: #fef3c7;
+    border: 2px solid #fcd34d;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #92400e;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hint-btn:hover {
+    background: #fde68a;
+    transform: translateY(-1px);
+}
+
+.hint-btn.hidden {
+    display: none;
+}
+
+.hint-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.hint-display {
+    text-align: center;
+    padding: 10px 16px;
+    background: #fef9c3;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #92400e;
+    margin-top: 8px;
+}
+
+.hint-display.hidden {
+    display: none;
 }
 
 .primary-btn:hover {
@@ -630,25 +743,28 @@ html, body {
     }
 
     .mode-cards {
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
         max-width: 100%;
+        padding: 0 5px;
     }
 
     .mode-card {
-        padding: 14px 12px;
-        border-radius: 14px;
+        padding: 12px 8px;
+        border-radius: 12px;
+        min-height: 85px;
     }
 
     .mode-card-icon {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .mode-card-name {
-        font-size: 1.1rem;
+        font-size: 0.85rem;
     }
 
     .mode-card-desc {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
 
     .stats-preview {
@@ -794,33 +910,49 @@ html, body {
 
 /* ============ MODE CARDS (Stage 1) ============ */
 #mode-screen {
-    justify-content: center;
+    position: relative;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
-    gap: 30px;
+    gap: 12px;
+    padding-top: 15px;
     background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%);
+    overflow-y: auto;
+}
+
+#mode-screen h1 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+#mode-screen .subtitle {
+    margin-top: -5px;
+    font-size: 1rem;
 }
 
 .mode-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
     width: 100%;
-    max-width: 280px;
+    max-width: 380px;
+    padding: 0 10px;
 }
 
 .mode-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 24px 20px;
+    justify-content: center;
+    gap: 2px;
+    padding: 10px 8px;
     background: var(--surface);
-    border: 3px solid transparent;
-    border-radius: 20px;
+    border: 2px solid transparent;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    min-height: 75px;
 }
 
 .mode-card:hover {
@@ -834,18 +966,20 @@ html, body {
 }
 
 .mode-card-icon {
-    font-size: 3rem;
+    font-size: 1.8rem;
 }
 
 .mode-card-name {
-    font-size: 1.3rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--text);
+    text-align: center;
 }
 
 .mode-card-desc {
-    font-size: 0.9rem;
+    font-size: 0.65rem;
     color: var(--text-light);
+    text-align: center;
 }
 
 /* Baby mode card special style */
@@ -910,6 +1044,109 @@ html, body {
 .shopping-btn:hover {
     border-color: var(--accent);
     border-left: 4px solid var(--accent);
+}
+
+/* Real World button variant */
+.realworld-btn {
+    border-left: 4px solid #10b981;
+}
+
+.realworld-btn:hover {
+    border-color: #10b981;
+    border-left: 4px solid #10b981;
+}
+
+/* Time Detective button variant */
+.time-btn {
+    border-left: 4px solid #f59e0b;
+}
+
+.time-btn:hover {
+    border-color: #f59e0b;
+    border-left: 4px solid #f59e0b;
+}
+
+/* Magnitude button variant */
+.magnitude-btn {
+    border-left: 4px solid #8b5cf6;
+}
+
+.magnitude-btn:hover {
+    border-color: #8b5cf6;
+    border-left: 4px solid #8b5cf6;
+}
+
+/* Friends Math button variant */
+.friends-btn {
+    border-left: 4px solid #ec4899;
+}
+
+.friends-btn:hover {
+    border-color: #ec4899;
+    border-left: 4px solid #ec4899;
+}
+
+/* About Me card special style */
+.aboutme-card {
+    background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+    border: 2px solid #818cf8;
+}
+
+/* ============ ABOUT ME SETUP SCREEN ============ */
+#aboutme-setup-screen {
+    padding: 20px;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0f9ff 100%);
+}
+
+.aboutme-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.form-group input {
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    text-align: center;
+    background: var(--surface);
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-group input::placeholder {
+    color: #cbd5e1;
+}
+
+@media (max-width: 400px) {
+    .aboutme-form {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .form-group input {
+        padding: 10px;
+        font-size: 1.1rem;
+    }
 }
 
 /* ============ SHOPPING DISPLAY ============ */
@@ -1008,13 +1245,13 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
 }
 
 .baby-problem {
     background: var(--surface);
-    border-radius: 24px;
-    padding: 32px 40px;
+    border-radius: 20px;
+    padding: 24px 30px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
@@ -1147,10 +1384,31 @@ html, body {
 }
 
 /* Responsive for smaller screens */
-@media (max-height: 600px) {
+@media (max-height: 650px) {
+    .baby-main {
+        gap: 20px;
+    }
+
+    .baby-problem {
+        padding: 20px 24px;
+    }
+
+    .baby-visual {
+        font-size: 2.5rem;
+        letter-spacing: 4px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-height: 580px) {
+    .baby-main {
+        gap: 16px;
+    }
+
     .baby-visual {
         font-size: 2rem;
-        letter-spacing: 4px;
+        letter-spacing: 3px;
+        margin-bottom: 8px;
     }
 
     .baby-choice-btn {
@@ -1162,7 +1420,8 @@ html, body {
     }
 
     .baby-problem {
-        padding: 16px 20px;
+        padding: 14px 18px;
+        border-radius: 16px;
     }
 
     .baby-feedback-emoji {
@@ -1172,10 +1431,58 @@ html, body {
     .baby-question {
         font-size: 1.1rem;
     }
+
+    .baby-choices {
+        gap: 12px;
+        max-width: 280px;
+    }
+}
+
+@media (max-height: 500px) {
+    .baby-main {
+        gap: 12px;
+    }
+
+    .baby-problem {
+        padding: 12px 16px;
+    }
+
+    .baby-visual {
+        font-size: 1.6rem;
+        letter-spacing: 2px;
+        margin-bottom: 6px;
+    }
+
+    .baby-question {
+        font-size: 1rem;
+    }
+
+    .baby-choice-btn {
+        font-size: 1.6rem;
+        border-radius: 16px;
+        border-width: 3px;
+    }
+
+    .baby-choice-btn.visual-choice {
+        font-size: 1.2rem;
+    }
+
+    .baby-choice-btn.numeral-choice {
+        font-size: 2rem;
+    }
+
+    .baby-choices {
+        gap: 10px;
+        max-width: 240px;
+    }
+
+    .baby-feedback-emoji {
+        font-size: 4rem;
+    }
 }
 
 /* Larger screens - bigger buttons */
-@media (min-width: 400px) {
+@media (min-width: 400px) and (min-height: 600px) {
     .baby-choices {
         max-width: 360px;
         gap: 20px;
@@ -1188,4 +1495,175 @@ html, body {
     .baby-choice-btn.visual-choice {
         font-size: 2rem;
     }
+}
+
+/* ============ CARTOONY ANIMATIONS & DECORATIONS ============ */
+
+/* Bouncy title animation */
+#mode-screen h1 {
+    animation: bounceIn 0.8s ease-out;
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+/* Floating animation for mode card icons */
+.mode-card-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+.mode-card:nth-child(2n) .mode-card-icon {
+    animation-delay: 0.5s;
+}
+
+.mode-card:nth-child(3n) .mode-card-icon {
+    animation-delay: 1s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* Wiggle animation for mode cards on hover */
+.mode-card:hover .mode-card-icon {
+    animation: wiggle 0.5s ease-in-out;
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+/* Pop animation for buttons */
+.primary-btn:active {
+    animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+/* Sparkle effect for correct answers */
+.feedback.bullseye {
+    position: relative;
+    overflow: visible;
+}
+
+.feedback.bullseye::before,
+.feedback.bullseye::after {
+    content: '✨';
+    position: absolute;
+    animation: sparkle 1s ease-in-out infinite;
+}
+
+.feedback.bullseye::before {
+    top: -10px;
+    left: 10%;
+    animation-delay: 0.2s;
+}
+
+.feedback.bullseye::after {
+    top: -10px;
+    right: 10%;
+    animation-delay: 0.5s;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+/* Fun score counter animation */
+#current-score {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.score-display:hover #current-score {
+    animation: scoreJump 0.3s ease;
+}
+
+@keyframes scoreJump {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Rainbow streak effect */
+.streak-display #streak-icon.fire {
+    animation: fireGlow 0.5s ease infinite alternate;
+}
+
+@keyframes fireGlow {
+    0% { filter: brightness(1) drop-shadow(0 0 2px #f59e0b); }
+    100% { filter: brightness(1.2) drop-shadow(0 0 8px #ef4444); }
+}
+
+/* Confetti-style celebration for big wins */
+@keyframes confetti {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+}
+
+/* Slider thumb pulse when ready */
+.slider-thumb {
+    animation: thumbPulse 2s ease-in-out infinite;
+}
+
+.slider-thumb.active {
+    animation: none;
+}
+
+@keyframes thumbPulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4); }
+    50% { box-shadow: 0 2px 16px rgba(99, 102, 241, 0.6); }
+}
+
+/* Fun background pattern for mode screen */
+#mode-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#mode-screen > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Number input bounce in */
+.number-input-container {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hint button wiggle to draw attention */
+.hint-btn:not(:disabled) {
+    animation: hintWiggle 2s ease-in-out infinite;
+    animation-delay: 3s;
+}
+
+@keyframes hintWiggle {
+    0%, 90%, 100% { transform: rotate(0deg); }
+    92%, 96% { transform: rotate(-5deg); }
+    94%, 98% { transform: rotate(5deg); }
 }

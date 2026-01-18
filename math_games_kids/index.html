@@ -28,6 +28,26 @@
                     <span class="mode-card-name">Numbers</span>
                     <span class="mode-card-desc">Math estimation</span>
                 </button>
+                <button class="mode-card" data-mode="realworld">
+                    <span class="mode-card-icon">🌍</span>
+                    <span class="mode-card-name">Real World</span>
+                    <span class="mode-card-desc">Facts & prices</span>
+                </button>
+                <button class="mode-card" data-mode="time">
+                    <span class="mode-card-icon">⏰</span>
+                    <span class="mode-card-name">Time Detective</span>
+                    <span class="mode-card-desc">Time in your life</span>
+                </button>
+                <button class="mode-card" data-mode="magnitude">
+                    <span class="mode-card-icon">📊</span>
+                    <span class="mode-card-name">Big Numbers</span>
+                    <span class="mode-card-desc">Million vs Billion</span>
+                </button>
+                <button class="mode-card" data-mode="friends">
+                    <span class="mode-card-icon">🤝</span>
+                    <span class="mode-card-name">Friends Math</span>
+                    <span class="mode-card-desc">Combinations</span>
+                </button>
                 <button class="mode-card" data-mode="shopping">
                     <span class="mode-card-icon">🛒</span>
                     <span class="mode-card-name">Shopping</span>
@@ -37,6 +57,21 @@
                     <span class="mode-card-icon">🎓</span>
                     <span class="mode-card-name">College</span>
                     <span class="mode-card-desc">Science & economics</span>
+                </button>
+                <button class="mode-card" data-mode="puzzlers">
+                    <span class="mode-card-icon">🧩</span>
+                    <span class="mode-card-name">Puzzlers</span>
+                    <span class="mode-card-desc">Brain teasers</span>
+                </button>
+                <button class="mode-card" data-mode="fallacies">
+                    <span class="mode-card-icon">🎭</span>
+                    <span class="mode-card-name">Fallacies</span>
+                    <span class="mode-card-desc">Scams & mind tricks</span>
+                </button>
+                <button class="mode-card aboutme-card" data-mode="aboutme">
+                    <span class="mode-card-icon">📖</span>
+                    <span class="mode-card-name">About Me</span>
+                    <span class="mode-card-desc">Questions about YOU!</span>
                 </button>
             </div>
 
@@ -88,9 +123,9 @@
             <!-- Shopping Mode Levels -->
             <div id="shopping-levels" class="level-select hidden">
                 <button class="level-btn shopping-btn" data-level="deals">
-                    <span class="level-icon">🏷️</span>
-                    <span class="level-name">Better Deals</span>
-                    <span class="level-desc">Compare prices</span>
+                    <span class="level-icon">🧮</span>
+                    <span class="level-name">Price Per Ounce</span>
+                    <span class="level-desc">Calculate unit price</span>
                 </button>
                 <button class="level-btn shopping-btn" data-level="basket">
                     <span class="level-icon">🧺</span>
@@ -132,6 +167,146 @@
                     <span class="level-desc">Compound growth</span>
                 </button>
             </div>
+
+            <!-- Real World Mode Levels -->
+            <div id="realworld-levels" class="level-select hidden">
+                <button class="level-btn realworld-btn" data-level="realWorldKids">
+                    <span class="level-icon">🧒</span>
+                    <span class="level-name">Kid Facts</span>
+                    <span class="level-desc">Fun facts to guess</span>
+                </button>
+                <button class="level-btn realworld-btn" data-level="realWorldPrices">
+                    <span class="level-icon">💰</span>
+                    <span class="level-name">Price Check</span>
+                    <span class="level-desc">How much does it cost?</span>
+                </button>
+                <button class="level-btn realworld-btn" data-level="realWorldAdult">
+                    <span class="level-icon">🌍</span>
+                    <span class="level-name">World Facts</span>
+                    <span class="level-desc">Big world questions</span>
+                </button>
+            </div>
+
+            <!-- Time Detective Mode Levels -->
+            <div id="time-levels" class="level-select hidden">
+                <button class="level-btn time-btn" data-level="timeDaily">
+                    <span class="level-icon">📅</span>
+                    <span class="level-name">Your Day</span>
+                    <span class="level-desc">Daily time questions</span>
+                </button>
+                <button class="level-btn time-btn" data-level="timeLife">
+                    <span class="level-icon">🗓️</span>
+                    <span class="level-name">Lifetime</span>
+                    <span class="level-desc">Big picture time</span>
+                </button>
+            </div>
+
+            <!-- Magnitude Mode Levels -->
+            <div id="magnitude-levels" class="level-select hidden">
+                <button class="level-btn magnitude-btn" data-level="magnitudeEasy">
+                    <span class="level-icon">🔢</span>
+                    <span class="level-name">Big vs Bigger</span>
+                    <span class="level-desc">Compare numbers</span>
+                </button>
+                <button class="level-btn magnitude-btn" data-level="magnitudeHard">
+                    <span class="level-icon">🤯</span>
+                    <span class="level-name">Million vs Billion</span>
+                    <span class="level-desc">Mind-bending scale</span>
+                </button>
+            </div>
+
+            <!-- Friends Mode (single level) -->
+            <div id="friends-levels" class="level-select hidden">
+                <button class="level-btn friends-btn" data-level="friendsMode">
+                    <span class="level-icon">🤝</span>
+                    <span class="level-name">Handshakes & Hugs</span>
+                    <span class="level-desc">How many combinations?</span>
+                </button>
+            </div>
+
+            <!-- Puzzlers Mode Levels -->
+            <div id="puzzlers-levels" class="level-select hidden">
+                <button class="level-btn puzzlers-btn" data-level="puzzlersSequences">
+                    <span class="level-icon">🔢</span>
+                    <span class="level-name">Sequences</span>
+                    <span class="level-desc">Triangular, Fibonacci</span>
+                </button>
+                <button class="level-btn puzzlers-btn" data-level="puzzlersPaths">
+                    <span class="level-icon">🗺️</span>
+                    <span class="level-name">Grid Paths</span>
+                    <span class="level-desc">Count the routes</span>
+                </button>
+                <button class="level-btn puzzlers-btn" data-level="puzzlersClassic">
+                    <span class="level-icon">🧠</span>
+                    <span class="level-name">Classic Puzzles</span>
+                    <span class="level-desc">Tower of Hanoi & more</span>
+                </button>
+                <button class="level-btn puzzlers-btn" data-level="puzzlersProbability">
+                    <span class="level-icon">🎲</span>
+                    <span class="level-name">Probability</span>
+                    <span class="level-desc">Birthday paradox & more</span>
+                </button>
+            </div>
+
+            <!-- Fallacies Mode Levels -->
+            <div id="fallacies-levels" class="level-select hidden">
+                <button class="level-btn fallacies-btn" data-level="fallaciesProbability">
+                    <span class="level-icon">🎲</span>
+                    <span class="level-name">Probability Traps</span>
+                    <span class="level-desc">Gambler's fallacy & more</span>
+                </button>
+                <button class="level-btn fallacies-btn" data-level="fallaciesFinancial">
+                    <span class="level-icon">💸</span>
+                    <span class="level-name">Financial Tricks</span>
+                    <span class="level-desc">MLM, fake discounts</span>
+                </button>
+                <button class="level-btn fallacies-btn" data-level="fallaciesStatistics">
+                    <span class="level-icon">📊</span>
+                    <span class="level-name">Statistics Lies</span>
+                    <span class="level-desc">How numbers deceive</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- About Me Setup Screen -->
+        <div id="aboutme-setup-screen" class="screen">
+            <header class="level-header">
+                <button id="aboutme-back-btn" class="icon-btn" aria-label="Back">←</button>
+                <h2>Tell Me About You! 📖</h2>
+            </header>
+
+            <div class="aboutme-form">
+                <div class="form-group">
+                    <label>Your Age</label>
+                    <input type="number" id="aboutme-age" min="3" max="18" placeholder="8">
+                </div>
+                <div class="form-group">
+                    <label>Brothers & Sisters</label>
+                    <input type="number" id="aboutme-siblings" min="0" max="20" placeholder="2">
+                </div>
+                <div class="form-group">
+                    <label>Pets at Home</label>
+                    <input type="number" id="aboutme-pets" min="0" max="20" placeholder="1">
+                </div>
+                <div class="form-group">
+                    <label>Rooms in Your House</label>
+                    <input type="number" id="aboutme-rooms" min="1" max="50" placeholder="6">
+                </div>
+                <div class="form-group">
+                    <label>People Living at Home</label>
+                    <input type="number" id="aboutme-family" min="1" max="20" placeholder="4">
+                </div>
+                <div class="form-group">
+                    <label>Books You've Read This Year</label>
+                    <input type="number" id="aboutme-books" min="0" max="200" placeholder="10">
+                </div>
+                <div class="form-group">
+                    <label>Favorite Number (1-100)</label>
+                    <input type="number" id="aboutme-favnum" min="1" max="100" placeholder="7">
+                </div>
+            </div>
+
+            <button id="aboutme-start-btn" class="primary-btn">Let's Play! 🎮</button>
         </div>
 
         <!-- Baby Mode Game Screen -->
@@ -185,7 +360,14 @@
                     <div id="shopping-items" class="shopping-items"></div>
                 </div>
 
-                <div class="number-line-container">
+                <!-- Direct number input for advanced modes -->
+                <div id="number-input-container" class="number-input-container hidden">
+                    <input type="number" id="number-input" class="number-input" placeholder="Enter guess">
+                    <button id="hint-btn" class="hint-btn hidden">💡 Get a Hint</button>
+                    <div id="hint-display" class="hint-display hidden"></div>
+                </div>
+
+                <div id="number-line-container" class="number-line-container">
                     <div class="number-line-labels">
                         <span id="min-label">0</span>
                         <span id="max-label">100</span>
@@ -216,6 +398,7 @@
                         You guessed: <span id="your-guess">95</span> |
                         Points: <span id="points-earned">+100</span>
                     </div>
+                    <div id="feedback-explanation" class="feedback-explanation hidden"></div>
                     <div id="time-info" class="time-info hidden"></div>
                     <div id="credits-reminder" class="credits-reminder hidden">
                         <a href="https://www.linkedin.com/in/nesimsisa" target="_blank">Nesim Sisa</a> ✦
