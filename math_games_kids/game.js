@@ -2977,7 +2977,7 @@ function generateBabyTakeAway() {
     return {
         type: 'takeAway',
         visual: `${remainingItems} ${crossedOutItems}`,
-        question: `${takeAway} gone! How many left?`,
+        question: '👋 = ❓',  // Visual: wave bye-bye, how many left?
         answer: answer,
         choices: choices,
         choiceType: 'visual'
@@ -3057,7 +3057,7 @@ function generateBabyComparison(compareType) {
     return {
         type: 'comparison',
         visual: `${group1}\n\n${group2}`,
-        question: compareType === 'more' ? '👆 Which has MORE?' : '👇 Which has LESS?',
+        question: compareType === 'more' ? '🐘❓' : '🐜❓',  // Elephant = big, Ant = small
         answer: answer,
         choices: choices,
         choiceType: 'visual',
