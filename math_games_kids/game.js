@@ -2318,22 +2318,34 @@ function generateGridPathsProblem() {
     const n = randInt(2, 4);
     const answer = gridPaths(m, n);
 
-    // Create a visual grid
+    // Create a visual grid showing A→B path
+    // Example for 3×2: A─●─●─●
+    //                  │ │ │ │
+    //                  ●─●─●─B
     let gridVisual = '';
-    for (let i = 0; i <= n; i++) {
-        gridVisual += (i === 0 ? 'A' : '●') + '─●'.repeat(m) + (i === n ? 'B' : '') + '\n';
-        if (i < n) gridVisual += '│ '.repeat(m + 1) + '\n';
+    for (let row = 0; row <= n; row++) {
+        let line = '';
+        for (let col = 0; col <= m; col++) {
+            if (row === 0 && col === 0) line += 'A';
+            else if (row === n && col === m) line += 'B';
+            else line += '●';
+            if (col < m) line += '─';
+        }
+        gridVisual += line + '\n';
+        if (row < n) {
+            gridVisual += Array(m + 1).fill('│').join(' ') + '\n';
+        }
     }
 
     return {
-        text: `On a ${m}×${n} grid, how many paths from A to B? (Only move right ➡️ or down ⬇️)`,
+        text: `Count the paths from A to B.\nYou can ONLY move ➡️ right or ⬇️ down.`,
         answer: answer,
         min: 0,
         max: Math.ceil(answer * 2),
         label: 'Grid Paths',
-        visual: `🗺️ ${m}×${n} grid (right & down only)`,
-        hint: `Think: ${m} rights and ${n} downs in some order`,
-        feedbackExtra: `🗺️ GRID PATH COUNTING:\n\nYou need exactly ${m} rights (→) and ${n} downs (↓)\nTotal moves: ${m + n}\n\nFormula: Choose which ${m} moves are "right"\nC(${m+n}, ${m}) = ${m+n}! / (${m}! × ${n}!) = ${answer}\n\nAlternatively: Fill grid with path counts\n(Each cell = sum of left + above)`,
+        visual: gridVisual,
+        hint: `You need ${m} moves right and ${n} moves down. In what order?`,
+        feedbackExtra: `🗺️ GRID PATH COUNTING:\n\nEvery path needs exactly:\n• ${m} moves right (→)\n• ${n} moves down (↓)\nTotal: ${m + n} moves\n\nThe question is: which ${m} of the ${m + n} moves go right?\n\nFormula: C(${m+n}, ${m}) = ${m+n}! / (${m}! × ${n}!) = ${answer}\n\nTip: You can also count by filling in each intersection\nwith the number of ways to reach it (add left + above).`,
         sourceUrl: 'https://www.mathsisfun.com/combinatorics/combinations-permutations.html'
     };
 }
