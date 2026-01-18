@@ -527,8 +527,122 @@ const elements = {
     numberLineContainer: document.getElementById('number-line-container'),
     numberInput: document.getElementById('number-input'),
     hintBtn: document.getElementById('hint-btn'),
-    hintDisplay: document.getElementById('hint-display')
+    hintDisplay: document.getElementById('hint-display'),
+    // Celebration elements
+    confettiContainer: document.getElementById('confetti-container'),
+    achievementToast: document.getElementById('achievement-toast'),
+    achievementText: document.querySelector('.achievement-text'),
+    achievementIcon: document.querySelector('.achievement-icon')
 };
+
+// ============ ACHIEVEMENTS ============
+const ACHIEVEMENTS = {
+    streak5: { icon: '🔥', text: '5 Streak!', threshold: 5 },
+    streak10: { icon: '⚡', text: '10 Streak! Amazing!', threshold: 10 },
+    streak20: { icon: '🌟', text: '20 Streak! Incredible!', threshold: 20 },
+    bullseye3: { icon: '🎯', text: '3 Bullseyes!', threshold: 3 },
+    bullseye10: { icon: '💎', text: '10 Bullseyes! Sharp shooter!', threshold: 10 },
+    points100: { icon: '💯', text: '100 Points!', threshold: 100 },
+    points500: { icon: '🏆', text: '500 Points!', threshold: 500 },
+    points1000: { icon: '👑', text: '1000 Points! Champion!', threshold: 1000 }
+};
+
+let achievementsEarned = JSON.parse(localStorage.getItem('mathEstimatorAchievements') || '{}');
+let bullseyeCount = 0;
+
+function triggerConfetti() {
+    if (!elements.confettiContainer) return;
+
+    elements.confettiContainer.classList.remove('hidden');
+    elements.confettiContainer.innerHTML = '';
+
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+    const shapes = ['●', '■', '▲', '★', '♦'];
+
+    for (let i = 0; i < 50; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.color = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.fontSize = (Math.random() * 15 + 10) + 'px';
+        piece.style.animationDelay = Math.random() * 0.5 + 's';
+        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        elements.confettiContainer.appendChild(piece);
+    }
+
+    setTimeout(() => {
+        elements.confettiContainer.classList.add('hidden');
+        elements.confettiContainer.innerHTML = '';
+    }, 4000);
+}
+
+function showAchievement(icon, text) {
+    if (!elements.achievementToast) return;
+
+    elements.achievementIcon.textContent = icon;
+    elements.achievementText.textContent = text;
+    elements.achievementToast.classList.remove('hidden');
+
+    // Trigger reflow for animation
+    elements.achievementToast.offsetHeight;
+    elements.achievementToast.classList.add('show');
+
+    setTimeout(() => {
+        elements.achievementToast.classList.remove('show');
+        setTimeout(() => {
+            elements.achievementToast.classList.add('hidden');
+        }, 500);
+    }, 3000);
+}
+
+function checkAchievements(streak, points, isBullseye) {
+    if (isBullseye) {
+        bullseyeCount++;
+    }
+
+    // Check streak achievements
+    if (streak === 5 && !achievementsEarned.streak5) {
+        achievementsEarned.streak5 = true;
+        showAchievement('🔥', '5 Streak!');
+        triggerConfetti();
+    } else if (streak === 10 && !achievementsEarned.streak10) {
+        achievementsEarned.streak10 = true;
+        showAchievement('⚡', '10 Streak! Amazing!');
+        triggerConfetti();
+    } else if (streak === 20 && !achievementsEarned.streak20) {
+        achievementsEarned.streak20 = true;
+        showAchievement('🌟', '20 Streak! Incredible!');
+        triggerConfetti();
+    }
+
+    // Check bullseye achievements
+    if (bullseyeCount === 3 && !achievementsEarned.bullseye3) {
+        achievementsEarned.bullseye3 = true;
+        showAchievement('🎯', '3 Bullseyes!');
+    } else if (bullseyeCount === 10 && !achievementsEarned.bullseye10) {
+        achievementsEarned.bullseye10 = true;
+        showAchievement('💎', '10 Bullseyes! Sharp shooter!');
+        triggerConfetti();
+    }
+
+    // Check points achievements
+    if (points >= 100 && !achievementsEarned.points100) {
+        achievementsEarned.points100 = true;
+        showAchievement('💯', '100 Points!');
+    } else if (points >= 500 && !achievementsEarned.points500) {
+        achievementsEarned.points500 = true;
+        showAchievement('🏆', '500 Points!');
+        triggerConfetti();
+    } else if (points >= 1000 && !achievementsEarned.points1000) {
+        achievementsEarned.points1000 = true;
+        showAchievement('👑', '1000 Points! Champion!');
+        triggerConfetti();
+    }
+
+    // Save achievements
+    localStorage.setItem('mathEstimatorAchievements', JSON.stringify(achievementsEarned));
+}
 
 // ============ UTILITY FUNCTIONS ============
 function randInt(min, max) {
@@ -3778,6 +3892,9 @@ function checkEstimate() {
     // Update displays
     updateScoreDisplay();
     saveProgress();
+
+    // Check for achievements
+    checkAchievements(state.streak, state.totalPoints, result === 'bullseye');
 
     // Switch buttons
     elements.submitBtn.classList.add('hidden');
