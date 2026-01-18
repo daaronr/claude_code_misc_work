@@ -2950,13 +2950,11 @@ function generateBabyTakeAway() {
     const answer = total - takeAway;
     const emoji = randChoice(BABY_ITEMS);
 
-    // Show items clearly: remaining items, then crossed-out items being taken
-    const remainingItems = Array(answer).fill(emoji).join('');
-    const takenItems = Array(takeAway).fill(emoji).join('');
-
-    // Create a clear visual: items that stay vs items that go away
-    // Use strikethrough/faded look for items being removed
-    const crossedOutItems = Array(takeAway).fill('❌').join('');
+    // Show a clear subtraction story:
+    // Line 1: All original items
+    // Line 2: Someone eating/taking some away
+    const allItems = Array(total).fill(emoji).join('');
+    const eatenItems = Array(takeAway).fill(emoji).join('');
 
     // Generate wrong answers
     const wrongAnswers = [];
@@ -2976,8 +2974,8 @@ function generateBabyTakeAway() {
 
     return {
         type: 'takeAway',
-        visual: `${remainingItems} ${crossedOutItems}`,
-        question: '👋 = ❓',  // Visual: wave bye-bye, how many left?
+        visual: `${allItems}\n🍴${eatenItems}`,  // Story: all items, then fork/knife eating some
+        question: '= ❓',  // How many left?
         answer: answer,
         choices: choices,
         choiceType: 'visual'
