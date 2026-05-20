@@ -1,0 +1,626 @@
+# Claude Code Sessions Metadata
+# Rich descriptions merged with live session statistics.
+# Update this file to add project descriptions, status, and next steps.
+
+projects:
+  # ============================================================================
+  # UNJOURNAL CORE PROJECTS
+  # ============================================================================
+
+  unjournal-gitbook-knowledge-comms:
+    display_name: "The Unjournal - Core Documentation & Comms"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/unjournal_gitbook"
+    hosted: "https://globalimpact.gitbook.io/the-unjournal-project-and-communication-space"
+    description: |
+      Central documentation and communications hub for The Unjournal project.
+      Handles public-facing content, evaluator communications, and organizational knowledge.
+    goals:
+      - Evaluator prize announcements and winner pages
+      - Donation/support pages for Google Ads campaigns
+      - Forum bot development (EA Forum integration)
+      - Interactive tools and content organization
+    status: "active"
+    status_note: "Ongoing documentation updates"
+    next_steps:
+      - Complete workshop scheduling system
+      - Update evaluator prize pages for 2026
+      - Integrate forum bot with new EA Forum API
+    key_sessions:
+      - id: "a7368ffd-4573-4a71-8e2c-b380e724c2a3"
+        description: "Main documentation work"
+
+  # Nested: Pivotal Questions (within unjournal-gitbook-knowledge-comms)
+  pivotal-questions:
+    display_name: "Pivotal Questions Framework"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/pivotalquestions"
+    description: |
+      Workshop planning and pivotal questions framework.
+      Research prioritization methodology for high-impact topics.
+    goals:
+      - Pivotal questions framework development
+      - Workshop coordination and planning
+      - Research agenda prioritization
+    status: "active"
+    status_note: "Workshop series in progress"
+    next_steps:
+      - Finalize March workshop materials
+      - Document methodology
+
+  # Nested: Workshop Form
+  workshop-form:
+    display_name: "Workshop Scheduling Form"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/pivotalquestions"
+    description: |
+      Workshop scheduling and registration forms.
+      Availability collection and session planning tools.
+    goals:
+      - Availability grid functionality
+      - Registration workflow
+      - Session scheduling automation
+    status: "active"
+    status_note: "Form deployed"
+    next_steps:
+      - Add email notifications
+      - Improve mobile UX
+
+  # Nested: Wellbeing Workshop
+  wellbeing-workshop:
+    display_name: "WELLBY/DALY Workshop"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/pivotalquestions"
+    description: |
+      WELLBY/DALY workshop coordination for wellbeing measurement research.
+      Academic and practitioner workshop on wellbeing metrics.
+    goals:
+      - Workshop logistics and scheduling
+      - Participant coordination
+      - Materials preparation
+    status: "active"
+    status_note: "Workshop scheduled for March"
+    next_steps:
+      - Finalize participant list
+      - Prepare presentation materials
+      - Set up recording
+
+  # Nested: Workshop Collab Tool
+  workshop-collab-tool:
+    display_name: "Workshop Collaboration Tool"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/pivotalquestions"
+    description: |
+      Collaborative tools for workshop participants.
+      Hypothesis annotation monitoring and discussion facilitation.
+    goals:
+      - Hypothesis annotation integration
+      - Real-time collaboration features
+    status: "active"
+    status_note: "Monitoring active"
+
+  # Nested: CM Workshop
+  cm-workshop:
+    display_name: "CM Workshop"
+    category: "Unjournal Core"
+    description: "Cost-effectiveness modeling workshop materials"
+    status: "completed"
+    status_note: "Workshop completed"
+
+  # Nested: Landing Pages
+  landing-pages:
+    display_name: "Landing Pages"
+    category: "Unjournal Core"
+    description: "Campaign landing pages for Unjournal outreach"
+    status: "active"
+    status_note: "Google Ads campaigns"
+
+  uj-prioritization:
+    display_name: "Unjournal Research Prioritization Tool"
+    category: "Unjournal Core"
+    github: "https://github.com/daaronr/uj-prioritization"
+    hosted: "https://uj-prioritization-prototype.netlify.app"
+    description: |
+      AI-powered pipeline for discovering, scoring, and prioritizing research papers for
+      Unjournal's evaluation workflow. Pulls from NBER, arXiv, CEPR, EA Forum, Semantic Scholar,
+      Zotero, and RePEC; deduplicates against the Unjournal DB; scores with LLMs (GPT-4o-mini,
+      Claude); syncs high-scoring papers to Zotero; and deploys a public Netlify dashboard.
+      Flask API layer handles team feedback with privacy controls.
+    goals:
+      - Weekly automated pipeline (cron Mon/Thu) to surface new high-priority papers
+      - LLM scoring calibrated against existing Unjournal evaluations
+      - Public Netlify dashboard for browsing prioritized papers
+      - Zotero two-way sync (public group for score≥65, private for all)
+      - Flask API for internal team scoring and feedback
+    status: "active"
+    status_note: "Pipeline running, dashboard live"
+    next_steps:
+      - Expand source coverage (more fetchers)
+      - Improve LLM scoring calibration
+      - Add team feedback loop to re-rank
+    key_sessions:
+      - id: ""
+        description: "Main pipeline and dashboard work"
+
+  llm-uj-research-eval:
+    display_name: "LLM Research Evaluation Project"
+    category: "Unjournal Core"
+    github: "https://github.com/daaronr/llm-paper-mirror"
+    hosted: "https://llm-uj-research-eval.netlify.app"
+    description: |
+      Research project comparing LLM-generated evaluations against human expert evaluations.
+      Includes correlation analysis, Quarto presentations, and paper metadata management.
+    goals:
+      - LLM vs human evaluation correlation analysis
+      - Quarto book/slides for academic presentations
+      - Journal tier rating comparisons
+      - Paper download and metadata tracking system
+      - Coda API integration for paper data
+      - Netlify deployment
+    status: "active"
+    status_note: "Analysis ongoing, preparing publication"
+    next_steps:
+      - Complete correlation analysis write-up
+      - Add more LLM evaluation models for comparison
+      - Finalize Quarto slides for conference
+    key_sessions:
+      - id: "7390fe92-2931-4c32-a9ca-8a55f835d0e6"
+        description: "Paper downloads & analysis"
+
+  unjournaldatafix:
+    display_name: "Unjournal Data & Analytics"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/unjournaldata"
+    hosted: "https://unjournal.github.io/unjournaldata"
+    description: |
+      Data analysis and visualization for Unjournal evaluation metrics.
+      Powers the data blog and public statistics pages.
+    goals:
+      - Data blog posts with updated evaluation statistics
+      - PCA analysis of evaluation dimensions
+      - IRR/Krippendorff inter-rater reliability measures
+      - Interactive Plotly visualizations
+      - Quarto publishing to GitHub Pages
+    status: "active"
+    status_note: "Regular data updates"
+    next_steps:
+      - Update statistics for Q1 2026
+      - Add new visualization for evaluator agreement
+      - Improve mobile responsiveness
+
+  # Nested: unjournaldatafix/website
+  unjournaldatafix/website:
+    display_name: "Unjournal Data Website"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/unjournaldata"
+    hosted: "https://unjournal.github.io/unjournaldata"
+    description: "Public-facing data website and blog posts"
+    status: "active"
+    status_note: "Publishing updates"
+
+  pypubpub:
+    display_name: "PubPub Content Management"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/pypubpub"
+    hosted: "https://unjournal.pubpub.org"
+    description: |
+      Python tools for managing content on unjournal.pubpub.org.
+      Handles link checking, content migration, and API automation.
+    goals:
+      - Dead link detection and fixing
+      - Trailing backslash URL issues resolution
+      - Content migration and organization
+      - API automation for content management
+    status: "maintenance"
+    status_note: "Periodic link checks"
+    next_steps:
+      - Run quarterly link audit
+      - Update API integration for PubPub v7
+    key_sessions:
+      - id: "e90abb58-1ba6-45d1-a2d1-6882bbfd3548"
+        description: "Link checking & fixes"
+
+  coda-org-unjournal:
+    display_name: "Coda Organization Hub"
+    category: "Unjournal Core"
+    github: "https://github.com/daaronr/coda-unjournal-private"
+    hosted: "https://coda.io/@unjournal"
+    description: |
+      Programmatic management of Coda documents for Unjournal operations.
+      Syncs local files with Coda docs and manages the internal hub.
+    goals:
+      - Programmatic Coda content management via API
+      - Syncing between local files and Coda docs
+      - Organization of Unjournal Hub internal docs
+      - Integration with unjournaldata repository
+    status: "active"
+    status_note: "Regular sync operations"
+    next_steps:
+      - Automate daily sync
+      - Add bidirectional sync capability
+    key_sessions:
+      - id: "621ccd4b-f30e-47c0-9356-fa1f13dc74a1"
+        description: "Main Coda organization"
+
+  unjournal-tools-interfaces:
+    display_name: "Unjournal Tools & Interfaces"
+    category: "Unjournal Core"
+    github: "https://github.com/daaronr/unjournal_tools_interfaces"
+    description: |
+      Development of evaluation forms and internal tools for Unjournal operations.
+    goals:
+      - Evaluation form development
+      - Interface improvements
+      - Tool automation
+    status: "active"
+    status_note: "Form development in progress"
+    next_steps:
+      - Complete new evaluation form design
+      - Add form validation
+    key_sessions:
+      - id: "8440f611-b9d6-4fb6-8bc4-ba0c4045c675"
+        description: "Main tools session"
+
+  unjournal-database:
+    display_name: "Unjournal Database"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/unjournal-database"
+    description: |
+      Central database and data management for Unjournal evaluations and papers.
+    goals:
+      - Repository setup for centralized data management
+      - Integration with existing data sources
+    status: "development"
+    status_note: "Initial setup phase"
+    next_steps:
+      - Define schema
+      - Import historical data
+
+  unjournal-gitbook:
+    display_name: "Legacy Gitbook Content"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/unjournal_gitbook"
+    description: |
+      Migration and maintenance of legacy Gitbook documentation.
+    goals:
+      - Content migration from old Gitbook format
+      - Archive management
+    status: "archived"
+    status_note: "Migrated to new system"
+    key_sessions:
+      - id: "0fb89330-de94-4e67-8cd8-8b81a50c813f"
+        description: "Legacy gitbook work"
+
+  ops-internal:
+    display_name: "Ops Internal"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/ops-internal"
+    description: |
+      Internal operations for Unjournal - contractor management, tax filings, sensitive data.
+    goals:
+      - Contractor W-9 form setup
+      - 1099 tax filing preparation
+      - Sensitive file management
+    status: "active"
+    status_note: "Tax season prep"
+    next_steps:
+      - Complete 1099 filings
+      - Update contractor records
+
+  ops-internal/forum-bot:
+    display_name: "Forum Bot"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/ops-internal"
+    description: "Automation bot for EA Forum posting and monitoring"
+    status: "development"
+    status_note: "Testing phase"
+    next_steps:
+      - Complete API integration
+      - Add scheduling
+
+  UJ-metaculus-automation:
+    display_name: "Metaculus Automation"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/UJ_metaculus_automation"
+    description: "Automation for Metaculus prediction market integration"
+    status: "development"
+    status_note: "Initial development"
+    next_steps:
+      - Connect to Metaculus API
+      - Add question creation
+
+  cm-pq-modeling:
+    display_name: "CM PQ Modeling"
+    category: "Unjournal Core"
+    github: "https://github.com/unjournal/cm_pq_modeling"
+    description: |
+      Quantitative modeling for pivotal questions framework using Squiggle.
+      Explores uncertainty and value-of-information calculations.
+    goals:
+      - Squiggle modeling integration
+      - Pivotal questions framework modeling
+      - Uncertainty quantification
+    status: "active"
+    status_note: "Model development"
+    next_steps:
+      - Complete VoI calculations
+      - Document methodology
+
+  cm-pq-interface:
+    display_name: "CM PQ Interface"
+    category: "Unjournal Core"
+    description: "Interface for cost-effectiveness and pivotal questions modeling"
+    status: "development"
+    status_note: "Interface building"
+
+  icrc-work:
+    display_name: "ICRC Work"
+    category: "Unjournal Core"
+    github: "https://github.com/daaronr/icrc_work"
+    description: |
+      International work and fundraising content management for Unjournal.
+    goals:
+      - Migration and transition planning
+      - Fundraising content management
+    status: "transition"
+    status_note: "Handoff in progress"
+    next_steps:
+      - Complete documentation handoff
+      - Archive completed materials
+
+  # ============================================================================
+  # PERSONAL & SIDE PROJECTS
+  # ============================================================================
+
+  impact-directory:
+    display_name: "Impact Products & Services Directory"
+    category: "Personal Projects"
+    github: "https://github.com/daaronr/claude_code_misc_work"
+    description: |
+      Public, searchable, claim-centered directory of products, product families, services,
+      and organizations connected to substantial charitable giving. Ingests Profit for Good,
+      Giving What We Can company pledgers, EASE, Good Store, Humanitix, and similar sources.
+      React 18 + Vite + Tailwind static site with Fuse.js client-side search; deployed on
+      Netlify. Every entry links to sourced impact claims with confidence scores and exact
+      original wording.
+    goals:
+      - Searchable catalog of profit-for-good products and EA-aligned service providers
+      - Claim-centered schema (organizations, offerings, claims, sources, evidence)
+      - Importers for Profit for Good, GWWC, EASE, Good Store, Humanitix
+      - Confidence scores and exactness levels (exact / collection / inferred) on all claims
+      - Community correction and moderation pipeline (v2)
+    status: "development"
+    status_note: "Core UI and data schema built; populating initial data"
+    next_steps:
+      - Complete and deploy initial dataset from seed sources
+      - Get live Netlify URL set up
+      - Build out importers for GWWC and EASE
+      - Add search filters (cause area, donation %, confidence, freshness)
+
+  claude-code-misc-work/ma-library-of-things:
+    display_name: "MA Library of Things"
+    category: "Personal Projects"
+    github: "https://github.com/daaronr/ma-library-of-things"
+    hosted: "https://masslibraryofthings.netlify.app/"
+    description: |
+      Community library sharing platform for the Medford/Arlington area.
+      Allows neighbors to share tools, equipment, and household items.
+    goals:
+      - Item catalog and search functionality
+      - User authentication and profiles
+      - Borrowing/lending workflow
+      - Local community features
+    status: "development"
+    status_note: "MVP in progress"
+    next_steps:
+      - Complete item listing UI
+      - Add user authentication
+      - Test with local community
+
+  word2vecgames:
+    display_name: "Word Vector Games"
+    category: "Personal Projects"
+    github: "https://github.com/daaronr/word2vecgames"
+    hosted: "http://45.79.160.157:8000"
+    description: |
+      Interactive word embedding game using Word2Vec semantic similarity.
+      A "bocce" style game where players guess words close to a target in vector space.
+    goals:
+      - Word2vec "bocce" game MVP
+      - FastAPI backend development
+      - Linode deployment
+      - Puzzle mode and visualization features
+      - Cosine similarity scoring mechanics
+    status: "deployed"
+    status_note: "Live on Linode"
+    next_steps:
+      - Add multiplayer support
+      - Improve UI/UX
+      - Add leaderboard
+
+  claude-code-misc-work/math-games-kids:
+    display_name: "Math Games for Kids"
+    category: "Personal Projects"
+    github: "https://github.com/daaronr/claude_code_misc_work"
+    description: |
+      Educational math games designed for children.
+      Gamified learning for arithmetic and mathematical concepts.
+    goals:
+      - Age-appropriate math challenges
+      - Engaging game mechanics
+      - Progress tracking
+    status: "development"
+    status_note: "Core games complete"
+    next_steps:
+      - Add more game types
+      - Parent dashboard
+
+  claude-code-misc-work/text-to-voice-work:
+    display_name: "Text to Voice Tools"
+    category: "Personal Projects"
+    github: "https://github.com/daaronr/claude_code_misc_work"
+    description: "Text-to-speech generation tools and experiments"
+    status: "development"
+    status_note: "Toolkit built"
+
+  reinstein-fork-sleeger:
+    display_name: "Personal Website"
+    category: "Personal Projects"
+    github: "https://github.com/daaronr/reinstein_fork_sleeger"
+    hosted: "https://davidreinstein.org"
+    description: |
+      Personal academic website at davidreinstein.org.
+      CV, publications, and professional information.
+    goals:
+      - CV updates
+      - LinkedIn and academic content integration
+    status: "maintenance"
+    status_note: "Periodic updates"
+    next_steps:
+      - Update publications list
+      - Refresh design
+
+  music:
+    display_name: "Music Projects"
+    category: "Personal Projects"
+    github: "https://github.com/daaronr/music"
+    description: "Music-related work and experiments"
+    status: "hobby"
+    status_note: "Occasional work"
+
+  vibecode-whoseavailable:
+    display_name: "Who's Available Scheduler"
+    category: "Personal Projects"
+    description: "Scheduling tool for finding meeting availability"
+    status: "paused"
+    status_note: "MVP complete"
+
+  # ============================================================================
+  # RESEARCH PROJECTS
+  # ============================================================================
+
+  sponsorship-design-analysis:
+    display_name: "Sponsorship Design Analysis"
+    category: "Research"
+    github: "https://github.com/daaronr/sponsorship_design_analysis"
+    description: "Research design for sponsorship study"
+    status: "paused"
+    status_note: "Awaiting data"
+
+  dualprocess:
+    display_name: "Dual Process Research"
+    category: "Research"
+    github: "https://github.com/daaronr/dualprocess"
+    description: "Psychology research on dual-process theory"
+    status: "archived"
+    status_note: "Completed"
+
+  charity-effectiveness-prolific:
+    display_name: "Charity Effectiveness Study"
+    category: "Research"
+    github: "https://github.com/daaronr/charity_effectiveness_prolific_kretschmer_et_al_replication"
+    description: "Replication study on charity effectiveness via Prolific"
+    status: "completed"
+    status_note: "Data collected"
+
+  fundingwiki:
+    display_name: "Funding Wiki"
+    category: "Research"
+    description: "Wiki for researching funding opportunities and grant information"
+    status: "paused"
+    status_note: "On hold"
+
+  # ============================================================================
+  # ADMINISTRATIVE & OPERATIONS
+  # ============================================================================
+
+  Dropbox/obsidian-in-dropbox:
+    display_name: "Obsidian Knowledge Base"
+    category: "Admin & Ops"
+    github: "https://github.com/daaronr/obsidian-vault"
+    description: |
+      Personal knowledge management system using Obsidian.
+      Synced via Dropbox with Git versioning.
+    goals:
+      - Git repo setup for Obsidian vault
+      - Symlink organization across machines
+      - Automated knowledge base backups
+    status: "active"
+    status_note: "Daily use"
+    next_steps:
+      - Improve tagging system
+      - Add more templates
+
+  Dropbox/unjournal-private-backups:
+    display_name: "Private Backups & Personal Finance"
+    category: "Admin & Ops"
+    description: |
+      Personal financial planning, expense tracking, and Unjournal private data backups.
+      Includes negotiation playbooks and cost reduction strategies.
+    goals:
+      - Expense analysis and cost reduction
+      - Xfinity negotiation playbook
+      - Integration of various Unjournal data sources
+      - Google Drive backup management
+    status: "active"
+    status_note: "Ongoing financial tracking"
+    next_steps:
+      - Review Q2 expenses
+      - Update negotiation scripts
+    key_sessions:
+      - id: "dec8f98e-07b9-4d7b-af58-478b2a9eb8b3"
+        description: "Xfinity negotiation & expense reduction - detailed negotiation scripts"
+
+  google-ads-manager:
+    display_name: "Google Ads Manager"
+    category: "Admin & Ops"
+    github: "https://github.com/daaronr/google-ads-manager"
+    description: |
+      Python CLI to inspect, pause/enable, and adjust budgets for Google Ads campaigns
+      via the Google Ads API. Built for Unjournal's donation/outreach campaigns.
+      Designed to run locally or on a lightweight server (Linode).
+    goals:
+      - Campaign inspection and budget management via CLI
+      - Pause/enable campaigns programmatically
+      - Potential FastAPI/Flask endpoint for remote triggers
+    status: "development"
+    status_note: "CLI working, credentials setup required"
+    next_steps:
+      - Wire up credentials and test against live Unjournal campaigns
+      - Add budget reporting and performance pull
+      - Consider lightweight API wrapper for remote automation
+
+  dokuwiki-content:
+    display_name: "DokuWiki Content"
+    category: "Admin & Ops"
+    github: "https://github.com/daaronr/iif_dokuwiki_content"
+    description: "Wiki content migration and management"
+    status: "archived"
+    status_note: "Migrated"
+
+# Categories for organizing the output
+categories:
+  - name: "Unjournal Core"
+    description: "Main Unjournal project repositories, tools, and workshops"
+    priority: 1
+  - name: "Research"
+    description: "Academic research projects and analysis"
+    priority: 2
+  - name: "Personal Projects"
+    description: "Side projects and personal development"
+    priority: 3
+  - name: "Admin & Ops"
+    description: "Administrative, operations, and internal tools"
+    priority: 4
+
+# Status definitions
+status_definitions:
+  active: "Actively being worked on"
+  development: "Under development, not yet complete"
+  deployed: "Live and running"
+  maintenance: "Stable, occasional updates"
+  paused: "On hold, may resume"
+  transition: "Being handed off or migrated"
+  archived: "No longer active, kept for reference"
+  completed: "Finished project"
+  hobby: "Casual/occasional work"
