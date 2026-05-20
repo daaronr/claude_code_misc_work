@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Sessions Dashboard</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        header h1 { font-size: 2rem; margin-bottom: 10px; }
+        header .subtitle { opacity: 0.9; font-size: 0.95rem; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .category-section { margin-bottom: 40px; }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .category-header h2 { font-size: 1.5rem; color: var(--text); }
+
+        .category-header .count {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .project-list { display: flex; flex-direction: column; gap: 12px; }
+
+        /* Expandable card using details/summary */
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+            overflow: hidden;
+        }
+
+        .project-card summary {
+            padding: 16px 20px;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .project-card summary::-webkit-details-marker { display: none; }
+
+        .project-card summary::before {
+            content: "▶";
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .project-card[open] summary::before { transform: rotate(90deg); }
+
+        .project-card summary:hover { background: #f8fafc; }
+
+        .project-card .title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .project-card .summary-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .project-card .status-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .project-card .last-active {
+            font-weight: 500;
+        }
+
+        .project-card .content {
+            padding: 0 20px 20px 20px;
+            border-top: 1px solid var(--border);
+            margin-top: 0;
+        }
+
+        .project-card .description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 16px 0;
+        }
+
+        .project-card .links {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .project-card .links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg);
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .project-card .links a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .project-card .section-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 16px 0 8px 0;
+            font-weight: 600;
+        }
+
+        .project-card .goals ul,
+        .project-card .next-steps ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .project-card .goals li,
+        .project-card .next-steps li {
+            font-size: 0.85rem;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .project-card .goals li::before {
+            content: "•";
+            position: absolute;
+            left: 6px;
+            color: var(--primary);
+        }
+
+        .project-card .next-steps li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        .project-card .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .project-card .meta-item {
+            font-size: 0.8rem;
+        }
+
+        .project-card .meta-item .label {
+            color: var(--text-muted);
+        }
+
+        .project-card .meta-item .value {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .project-card .sessions-list {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .project-card .sessions-list .session {
+            margin: 4px 0;
+        }
+
+        .project-card .sessions-list .session-desc {
+            color: var(--text);
+            font-family: inherit;
+            margin-left: 8px;
+        }
+
+        .quick-nav {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .quick-nav h3 { font-size: 1rem; margin-bottom: 12px; color: var(--text-muted); }
+
+        .quick-nav .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .quick-nav a {
+            padding: 8px 16px;
+            background: var(--bg);
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .quick-nav a:hover { background: var(--primary); color: white; }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 8px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .controls button:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer code {
+            background: var(--bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 24px; }
+            header h1 { font-size: 1.5rem; }
+            .project-card summary { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Claude Code &amp; Codex Sessions Dashboard</h1>
+            <div class="subtitle">Auto-generated: 2026-05-20 18:27 • Combines Claude Code (~/.claude) and Codex (~/.codex) sessions, sorted by recency within each category</div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">26</div>
+                <div class="label">Total Projects</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">13,640</div>
+                <div class="label">Total Messages</div>
+                <div class="label" style="font-size:0.75rem;margin-top:4px;">Claude 13,052 · Codex 588</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">21</div>
+                <div class="label">Projects w/ Codex Activity</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">17</div>
+                <div class="label">Active This Month</div>
+            </div>
+        </div>
+
+        <div class="quick-nav">
+            <h3>Quick Navigation</h3>
+            <div class="links">
+                <a href="#unjournal-core">Unjournal Core</a>
+                <a href="#personal-projects">Personal Projects</a>
+                <a href="#admin-&-ops">Admin & Ops</a>
+                <a href="#other">Other</a>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button onclick="document.querySelectorAll('.project-card').forEach(d => d.open = true)">Expand All</button>
+            <button onclick="document.querySelectorAll('.project-card').forEach(d => d.open = false)">Collapse All</button>
+        </div>
+
+        <section class="category-section" id="unjournal-core">
+            <div class="category-header">
+                <h2>Unjournal Core</h2>
+                <span class="count">8 projects</span>
+            </div>
+            <div class="project-list">
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">PubPub Content Management</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #8b5cf6">maintenance</span>
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-20</span>
+                            <span>💬 732 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/unjournal/pypubpub" target="_blank">📁 GitHub</a><a href="https://unjournal.pubpub.org" target="_blank">🌐 Live Site</a></div>
+                        <div class="description">Python tools for managing content on unjournal.pubpub.org.
+Handles link checking, content migration, and API automation.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Dead link detection and fixing</li><li>Trailing backslash URL issues resolution</li><li>Content migration and organization</li><li>API automation for content management</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Run quarterly link audit</li><li>Update API integration for PubPub v7</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Periodic link checks</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-19 → 2026-05-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">594</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">138</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">10</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2025-11-19 → 2026-02-07</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>pypubpub</code></span>
+                            </div>
+                        </div>
+                        <div class="sessions-list"><div class="section-title" style="margin-top:0">Key Sessions</div><div class="session"><code>e90abb58-1ba6-45d1-a2d1-6882bbfd3548</code><span class="session-desc">— Link checking & fixes</span></div></div>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">CM Workshop</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #14b8a6">completed</span>
+                            
+                            <span class="last-active">📅 2026-05-20</span>
+                            <span>💬 389 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        
+                        <div class="description">Cost-effectiveness modeling workshop materials</div>
+                        
+                        
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Workshop completed</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-05-16 → 2026-05-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">389</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>cm/workshop</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">The Unjournal - Core Documentation & Comms</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #10b981">active</span>
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-20</span>
+                            <span>💬 332 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/unjournal/unjournal_gitbook" target="_blank">📁 GitHub</a><a href="https://globalimpact.gitbook.io/the-unjournal-project-and-communication-space" target="_blank">🌐 Live Site</a></div>
+                        <div class="description">Central documentation and communications hub for The Unjournal project.
+Handles public-facing content, evaluator communications, and organizational knowledge.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Evaluator prize announcements and winner pages</li><li>Donation/support pages for Google Ads campaigns</li><li>Forum bot development (EA Forum integration)</li><li>Interactive tools and content organization</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Complete workshop scheduling system</li><li>Update evaluator prize pages for 2026</li><li>Integrate forum bot with new EA Forum API</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Ongoing documentation updates</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-02-02 → 2026-05-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">303</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">6</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">29</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2026-02-02 → 2026-05-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>knowledge/comms</code></span>
+                            </div>
+                        </div>
+                        <div class="sessions-list"><div class="section-title" style="margin-top:0">Key Sessions</div><div class="session"><code>a7368ffd-4573-4a71-8e2c-b380e724c2a3</code><span class="session-desc">— Main documentation work</span></div></div>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">CM PQ Modeling</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #10b981">active</span>
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-15</span>
+                            <span>💬 1438 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/unjournal/cm_pq_modeling" target="_blank">📁 GitHub</a></div>
+                        <div class="description">Quantitative modeling for pivotal questions framework using Squiggle.
+Explores uncertainty and value-of-information calculations.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Squiggle modeling integration</li><li>Pivotal questions framework modeling</li><li>Uncertainty quantification</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Complete VoI calculations</li><li>Document methodology</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Model development</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-02-21 → 2026-05-15</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">1410</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">28</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2026-02-21 → 2026-02-22</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>pq/modeling</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">Ops Internal</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #10b981">active</span>
+                            
+                            <span class="last-active">📅 2026-05-11</span>
+                            <span>💬 342 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/unjournal/ops-internal" target="_blank">📁 GitHub</a></div>
+                        <div class="description">Internal operations for Unjournal - contractor management, tax filings, sensitive data.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Contractor W-9 form setup</li><li>1099 tax filing preparation</li><li>Sensitive file management</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Complete 1099 filings</li><li>Update contractor records</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Tax season prep</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-04-18 → 2026-05-11</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">342</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>ops/internal</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">Unjournal Data & Analytics</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #10b981">active</span>
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-01</span>
+                            <span>💬 330 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/unjournal/unjournaldata" target="_blank">📁 GitHub</a><a href="https://unjournal.github.io/unjournaldata" target="_blank">🌐 Live Site</a></div>
+                        <div class="description">Data analysis and visualization for Unjournal evaluation metrics.
+Powers the data blog and public statistics pages.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Data blog posts with updated evaluation statistics</li><li>PCA analysis of evaluation dimensions</li><li>IRR/Krippendorff inter-rater reliability measures</li><li>Interactive Plotly visualizations</li><li>Quarto publishing to GitHub Pages</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Update statistics for Q1 2026</li><li>Add new visualization for evaluator agreement</li><li>Improve mobile responsiveness</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Regular data updates</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-19 → 2026-05-01</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">314</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">16</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2025-11-19 → 2025-12-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>unjournaldatafix</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">LLM Research Evaluation Project</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #10b981">active</span>
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-04-29</span>
+                            <span>💬 238 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/daaronr/llm-paper-mirror" target="_blank">📁 GitHub</a><a href="https://llm-uj-research-eval.netlify.app" target="_blank">🌐 Live Site</a></div>
+                        <div class="description">Research project comparing LLM-generated evaluations against human expert evaluations.
+Includes correlation analysis, Quarto presentations, and paper metadata management.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>LLM vs human evaluation correlation analysis</li><li>Quarto book/slides for academic presentations</li><li>Journal tier rating comparisons</li><li>Paper download and metadata tracking system</li><li>Coda API integration for paper data</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Complete correlation analysis write-up</li><li>Add more LLM evaluation models for comparison</li><li>Finalize Quarto slides for conference</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Analysis ongoing, preparing publication</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-12-18 → 2026-04-29</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">208</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">30</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2025-12-18 → 2026-01-08</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>research/eval</code></span>
+                            </div>
+                        </div>
+                        <div class="sessions-list"><div class="section-title" style="margin-top:0">Key Sessions</div><div class="session"><code>7390fe92-2931-4c32-a9ca-8a55f835d0e6</code><span class="session-desc">— Paper downloads & analysis</span></div></div>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">Pivotal Questions Framework</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #10b981">active</span>
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2026-04-01</span>
+                            <span>💬 21 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/unjournal/pivotalquestions" target="_blank">📁 GitHub</a></div>
+                        <div class="description">Workshop planning and pivotal questions framework.
+Research prioritization methodology for high-impact topics.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Pivotal questions framework development</li><li>Workshop coordination and planning</li><li>Research agenda prioritization</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Finalize March workshop materials</li><li>Document methodology</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Workshop series in progress</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-03-30 → 2026-04-01</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">21</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2026-03-30 → 2026-04-01</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>pivotal/questions</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section class="category-section" id="personal-projects">
+            <div class="category-header">
+                <h2>Personal Projects</h2>
+                <span class="count">3 projects</span>
+            </div>
+            <div class="project-list">
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">MA Library of Things</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #6366f1">development</span>
+                            
+                            <span class="last-active">📅 2026-05-20</span>
+                            <span>💬 340 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/daaronr/ma-library-of-things" target="_blank">📁 GitHub</a><a href="https://masslibraryofthings.netlify.app/" target="_blank">🌐 Live Site</a></div>
+                        <div class="description">Community library sharing platform for the Medford/Arlington area.
+Allows neighbors to share tools, equipment, and household items.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Item catalog and search functionality</li><li>User authentication and profiles</li><li>Borrowing/lending workflow</li><li>Local community features</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Complete item listing UI</li><li>Add user authentication</li><li>Test with local community</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">MVP in progress</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-04-24 → 2026-05-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">340</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">10</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>misc/work</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">Music Projects</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #ec4899">hobby</span>
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2026-05-18</span>
+                            <span>💬 22 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/daaronr/music" target="_blank">📁 GitHub</a></div>
+                        <div class="description">Music-related work and experiments</div>
+                        
+                        
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Occasional work</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-04-27 → 2026-05-18</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">22</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2026-04-27 → 2026-05-18</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>music</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">Who's Available Scheduler</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #f59e0b">paused</span>
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2026-01-16</span>
+                            <span>💬 2 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        
+                        <div class="description">Scheduling tool for finding meeting availability</div>
+                        
+                        
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">MVP complete</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-01-16 → 2026-01-16</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2026-01-16 → 2026-01-16</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>vibecode/whoseavailable</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section class="category-section" id="admin-&-ops">
+            <div class="category-header">
+                <h2>Admin & Ops</h2>
+                <span class="count">2 projects</span>
+            </div>
+            <div class="project-list">
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">Private Backups & Personal Finance</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #10b981">active</span>
+                            
+                            <span class="last-active">📅 2026-05-12</span>
+                            <span>💬 76 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        
+                        <div class="description">Personal financial planning, expense tracking, and Unjournal private data backups.
+Includes negotiation playbooks and cost reduction strategies.</div>
+                        <div class="goals"><div class="section-title">Goals & Topics</div><ul><li>Expense analysis and cost reduction</li><li>Xfinity negotiation playbook</li><li>Integration of various Unjournal data sources</li><li>Google Drive backup management</li></ul></div>
+                        <div class="next-steps"><div class="section-title">Next Steps</div><ul><li>Review Q2 expenses</li><li>Update negotiation scripts</li></ul></div>
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Ongoing financial tracking</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-05-11 → 2026-05-12</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">76</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>private/backups</code></span>
+                            </div>
+                        </div>
+                        <div class="sessions-list"><div class="section-title" style="margin-top:0">Key Sessions</div><div class="session"><code>dec8f98e-07b9-4d7b-af58-478b2a9eb8b3</code><span class="session-desc">— Xfinity negotiation & expense reduction - detailed negotiation scripts</span></div></div>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">DokuWiki Content</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background: #6b7280">archived</span>
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2025-11-28</span>
+                            <span>💬 3 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="links"><a href="https://github.com/daaronr/iif_dokuwiki_content" target="_blank">📁 GitHub</a></div>
+                        <div class="description">Wiki content migration and management</div>
+                        
+                        
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Status:</span>
+                                <span class="value">Migrated</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-28 → 2025-11-28</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude sessions:</span>
+                                <span class="value">0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs:</span>
+                                <span class="value">3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex sessions:</span>
+                                <span class="value">2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex period:</span>
+                                <span class="value">2025-11-28 → 2025-11-28</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Repo:</span>
+                                <span class="value"><code>dokuwiki/content</code></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <section class="category-section" id="other">
+            <div class="category-header">
+                <h2>Other Projects</h2>
+                <span class="count">13 projects</span>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Projects not yet categorized in metadata</p>
+            <div class="project-list">
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">visual/processing</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-20</span>
+                            <span>💬 214 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-04-19 → 2026-05-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">131 / 2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">83 / 2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/audio/visual/processing</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">beliefs/project</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-20</span>
+                            <span>💬 6278 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-04-16 → 2026-05-20</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">6219 / 16</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">59 / 3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/UJ/PQ/data/beliefs/project</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">AI/notes</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-19</span>
+                            <span>💬 1001 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-05-11 → 2026-05-19</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">968 / 12</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">33 / 1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/Dropbox/reinstein/law/AI/notes</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">may/2026</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2026-05-17</span>
+                            <span>💬 15 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-05-16 → 2026-05-17</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">15 / 1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/Dropbox/music_recordings/exeter_eugenios_gangs/may_2026</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">files/notes</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-15</span>
+                            <span>💬 517 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-20 → 2026-05-15</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">502 / 2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">15 / 3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/Dropbox/unjournal/shared/files/notes</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">grant/applications</span>
+                        <div class="summary-meta">
+                            
+                            <span class="last-active">📅 2026-05-15</span>
+                            <span>💬 92 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-05-14 → 2026-05-15</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">92 / 1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/grant/applications</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">zhuoran/reinstein</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2026-05-07</span>
+                            <span>💬 5 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-05-07 → 2026-05-07</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">5 / 1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/UJ_PQ_data_beliefs_project/beliefs_impact_funders_policy_project_zhuoran_reinstein</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">AI/work</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-05-06</span>
+                            <span>💬 1190 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-04-04 → 2026-05-06</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">1135 / 5</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">55 / 2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/Dropbox/replication/AI/work</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">-Users-yosemite-githubs</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-04-29</span>
+                            <span>💬 35 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-18 → 2026-04-29</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">29 / 1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">6 / 2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">-Users-yosemite</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2026-02-06</span>
+                            <span>💬 7 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-18 → 2026-02-06</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">7 / 3</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">eval/data</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2025-12-18</span>
+                            <span>💬 1 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-12-17 → 2025-12-18</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">1 / 1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/llm-uj-research-eval/data</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">schmooze/thing</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2025-11-28</span>
+                            <span>💬 12 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-27 → 2025-11-28</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">12 / 1</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/test_gitbook_schmooze_thing</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">al/replication</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2025-11-18</span>
+                            <span>💬 8 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-18 → 2025-11-18</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">8 / 2</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/charity_effectiveness_prolific_kretschmer_et_al_replication</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <footer>
+            <p>Auto-updated every 48 hours via cron • Sorted by most recent activity • Includes Claude Code (~/.claude) and Codex (~/.codex) sessions</p>
+            <p>Source: <code>~/githubs/claude_code_misc_work/update_sessions_outline.py</code></p>
+            <p>Metadata: <code>~/githubs/claude_code_misc_work/sessions_metadata.yaml</code></p>
+        </footer>
+    </div>
+</body>
+</html>
