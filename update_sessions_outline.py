@@ -341,6 +341,84 @@ def merge_data(live_stats: dict, metadata: dict) -> list:
     return result
 
 
+def generate_cron_status_section() -> str:
+    """Read ~/.cron_status/*.json and return an HTML <details> block for the dashboard."""
+    import glob as _glob
+    from pathlib import Path as _Path
+    from datetime import datetime as _dt, timezone as _tz
+
+    status_dir = _Path.home() / ".cron_status"
+    jobs = []
+    for path in sorted(status_dir.glob("*.json")):
+        try:
+            with open(path) as f:
+                jobs.append(json.load(f))
+        except Exception:
+            pass
+
+    if not jobs:
+        return ""
+
+    now = _dt.now(_tz.utc)
+
+    def rel_time(iso):
+        if not iso:
+            return "never"
+        try:
+            t = _dt.fromisoformat(iso)
+            if t.tzinfo is None:
+                t = t.replace(tzinfo=_tz.utc)
+            delta = int((now - t).total_seconds())
+            if delta < 3600:
+                return f"{delta // 60}m ago"
+            if delta < 86400:
+                return f"{delta // 3600}h ago"
+            return f"{delta // 86400}d ago"
+        except Exception:
+            return iso[:16]
+
+    rows = []
+    for j in sorted(jobs, key=lambda x: x.get("last_run", ""), reverse=True):
+        status = j.get("status", "?")
+        color = "#10b981" if status == "ok" else "#ef4444"
+        badge = f'<span style="color:{color};font-weight:700">{status.upper()}</span>'
+        dur = j.get("duration_s")
+        dur_str = f"{dur}s" if dur is not None else ""
+        tail = j.get("output_tail", [])
+        tail_text = "\n".join(tail[-5:]) if tail else ""
+        rows.append(f"""<tr>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">{j.get("job","?")}</td>
+          <td style="padding:4px 8px;color:#555">{j.get("schedule","")}</td>
+          <td style="padding:4px 8px">{badge}</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">{rel_time(j.get("last_run"))}</td>
+          <td style="padding:4px 8px;color:#888">{dur_str}</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="{tail_text}">{tail_text.splitlines()[-1] if tail_text else ""}</td>
+        </tr>""")
+
+    rows_html = "\n".join(rows)
+    return f"""
+        <details style="background:#f0fff4;border:1.5px solid #10b981;border-radius:8px;padding:8px 14px;margin:10px 0 18px 0;font-size:0.85rem;">
+            <summary style="cursor:pointer;font-weight:600;color:#065f46;list-style:none;display:flex;align-items:center;gap:8px;">
+                &#9656; Cron Job Status &mdash; {len(jobs)} tracked jobs
+            </summary>
+            <div style="margin-top:10px;overflow-x:auto;">
+                <table style="border-collapse:collapse;width:100%;font-size:0.83rem;">
+                  <thead><tr style="border-bottom:1px solid #ccc;color:#555">
+                    <th style="text-align:left;padding:3px 10px 3px 0">Job</th>
+                    <th style="text-align:left;padding:3px 8px">Schedule</th>
+                    <th style="text-align:left;padding:3px 8px">Status</th>
+                    <th style="text-align:left;padding:3px 8px">Last Run</th>
+                    <th style="text-align:left;padding:3px 8px">Duration</th>
+                    <th style="text-align:left;padding:3px 8px">Last output</th>
+                  </tr></thead>
+                  <tbody>{rows_html}</tbody>
+                </table>
+                <p style="margin-top:8px;color:#666">Status files: <code>~/.cron_status/*.json</code> &bull; Logs: <code>~/Library/Logs/cron/</code></p>
+            </div>
+        </details>
+"""
+
+
 def generate_html(merged_data: list, metadata: dict) -> str:
     """Generate rich HTML output with expandable cards."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -753,7 +831,22 @@ def generate_html(merged_data: list, metadata: dict) -> str:
             <button onclick="document.querySelectorAll('.project-card').forEach(d => d.open = true)">Expand All</button>
             <button onclick="document.querySelectorAll('.project-card').forEach(d => d.open = false)">Collapse All</button>
         </div>
+
+        <details style="background:#f0f4ff;border:1.5px solid #4a6cf7;border-radius:8px;padding:8px 14px;margin:10px 0 18px 0;font-size:0.85rem;">
+            <summary style="cursor:pointer;font-weight:600;color:#1a237e;list-style:none;display:flex;align-items:center;gap:8px;">
+                &#9656; Unjournal AI Conversation Archive &mdash; 488 conversations, ask Claude Code to query
+            </summary>
+            <div style="margin-top:10px;color:#333;line-height:1.7;">
+                <b>Location:</b> <code>~/Dropbox/obsidian_in_dropbox/chatgpt_team_organized/</code><br>
+                <b>Query:</b> Ask Claude Code in any terminal session — reads files directly, no upload needed.<br>
+                <b>Topics:</b> evaluations (847KB) &bull; data_work (1MB) &bull; web_tech (611KB) &bull; unjournal_ops (256KB) &bull; research_papers (363KB) &bull; funding_grants (284KB) &bull; writing_editing (184KB) &bull; meetings_comms (178KB) &bull; ea_related (259KB) &bull; social_media (100KB)<br>
+                <b>Grep:</b> <code>grep -r "term" ~/Dropbox/obsidian_in_dropbox/chatgpt_scraped_conversations/</code><br>
+                <b>Obsidian:</b> <code>obsidian://open?path=/Users/yosemite/Dropbox/obsidian_in_dropbox/chatgpt_team_organized</code>
+            </div>
+        </details>
 """
+
+    html += generate_cron_status_section()
 
     # Generate category sections
     for cat in sorted(metadata.get("categories", []), key=lambda x: x.get("priority", 99)):
