@@ -26,6 +26,27 @@ OUTPUT_HTML = Path.home() / "githubs" / "CLAUDE_CODE_SESSIONS_OUTLINE.html"
 DROPBOX_COPY = Path.home() / "Dropbox" / "unjournal private backups" / "claude_code_sessions_dashboard.html"
 REPO_HTML = SCRIPT_DIR / "sessions_dashboard.html"
 
+LINODE_JOBS = [
+    {
+        "job": "uj-prioritization-pull",
+        "schedule": "Mon+Thu 8:55am UTC",
+        "description": "git pull origin main → /opt/uj-prioritization",
+        "log": "/var/log/unjournal/uj-prioritization-pull.log",
+    },
+    {
+        "job": "pubpub-feed-proxy",
+        "schedule": "daily 7:00am UTC",
+        "description": "Fetch PubPub RSS via headless browser → info.unjournal.org/pubpub-rss.xml",
+        "log": "/var/log/pubpub-feed-proxy.log",
+    },
+    {
+        "job": "hypothesis-slack",
+        "schedule": "every 2 hours",
+        "description": "Push new CM workshop Hypothesis annotations to Slack",
+        "log": "/var/log/hypothesis_to_slack.log",
+    },
+]
+
 STATUS_COLORS = {
     "active": "#10b981",      # green
     "development": "#6366f1", # indigo
@@ -396,12 +417,24 @@ def generate_cron_status_section() -> str:
         </tr>""")
 
     rows_html = "\n".join(rows)
+
+    linode_rows = []
+    for lj in LINODE_JOBS:
+        linode_rows.append(f"""<tr>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">{lj['job']}</td>
+          <td style="padding:4px 8px;color:#555">{lj['schedule']}</td>
+          <td style="padding:4px 8px;color:#888;font-style:italic">no live status</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#666">{lj['description']}</td>
+        </tr>""")
+    linode_rows_html = "\n".join(linode_rows)
+
     return f"""
         <details style="background:#f0fff4;border:1.5px solid #10b981;border-radius:8px;padding:8px 14px;margin:10px 0 18px 0;font-size:0.85rem;">
             <summary style="cursor:pointer;font-weight:600;color:#065f46;list-style:none;display:flex;align-items:center;gap:8px;">
-                &#9656; Cron Job Status &mdash; {len(jobs)} tracked jobs
+                &#9656; Cron Job Status &mdash; {len(jobs)} local + {len(LINODE_JOBS)} Linode
             </summary>
             <div style="margin-top:10px;overflow-x:auto;">
+                <p style="font-weight:600;color:#065f46;margin-bottom:4px">Local (Mac) &mdash; {len(jobs)} tracked</p>
                 <table style="border-collapse:collapse;width:100%;font-size:0.83rem;">
                   <thead><tr style="border-bottom:1px solid #ccc;color:#555">
                     <th style="text-align:left;padding:3px 10px 3px 0">Job</th>
@@ -414,6 +447,18 @@ def generate_cron_status_section() -> str:
                   <tbody>{rows_html}</tbody>
                 </table>
                 <p style="margin-top:8px;color:#666">Status files: <code>~/.cron_status/*.json</code> &bull; Logs: <code>~/Library/Logs/cron/</code></p>
+
+                <p style="font-weight:600;color:#065f46;margin:14px 0 4px">Linode (45.79.160.157) &mdash; {len(LINODE_JOBS)} jobs, no live status</p>
+                <table style="border-collapse:collapse;width:100%;font-size:0.83rem;">
+                  <thead><tr style="border-bottom:1px solid #ccc;color:#555">
+                    <th style="text-align:left;padding:3px 10px 3px 0">Job</th>
+                    <th style="text-align:left;padding:3px 8px">Schedule</th>
+                    <th style="text-align:left;padding:3px 8px">Status</th>
+                    <th style="text-align:left;padding:3px 8px">Description</th>
+                  </tr></thead>
+                  <tbody>{linode_rows_html}</tbody>
+                </table>
+                <p style="margin-top:8px;color:#666">Logs: <code>root@45.79.160.157:/var/log/</code></p>
             </div>
         </details>
 """

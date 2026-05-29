@@ -110,7 +110,26 @@ Projects without metadata entries appear in "Other Projects" with just live stat
 
 ## Scheduled Jobs
 
-| Schedule | Script | Log |
-|----------|--------|-----|
-| Even days, noon | `update_sessions_outline.py` | `/tmp/sessions_outline.log` |
-| Odd days, 2:30 PM | `impact_products_services_directory/impact-directory/scripts/hypothesis_monitor.py` | `/tmp/hypothesis_impact.log` |
+All local jobs use `cron_wrapper.py`. Logs: `~/Library/Logs/cron/<job>.log`. Status: `~/.cron_status/<job>.json`.
+
+| Job name | Schedule | Script | Purpose |
+|----------|----------|--------|---------|
+| `forum_bot` | Sun 9am (local only) | `ops-internal/forum-bot` | Unjournal forum bot — only runs when Mac is awake |
+| `uj_prioritization` | Mon+Thu 10am | `uj-prioritization/pipeline/run_weekly.py` | Prioritization pipeline |
+| `sessions_outline` | Every 48h noon | `update_sessions_outline.py --push` | Sessions dashboard → GitHub Pages |
+| `hypothesis_monitor` | Every 48h 14:30 | `impact-directory/scripts/hypothesis_monitor.py` | Hypothes.is monitor |
+| `synthesis` | Daily 9:17am | `pba-workshop/scripts/generate_synthesis.py --deploy` | AI safety discussion synthesis |
+| `beliefs_dashboard` | Tue+Fri 9:30am | `cm-workshop/scripts/update_beliefs_dashboard.sh` | CM beliefs dashboard |
+| `cm_review` | Daily 8am | `audio_visual_processing/scripts/refresh_cm_review.py` | CM video review (temporary) |
+| `gdrive_notion_sync` | Daily 7am | `UJ_PQ_data_beliefs_project/scripts/gdrive_notion_sync.py` | Google Drive → Notion sync |
+| `swim_audio` | Mon+Thu 6am | `swim_audio_pipeline/swim_audio.py` | Swim audio pipeline |
+
+### Linode jobs (`root@45.79.160.157`) — direct cron, no wrapper. Logs: `/var/log/` on server.
+
+| Job | Schedule | Script | Purpose |
+|-----|----------|--------|---------|
+| `uj-prioritization-pull` | Mon+Thu 8:55am UTC | `git -C /opt/uj-prioritization pull origin main` | Pull latest code before Mac pipeline runs |
+| `pubpub-feed-proxy` | Daily 7:00am UTC | `/root/pubpub-feed-proxy.py` | PubPub RSS via headless browser → `info.unjournal.org/pubpub-rss.xml` |
+| `hypothesis-slack` | Every 2 hours | `/root/hypothesis-slack/hypothesis_to_slack.py` | CM workshop Hypothesis annotations → Slack |
+
+To check/edit Linode crontab: `ssh root@45.79.160.157 "crontab -l"`
