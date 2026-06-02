@@ -28,22 +28,28 @@ REPO_HTML = SCRIPT_DIR / "sessions_dashboard.html"
 
 LINODE_JOBS = [
     {
-        "job": "uj-prioritization-pull",
-        "schedule": "Mon+Thu 8:55am UTC",
-        "description": "git pull origin main → /opt/uj-prioritization",
-        "log": "/var/log/unjournal/uj-prioritization-pull.log",
+        "job": "forum_bot",
+        "schedule": "Sun 9am UTC",
+        "description": "EA Forum bot — find posts about Unjournal papers, post comments",
+        "log": "/root/.cron_logs/forum_bot.log",
     },
     {
-        "job": "pubpub-feed-proxy",
+        "job": "uj_prioritization_pull",
+        "schedule": "daily 8:55am UTC",
+        "description": "git pull origin main → /opt/uj-prioritization",
+        "log": "/root/.cron_logs/uj_prioritization_pull.log",
+    },
+    {
+        "job": "pubpub_feed_proxy",
         "schedule": "daily 7:00am UTC",
         "description": "Fetch PubPub RSS via headless browser → info.unjournal.org/pubpub-rss.xml",
-        "log": "/var/log/pubpub-feed-proxy.log",
+        "log": "/root/.cron_logs/pubpub_feed_proxy.log",
     },
     {
-        "job": "hypothesis-slack",
+        "job": "hypothesis_slack",
         "schedule": "every 2 hours",
         "description": "Push new CM workshop Hypothesis annotations to Slack",
-        "log": "/var/log/hypothesis_to_slack.log",
+        "log": "/root/.cron_logs/hypothesis_slack.log",
     },
 ]
 

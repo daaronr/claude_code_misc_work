@@ -28,7 +28,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 STATUS_DIR = Path.home() / ".cron_status"
-LOG_DIR = Path.home() / "Library" / "Logs" / "cron"
+LOG_DIR = (
+    Path.home() / "Library" / "Logs" / "cron"
+    if __import__("sys").platform == "darwin"
+    else Path.home() / ".cron_logs"
+)
 TAIL_LINES = 40
 
 
