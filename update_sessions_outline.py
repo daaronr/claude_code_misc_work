@@ -30,13 +30,19 @@ LINODE_JOBS = [
     {
         "job": "forum_bot",
         "schedule": "Sun 9am UTC",
-        "description": "EA Forum bot — find posts about Unjournal papers, post comments",
+        "description": "EA Forum: auto-post Type A matches; Type B + topic matches → pending queue",
         "log": "/root/.cron_logs/forum_bot.log",
+    },
+    {
+        "job": "forum_bot_bluesky",
+        "schedule": "Sun 10:50am UTC",
+        "description": "Bluesky: search and reply on Unjournal paper matches",
+        "log": "/root/.cron_logs/forum_bot_bluesky.log",
     },
     {
         "job": "forum_bot_notify",
         "schedule": "Sun 10am UTC",
-        "description": "Slack digest after bot run: posted comments + Type B suggestions",
+        "description": "Slack digest: posted comments, pending queue count, Type B suggestions",
         "log": "/root/.cron_logs/forum_bot_notify.log",
     },
     {

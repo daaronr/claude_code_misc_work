@@ -127,8 +127,9 @@ All local jobs use `cron_wrapper.py`. Logs: `~/Library/Logs/cron/<job>.log`. Sta
 
 | Job | Schedule | Script | Purpose |
 |-----|----------|--------|---------|
-| `forum_bot` | Sun 9am UTC | `ops-internal/forum-bot` | EA Forum bot — runs reliably on server, not Mac-sleep-dependent |
-| `forum_bot_notify` | Sun 10am UTC | `/root/forum_bot_notify.py` | Slack digest after bot run: posted comments + Type B suggestions |
+| `forum_bot` | Sun 9am UTC | `ops-internal/forum-bot` | EA Forum bot — posts on paper matches, adds Type B + topic matches to pending queue |
+| `forum_bot_bluesky` | Sun 10:50am UTC | `forum-bot bluesky run` | Bluesky bot — search and reply on paper matches |
+| `forum_bot_notify` | Sun 10am UTC | `/root/forum_bot_notify.py` | Slack digest: posted comments, pending count, Type B suggestions |
 | `uj_prioritization_pull` | Daily 8:55am UTC | `git -C /opt/uj-prioritization pull origin main` | Pull latest code before Mac pipeline runs |
 | `pubpub_feed_proxy` | Daily 7:00am UTC | `/root/pubpub-feed-proxy.py` | PubPub RSS via headless browser → `info.unjournal.org/pubpub-rss.xml` |
 | `hypothesis_slack` | Every 2 hours | `/root/hypothesis-slack/hypothesis_to_slack.py` | CM workshop Hypothesis annotations → Slack |
