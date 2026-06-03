@@ -128,9 +128,16 @@ All local jobs use `cron_wrapper.py`. Logs: `~/Library/Logs/cron/<job>.log`. Sta
 | Job | Schedule | Script | Purpose |
 |-----|----------|--------|---------|
 | `forum_bot` | Sun 9am UTC | `ops-internal/forum-bot` | EA Forum bot — runs reliably on server, not Mac-sleep-dependent |
+| `forum_bot_notify` | Sun 10am UTC | `/root/forum_bot_notify.py` | Slack digest after bot run: posted comments + Type B suggestions |
 | `uj_prioritization_pull` | Daily 8:55am UTC | `git -C /opt/uj-prioritization pull origin main` | Pull latest code before Mac pipeline runs |
 | `pubpub_feed_proxy` | Daily 7:00am UTC | `/root/pubpub-feed-proxy.py` | PubPub RSS via headless browser → `info.unjournal.org/pubpub-rss.xml` |
 | `hypothesis_slack` | Every 2 hours | `/root/hypothesis-slack/hypothesis_to_slack.py` | CM workshop Hypothesis annotations → Slack |
 
 To check/edit Linode crontab: `ssh root@45.79.160.157 "crontab -l"`
-CSV for forum_bot: `/root/ops-internal/forum-bot/data/paper_abstracts_and_metadata.csv` (sync with `scp` when papers are added)
+
+CSV for forum_bot: `/root/ops-internal/forum-bot/data/paper_abstracts_and_metadata.csv`
+When new evaluations are published: `scp ~/githubs/llm-uj-research-eval/data/paper_abstracts_meta_data/paper_abstracts_and_metadata.csv root@45.79.160.157:/root/ops-internal/forum-bot/data/paper_abstracts_and_metadata.csv`
+
+Notes:
+- forum_bot posts to `forum-bots.effectivealtruism.org` (EA Forum's bot subdomain, not main forum) — verify this is the intended destination
+- Type B suggestions (related but not auto-posted) appear in the Sunday Slack digest for manual review

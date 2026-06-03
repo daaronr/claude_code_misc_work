@@ -34,6 +34,12 @@ LINODE_JOBS = [
         "log": "/root/.cron_logs/forum_bot.log",
     },
     {
+        "job": "forum_bot_notify",
+        "schedule": "Sun 10am UTC",
+        "description": "Slack digest after bot run: posted comments + Type B suggestions",
+        "log": "/root/.cron_logs/forum_bot_notify.log",
+    },
+    {
         "job": "uj_prioritization_pull",
         "schedule": "daily 8:55am UTC",
         "description": "git pull origin main → /opt/uj-prioritization",
