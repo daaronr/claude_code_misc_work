@@ -346,7 +346,7 @@
     <div class="container">
         <header>
             <h1>📊 Claude Code &amp; Codex Sessions Dashboard</h1>
-            <div class="subtitle">Auto-generated: 2026-06-03 18:48 • Combines Claude Code (~/.claude) and Codex (~/.codex) sessions, sorted by recency within each category</div>
+            <div class="subtitle">Auto-generated: 2026-06-05 12:00 • Combines Claude Code (~/.claude) and Codex (~/.codex) sessions, sorted by recency within each category</div>
         </header>
 
         <div class="stats-grid">
@@ -355,9 +355,9 @@
                 <div class="label">Total Projects</div>
             </div>
             <div class="stat-card">
-                <div class="number">11,033</div>
+                <div class="number">11,521</div>
                 <div class="label">Total Messages</div>
-                <div class="label" style="font-size:0.75rem;margin-top:4px;">Claude 10,259 · Codex 774</div>
+                <div class="label" style="font-size:0.75rem;margin-top:4px;">Claude 10,745 · Codex 776</div>
             </div>
             <div class="stat-card">
                 <div class="number">22</div>
@@ -399,10 +399,10 @@
 
         <details style="background:#f0fff4;border:1.5px solid #10b981;border-radius:8px;padding:8px 14px;margin:10px 0 18px 0;font-size:0.85rem;">
             <summary style="cursor:pointer;font-weight:600;color:#065f46;list-style:none;display:flex;align-items:center;gap:8px;">
-                &#9656; Cron Job Status &mdash; 9 local + 9 Linode
+                &#9656; Cron Job Status &mdash; 10 local + 9 Linode
             </summary>
             <div style="margin-top:10px;overflow-x:auto;">
-                <p style="font-weight:600;color:#065f46;margin-bottom:4px">Local (Mac) &mdash; 9 tracked</p>
+                <p style="font-weight:600;color:#065f46;margin-bottom:4px">Local (Mac) &mdash; 10 tracked</p>
                 <table style="border-collapse:collapse;width:100%;font-size:0.83rem;">
                   <thead><tr style="border-bottom:1px solid #ccc;color:#555">
                     <th style="text-align:left;padding:3px 10px 3px 0">Job</th>
@@ -413,10 +413,46 @@
                     <th style="text-align:left;padding:3px 8px">Last output</th>
                   </tr></thead>
                   <tbody><tr>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">hypothesis_global</td>
+          <td style="padding:4px 8px;color:#555">daily 8:43am</td>
+          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">3h ago</td>
+          <td style="padding:4px 8px;color:#888">47.2s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-05 08:43:06] Netlify: enumerated 56 host(s)
+[2026-06-05 08:43:06] Checking 64 URL pattern(s) for outside annotations
+[2026-06-05 08:43:48] Found 189 outside annotation(s) total across all pages
+[2026-06-05 08:43:48] New since last run: 0
+[2026-06-05 08:43:48] Nothing new. Done.">[2026-06-05 08:43:48] Nothing new. Done.</td>
+        </tr>
+<tr>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">cm_review</td>
+          <td style="padding:4px 8px;color:#555">daily 8am</td>
+          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">4h ago</td>
+          <td style="padding:4px 8px;color:#888">27.3s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="⠋ Uploading 3 files
+✔ Finished uploading 3 assets
+⠋ Waiting for deploy to go live...
+✔ Deploy is live!
+[07:00:28] Deploy complete.">[07:00:28] Deploy complete.</td>
+        </tr>
+<tr>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">gdrive_notion_sync</td>
+          <td style="padding:4px 8px;color:#555">daily 7am</td>
+          <td style="padding:4px 8px"><span style="color:#ef4444;font-weight:700">ERROR</span></td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">5h ago</td>
+          <td style="padding:4px 8px;color:#888">0.7s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
+    _client._handle_error_response(response_data, retryable_error)
+  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})">google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})</td>
+        </tr>
+<tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">hypothesis_monitor</td>
           <td style="padding:4px 8px;color:#555">every 48h 14:30</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">4h ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">1d ago</td>
           <td style="padding:4px 8px;color:#888">4.1s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-03 14:30:05] New annotations:       0
 [2026-06-03 14:30:05] #implement requests:   0
@@ -428,7 +464,7 @@ Done. To review and implement changes, run a Claude Code session and say:
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">sessions_outline</td>
           <td style="padding:4px 8px;color:#555">every 48h noon</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">6h ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">2d ago</td>
           <td style="padding:4px 8px;color:#888">7.4s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="git@ssh.github.com: Permission denied (publickey).
 fatal: Could not read from remote repository.
@@ -437,34 +473,10 @@ Please make sure you have the correct access rights
 and the repository exists.">and the repository exists.</td>
         </tr>
 <tr>
-          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">cm_review</td>
-          <td style="padding:4px 8px;color:#555">daily 8am</td>
-          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">10h ago</td>
-          <td style="padding:4px 8px;color:#888">28.4s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="⠋ Uploading 3 files
-✔ Finished uploading 3 assets
-⠋ Waiting for deploy to go live...
-✔ Deploy is live!
-[07:00:29] Deploy complete.">[07:00:29] Deploy complete.</td>
-        </tr>
-<tr>
-          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">gdrive_notion_sync</td>
-          <td style="padding:4px 8px;color:#555">daily 7am</td>
-          <td style="padding:4px 8px"><span style="color:#ef4444;font-weight:700">ERROR</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">11h ago</td>
-          <td style="padding:4px 8px;color:#888">0.6s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
-    _client._handle_error_response(response_data, retryable_error)
-  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
-    raise exceptions.RefreshError(
-google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})">google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or revoked.', {'error': 'invalid_grant', 'error_description': 'Token has been expired or revoked.'})</td>
-        </tr>
-<tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">forum_bot</td>
           <td style="padding:4px 8px;color:#555">Sun 9am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">3d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">5d ago</td>
           <td style="padding:4px 8px;color:#888">5144.3s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="2026-05-31 10:24:14 [INFO] unjournal_forum_bot.runner:   Found 10 unique candidate posts
 2026-05-31 10:24:14 [INFO] unjournal_forum_bot.runner:   Matches: 0 (A=0, B=0)
@@ -476,7 +488,7 @@ google.auth.exceptions.RefreshError: ('invalid_grant: Token has been expired or 
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">synthesis</td>
           <td style="padding:4px 8px;color:#555">daily 9:17am</td>
           <td style="padding:4px 8px"><span style="color:#ef4444;font-weight:700">ERROR</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">4d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">6d ago</td>
           <td style="padding:4px 8px;color:#888">80.5s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="  File "/Users/yosemite/githubs/UJ_PQ_data_beliefs_project/pba-workshop/scripts/generate_synthesis.py", line 547, in generate
     submissions = fetch_submissions()
@@ -488,7 +500,7 @@ RuntimeError: Netlify CLI error: ›   FetchError: request to https://api.netlif
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">beliefs_dashboard</td>
           <td style="padding:4px 8px;color:#555">Tue+Fri 9:30am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">5d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">7d ago</td>
           <td style="padding:4px 8px;color:#888">20.9s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title=""></td>
         </tr>
@@ -496,7 +508,7 @@ RuntimeError: Netlify CLI error: ›   FetchError: request to https://api.netlif
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">uj_prioritization</td>
           <td style="padding:4px 8px;color:#555">Mon+Thu 10am</td>
           <td style="padding:4px 8px"><span style="color:#ef4444;font-weight:700">ERROR</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">6d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">8d ago</td>
           <td style="padding:4px 8px;color:#888">6.2s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="  File "/Users/yosemite/githubs/uj-prioritization/pipeline/run_weekly.py", line 341, in main
     init_db()
@@ -508,7 +520,7 @@ sqlite3.OperationalError: unable to open database file">sqlite3.OperationalError
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">swim_audio</td>
           <td style="padding:4px 8px;color:#555">Mon+Thu 6am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">6d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">8d ago</td>
           <td style="padding:4px 8px;color:#888">275.7s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-05-28 06:04:14] Selected podcast: Can AIs already start 'rogue deployments' inside AI companies? (Landmark new METR report) (score=14)
 [2026-05-28 06:04:14] Selected podcast: Eric Jang – Building AlphaGo from scratch (score=12)
@@ -599,8 +611,8 @@ sqlite3.OperationalError: unable to open database file">sqlite3.OperationalError
                         <div class="summary-meta">
                             <span class="status-badge" style="background: #10b981">active</span>
                             
-                            <span class="last-active">📅 2026-06-03</span>
-                            <span>💬 323 msgs</span>
+                            <span class="last-active">📅 2026-06-05</span>
+                            <span>💬 334 msgs</span>
                         </div>
                     </summary>
                     <div class="content">
@@ -615,11 +627,11 @@ sqlite3.OperationalError: unable to open database file">sqlite3.OperationalError
                             </div>
                             <div class="meta-item">
                                 <span class="label">Period (combined):</span>
-                                <span class="value">2026-05-11 → 2026-06-03</span>
+                                <span class="value">2026-05-11 → 2026-06-05</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude msgs:</span>
-                                <span class="value">323</span>
+                                <span class="value">334</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude sessions:</span>
@@ -640,8 +652,8 @@ sqlite3.OperationalError: unable to open database file">sqlite3.OperationalError
                         <div class="summary-meta">
                             <span class="status-badge" style="background: #10b981">active</span>
                             <span class="status-badge" style="background:#000000">Claude+Codex</span>
-                            <span class="last-active">📅 2026-06-03</span>
-                            <span>💬 229 msgs</span>
+                            <span class="last-active">📅 2026-06-05</span>
+                            <span>💬 314 msgs</span>
                         </div>
                     </summary>
                     <div class="content">
@@ -657,19 +669,19 @@ Handles public-facing content, evaluator communications, and organizational know
                             </div>
                             <div class="meta-item">
                                 <span class="label">Period (combined):</span>
-                                <span class="value">2026-02-02 → 2026-06-03</span>
+                                <span class="value">2026-02-02 → 2026-06-05</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude msgs:</span>
-                                <span class="value">173</span>
+                                <span class="value">256</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude sessions:</span>
-                                <span class="value">4</span>
+                                <span class="value">6</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Codex msgs:</span>
-                                <span class="value">56</span>
+                                <span class="value">58</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Codex sessions:</span>
@@ -677,7 +689,7 @@ Handles public-facing content, evaluator communications, and organizational know
                             </div>
                             <div class="meta-item">
                                 <span class="label">Codex period:</span>
-                                <span class="value">2026-02-02 → 2026-06-03</span>
+                                <span class="value">2026-02-02 → 2026-06-04</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Repo:</span>
@@ -694,8 +706,8 @@ Handles public-facing content, evaluator communications, and organizational know
                         <div class="summary-meta">
                             <span class="status-badge" style="background: #10b981">active</span>
                             <span class="status-badge" style="background:#000000">Claude+Codex</span>
-                            <span class="last-active">📅 2026-06-03</span>
-                            <span>💬 54 msgs</span>
+                            <span class="last-active">📅 2026-06-05</span>
+                            <span>💬 275 msgs</span>
                         </div>
                     </summary>
                     <div class="content">
@@ -711,11 +723,11 @@ Research prioritization methodology for high-impact topics.</div>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Period (combined):</span>
-                                <span class="value">2026-03-30 → 2026-06-03</span>
+                                <span class="value">2026-03-30 → 2026-06-05</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude msgs:</span>
-                                <span class="value">33</span>
+                                <span class="value">254</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude sessions:</span>
@@ -1014,8 +1026,8 @@ Powers the data blog and public statistics pages.</div>
                         <div class="summary-meta">
                             <span class="status-badge" style="background: #6366f1">development</span>
                             <span class="status-badge" style="background:#000000">Claude+Codex</span>
-                            <span class="last-active">📅 2026-06-03</span>
-                            <span>💬 913 msgs</span>
+                            <span class="last-active">📅 2026-06-05</span>
+                            <span>💬 963 msgs</span>
                         </div>
                     </summary>
                     <div class="content">
@@ -1031,11 +1043,11 @@ Allows neighbors to share tools, equipment, and household items.</div>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Period (combined):</span>
-                                <span class="value">2026-05-03 → 2026-06-03</span>
+                                <span class="value">2026-05-03 → 2026-06-05</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude msgs:</span>
-                                <span class="value">911</span>
+                                <span class="value">961</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude sessions:</span>
@@ -1284,6 +1296,40 @@ Includes negotiation playbooks and cost reduction strategies.</div>
 
                 <details class="project-card">
                     <summary>
+                        <span class="title">beliefs/project</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
+                            <span class="last-active">📅 2026-06-05</span>
+                            <span>💬 5376 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2026-05-03 → 2026-06-05</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">5276 / 13</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">100 / 4</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/githubs/UJ/PQ/data/beliefs/project</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
                         <span class="title">AI/notes</span>
                         <div class="summary-meta">
                             <span class="status-badge" style="background:#000000">Claude+Codex</span>
@@ -1308,40 +1354,6 @@ Includes negotiation playbooks and cost reduction strategies.</div>
                             <div class="meta-item">
                                 <span class="label">Path:</span>
                                 <span class="value"><code>~/Dropbox/reinstein/law/AI/notes</code></span>
-                            </div>
-                        </div>
-                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
-                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
-                        </p>
-                    </div>
-                </details>
-
-                <details class="project-card">
-                    <summary>
-                        <span class="title">beliefs/project</span>
-                        <div class="summary-meta">
-                            <span class="status-badge" style="background:#000000">Claude+Codex</span>
-                            <span class="last-active">📅 2026-06-03</span>
-                            <span>💬 5255 msgs</span>
-                        </div>
-                    </summary>
-                    <div class="content">
-                        <div class="meta-grid">
-                            <div class="meta-item">
-                                <span class="label">Period (combined):</span>
-                                <span class="value">2026-05-03 → 2026-06-03</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="label">Claude msgs / sessions:</span>
-                                <span class="value">5155 / 13</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="label">Codex msgs / sessions:</span>
-                                <span class="value">100 / 4</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="label">Path:</span>
-                                <span class="value"><code>~/githubs/UJ/PQ/data/beliefs/project</code></span>
                             </div>
                         </div>
                         <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
