@@ -34,9 +34,27 @@ LINODE_JOBS = [
         "log": "/root/.cron_logs/forum_bot.log",
     },
     {
+        "job": "forum_bot_lw",
+        "schedule": "Sun 9am UTC",
+        "description": "LessWrong: same paper scan as EA Forum, runs in parallel",
+        "log": "/root/.cron_logs/forum_bot_lw.log",
+    },
+    {
+        "job": "forum_bot_topics",
+        "schedule": "daily Mon-Sat 11am UTC",
+        "description": "EA Forum daily topic scan → pending queue (no paper crawl)",
+        "log": "/root/.cron_logs/forum_bot_topics.log",
+    },
+    {
+        "job": "forum_bot_lw_topics",
+        "schedule": "daily Mon-Sat 11:30am UTC",
+        "description": "LessWrong daily topic scan → pending queue",
+        "log": "/root/.cron_logs/forum_bot_lw_topics.log",
+    },
+    {
         "job": "forum_bot_bluesky",
         "schedule": "Sun 10:50am UTC",
-        "description": "Bluesky: search and reply on Unjournal paper matches",
+        "description": "Bluesky: search and reply on Unjournal paper matches + topic scan",
         "log": "/root/.cron_logs/forum_bot_bluesky.log",
     },
     {
@@ -99,10 +117,17 @@ def get_repo_name(encoded_path: str) -> str:
 
 
 def parse_session_file(filepath: Path) -> dict:
-    """Extract metadata from a session jsonl file."""
+    """Extract metadata from a session jsonl file.
+
+    Reads the real `cwd` recorded in the session events. The on-disk project
+    directory name is a *lossy* encoding (both `/` and `_` are written as `-`),
+    so it cannot be decoded back to the true folder name. The `cwd` field is the
+    authoritative source for the real path and folder name.
+    """
     messages = 0
     first_timestamp = None
     last_timestamp = None
+    cwd = None
 
     try:
         with open(filepath, 'r', errors='ignore') as f:
@@ -111,6 +136,8 @@ def parse_session_file(filepath: Path) -> dict:
                     data = json.loads(line)
                     if data.get("type") == "user" or (data.get("message", {}).get("role") == "user"):
                         messages += 1
+                    if cwd is None and data.get("cwd"):
+                        cwd = data.get("cwd")
                     ts = data.get("timestamp")
                     if ts:
                         if first_timestamp is None or ts < first_timestamp:
@@ -124,6 +151,7 @@ def parse_session_file(filepath: Path) -> dict:
 
     return {
         "messages": messages,
+        "cwd": cwd,
         "first_date": first_timestamp[:10] if first_timestamp else None,
         "last_date": last_timestamp[:10] if last_timestamp else None,
     }
@@ -146,6 +174,25 @@ def cwd_to_repo_name(cwd: str) -> str:
 def cwd_to_decoded_path(cwd: str) -> str:
     """Pretty-print a cwd as ~/... for display."""
     return re.sub(r"^/Users/yosemite", "~", cwd or "")
+
+
+def folder_label(cwd: str) -> str:
+    """The real, human-recognizable folder name for a cwd.
+
+    This is the leaf directory name (e.g. `pypubpub` for
+    `/Users/yosemite/githubs/pypubpub`). For a nested project the parent is
+    prepended so it stays distinguishable (e.g. `UJ_PQ_data_beliefs_project/cm-workshop`).
+    """
+    if not cwd:
+        return ""
+    p = Path(cwd)
+    home = str(Path.home())
+    # A repo checked out directly under ~/githubs (or another single level) → leaf name.
+    # A deeper nested path → keep the last two components for disambiguation.
+    parent = p.parent
+    if parent.name in {"githubs", "yosemite", "Dropbox", ""} or str(parent) == home:
+        return p.name
+    return f"{parent.name}/{p.name}"
 
 
 def parse_codex_session_file(filepath: Path) -> dict:
@@ -215,8 +262,9 @@ def parse_codex_session_file(filepath: Path) -> dict:
 
 
 def scan_codex_projects() -> dict:
-    """Scan Codex sessions and aggregate stats keyed by repo_name."""
+    """Scan Codex sessions and aggregate stats keyed by absolute cwd."""
     projects = defaultdict(lambda: {
+        "repo_name": None,
         "codex_messages": 0,
         "codex_first_date": None,
         "codex_last_date": None,
@@ -234,11 +282,13 @@ def scan_codex_projects() -> dict:
         if stats["messages"] <= 0 or not stats["cwd"]:
             continue
 
-        repo_name = cwd_to_repo_name(stats["cwd"])
+        key = stats["cwd"]  # absolute path: shared key with Claude scan
+        repo_name = folder_label(stats["cwd"])
         if not repo_name:
             continue
 
-        bucket = projects[repo_name]
+        bucket = projects[key]
+        bucket["repo_name"] = repo_name
         bucket["codex_messages"] += stats["messages"]
         bucket["codex_path"] = cwd_to_decoded_path(stats["cwd"])
         if stats["session_id"]:
@@ -255,8 +305,15 @@ def scan_codex_projects() -> dict:
 
 
 def scan_projects() -> dict:
-    """Scan Claude Code projects and aggregate stats."""
+    """Scan Claude Code projects and aggregate stats, keyed by absolute cwd.
+
+    The on-disk directory name (e.g. `-Users-yosemite-githubs-claude-code-misc-work`)
+    is a lossy encoding that cannot be reversed into the true folder name, so we
+    read the real `cwd` from each session's events instead. Sessions that share a
+    `cwd` are bucketed together regardless of which encoded directory they live in.
+    """
     projects = defaultdict(lambda: {
+        "repo_name": None,
         "messages": 0, "first_date": None, "last_date": None,
         "sessions": [], "path": None,
         "codex_messages": 0, "codex_first_date": None, "codex_last_date": None,
@@ -270,26 +327,39 @@ def scan_projects() -> dict:
         if not project_dir.is_dir():
             continue
 
-        project_name = project_dir.name
-        repo_name = get_repo_name(project_name)
-        decoded_path = decode_project_path(project_name)
+        # Fallback identity if a session has no recorded cwd (lossy decode).
+        fallback_path = decode_project_path(project_dir.name)
 
         for session_file in project_dir.glob("*.jsonl"):
             if "subagent" in str(session_file) or session_file.name.startswith("agent-"):
                 continue
 
             stats = parse_session_file(session_file)
-            if stats["messages"] > 0:
-                projects[repo_name]["messages"] += stats["messages"]
-                projects[repo_name]["path"] = decoded_path
-                projects[repo_name]["sessions"].append(session_file.stem)
+            if stats["messages"] <= 0:
+                continue
 
-                if stats["first_date"]:
-                    if projects[repo_name]["first_date"] is None or stats["first_date"] < projects[repo_name]["first_date"]:
-                        projects[repo_name]["first_date"] = stats["first_date"]
-                if stats["last_date"]:
-                    if projects[repo_name]["last_date"] is None or stats["last_date"] > projects[repo_name]["last_date"]:
-                        projects[repo_name]["last_date"] = stats["last_date"]
+            cwd = stats.get("cwd")
+            if cwd:
+                key = cwd
+                repo_name = folder_label(cwd)
+                decoded_path = cwd_to_decoded_path(cwd)
+            else:
+                key = fallback_path
+                repo_name = get_repo_name(project_dir.name)
+                decoded_path = fallback_path
+
+            bucket = projects[key]
+            bucket["repo_name"] = repo_name
+            bucket["messages"] += stats["messages"]
+            bucket["path"] = decoded_path
+            bucket["sessions"].append(session_file.stem)
+
+            if stats["first_date"]:
+                if bucket["first_date"] is None or stats["first_date"] < bucket["first_date"]:
+                    bucket["first_date"] = stats["first_date"]
+            if stats["last_date"]:
+                if bucket["last_date"] is None or stats["last_date"] > bucket["last_date"]:
+                    bucket["last_date"] = stats["last_date"]
 
     return projects
 
@@ -329,7 +399,8 @@ def merge_data(live_stats: dict, metadata: dict) -> list:
     """Merge live stats with metadata, organized by category."""
     merged = []
 
-    for repo_name, stats in live_stats.items():
+    for key, stats in live_stats.items():
+        repo_name = stats.get("repo_name") or get_repo_name(key)
         meta = match_metadata(repo_name, metadata) or {}
 
         combined_last = _max_date(stats.get("last_date"), stats.get("codex_last_date"))
@@ -636,6 +707,17 @@ def generate_html(merged_data: list, metadata: dict) -> str:
             min-width: 200px;
         }}
 
+        .project-card .folder-chip {{
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }}
+
         .project-card .summary-meta {{
             display: flex;
             gap: 12px;
@@ -895,6 +977,27 @@ def generate_html(merged_data: list, metadata: dict) -> str:
             <button onclick="document.querySelectorAll('.project-card').forEach(d => d.open = false)">Collapse All</button>
         </div>
 
+        <details style="background:#fffaf0;border:1.5px solid #f59e0b;border-radius:8px;padding:8px 14px;margin:10px 0 18px 0;font-size:0.85rem;">
+            <summary style="cursor:pointer;font-weight:600;color:#92400e;list-style:none;display:flex;align-items:center;gap:8px;">
+                &#9656; How &amp; where this page is generated
+            </summary>
+            <div style="margin-top:10px;color:#333;line-height:1.7;">
+                <b>Repo:</b> <code>~/githubs/claude_code_misc_work</code> (GitHub: <a href="https://github.com/daaronr/claude_code_misc_work" target="_blank">daaronr/claude_code_misc_work</a>)<br>
+                <b>Generator script:</b> <code>update_sessions_outline.py</code> &mdash; run it with
+                <code>python update_sessions_outline.py</code> (add <code>--push</code> to publish to GitHub Pages).<br>
+                <b>Descriptions/goals/links:</b> hand-edited in <code>sessions_metadata.yaml</code> (same repo). Projects without an entry land in <b>Other Projects</b> with live stats only.<br>
+                <b>Data sources (scanned live):</b>
+                <ul style="margin:4px 0 4px 18px;">
+                    <li>Claude Code sessions: <code>~/.claude/projects/&lt;encoded-path&gt;/*.jsonl</code></li>
+                    <li>Codex sessions: <code>~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl</code></li>
+                </ul>
+                <b>What shows up:</b> only folders where a session was actually launched (with at least one user message). The real folder name is read from the <code>cwd</code> recorded inside each session &mdash; shown as the monospace chip next to each project title.<br>
+                <b>Refresh:</b> auto-runs every 48h via the <code>sessions_outline</code> cron job; also regenerated whenever the script is run manually.<br>
+                <b>Outputs:</b> <code>~/githubs/CLAUDE_CODE_SESSIONS_OUTLINE.html</code> (local) &bull;
+                <code>sessions_dashboard.html</code> (repo / GitHub Pages) &bull; a copy in <code>~/Dropbox/unjournal private backups/</code>.
+            </div>
+        </details>
+
         <details style="background:#f0f4ff;border:1.5px solid #4a6cf7;border-radius:8px;padding:8px 14px;margin:10px 0 18px 0;font-size:0.85rem;">
             <summary style="cursor:pointer;font-weight:600;color:#1a237e;list-style:none;display:flex;align-items:center;gap:8px;">
                 &#9656; Unjournal AI Conversation Archive &mdash; 488 conversations, ask Claude Code to query
@@ -994,6 +1097,7 @@ def generate_html(merged_data: list, metadata: dict) -> str:
                 <details class="project-card">
                     <summary>
                         <span class="title">{p["display_name"]}</span>
+                        <span class="folder-chip" title="{p.get("path") or ""}">{p["repo_name"]}</span>
                         <div class="summary-meta">
                             <span class="status-badge" style="background: {status_color}">{p["status"]}</span>
                             {codex_badge}
@@ -1061,6 +1165,7 @@ def generate_html(merged_data: list, metadata: dict) -> str:
                 <details class="project-card">
                     <summary>
                         <span class="title">{p["repo_name"]}</span>
+                        <span class="folder-chip" title="{p.get("path") or p.get("codex_path") or ""}">{(p.get("path") or p.get("codex_path") or "").rstrip("/")}</span>
                         <div class="summary-meta">
                             {other_codex_badge}
                             <span class="last-active">📅 {p["combined_last_date"] or "Unknown"}</span>
@@ -1188,10 +1293,12 @@ def main(args=None):
     codex_stats = scan_codex_projects()
     print(f"  Found {len(codex_stats)} Codex projects with sessions")
 
-    # Merge Codex data into the same repo buckets. Projects only seen by Codex
-    # get a new entry with zeroed Claude fields.
-    for repo_name, cstats in codex_stats.items():
-        bucket = live_stats[repo_name]
+    # Merge Codex data into the same buckets (keyed by absolute cwd). Projects
+    # only seen by Codex get a new entry with zeroed Claude fields.
+    for key, cstats in codex_stats.items():
+        bucket = live_stats[key]
+        if not bucket.get("repo_name"):
+            bucket["repo_name"] = cstats.get("repo_name")
         bucket["codex_messages"] = cstats["codex_messages"]
         bucket["codex_first_date"] = cstats["codex_first_date"]
         bucket["codex_last_date"] = cstats["codex_last_date"]
