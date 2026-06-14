@@ -1,0 +1,119 @@
+{
+  "output_root": "~/Downloads",
+  "folder_prefix": "swim_audio",
+  "run_days_recent": 14,
+  "max_total_tracks": 12,
+  "max_podcast_tracks": 6,
+  "max_favorite_tracks": 6,
+  "max_email_items": 8,
+  "max_local_text_items": 4,
+  "min_interest_score": 2,
+  "digest": {
+    "enabled": true,
+    "claude_bin": "/Users/yosemite/.local/bin/claude",
+    "max_words": 1200,
+    "timeout_seconds": 300
+  },
+  "favorite_feeds": [
+    "You'll Hear It",
+    "10 Minute Jazz Lesson",
+    "Jazz United",
+    "Jazz Lines",
+    "Ahead of Its Time",
+    "Strong Songs",
+    "Heavyweight",
+    "The Daily",
+    "Hard Fork"
+  ],
+  "audio_bitrate": "96k",
+  "tts_voice": "en-GB-RyanNeural",
+  "tts_rate": "-12%",
+  "interest_keywords": [
+    "ai",
+    "artificial intelligence",
+    "alignment",
+    "economics",
+    "effective altruism",
+    "forecasting",
+    "global priorities",
+    "impact",
+    "open science",
+    "philanthropy",
+    "policy",
+    "research",
+    "replication",
+    "unjournal",
+    "jazz",
+    "music",
+    "improvisation",
+    "saxophone",
+    "piano",
+    "trumpet",
+    "album",
+    "song",
+    "chord",
+    "harmony",
+    "solo",
+    "composer",
+    "musician"
+  ],
+  "podcast_search_terms": [
+    "80,000 Hours Podcast",
+    "Dwarkesh Podcast",
+    "EconTalk",
+    "Hard Fork",
+    "Hear This Idea",
+    "Conversations with Tyler",
+    "The Lunar Society",
+    "Strong Songs",
+    "The Daily",
+    "You'll Hear It",
+    "Don't Worry About the Vase",
+    "Astral Codex Ten Podcast",
+    "Heavyweight",
+    "Jazz Lines",
+    "10 Minute Jazz Lesson",
+    "Ahead of Its Time",
+    "Jazz United",
+    "Sean Carroll's Mindscape",
+    "Clearer Thinking with Spencer Greenberg",
+    "Rationally Speaking",
+    "The Ezra Klein Show",
+    "Search Engine"
+  ],
+  "feed_urls": [],
+  "gmail": {
+    "enabled": true,
+    "credentials_path": "~/.gmail-mcp/credentials.json",
+    "query": "newer_than:14d -category:promotions -category:social -from:zoom.us -subject:\"Meeting assets\"",
+    "include_bodies": true
+  },
+  "local_text": {
+    "enabled": true,
+    "paths": [
+      "~/githubs/claude_code_misc_work"
+    ],
+    "extensions": [
+      ".md"
+    ],
+    "exclude_dirs": [
+      ".git",
+      ".claude",
+      ".netlify",
+      "__pycache__",
+      "node_modules",
+      "dist",
+      "build"
+    ],
+    "exclude_files": [
+      "CLAUDE.md",
+      "AGENTS.md",
+      "MEMORY.md",
+      "README*",
+      "CHANGELOG*",
+      "*settings*",
+      "*.lock",
+      "requirements*.txt"
+    ]
+  }
+}
