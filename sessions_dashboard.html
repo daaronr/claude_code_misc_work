@@ -357,7 +357,7 @@
     <div class="container">
         <header>
             <h1>📊 Claude Code &amp; Codex Sessions Dashboard</h1>
-            <div class="subtitle">Auto-generated: 2026-06-23 12:00 • Combines Claude Code (~/.claude) and Codex (~/.codex) sessions, sorted by recency within each category</div>
+            <div class="subtitle">Auto-generated: 2026-06-25 12:00 • Combines Claude Code (~/.claude) and Codex (~/.codex) sessions, sorted by recency within each category</div>
         </header>
 
         <div class="stats-grid">
@@ -366,16 +366,16 @@
                 <div class="label">Total Projects</div>
             </div>
             <div class="stat-card">
-                <div class="number">12,275</div>
+                <div class="number">12,714</div>
                 <div class="label">Total Messages</div>
-                <div class="label" style="font-size:0.75rem;margin-top:4px;">Claude 11,239 · Codex 1,036</div>
+                <div class="label" style="font-size:0.75rem;margin-top:4px;">Claude 11,675 · Codex 1,039</div>
             </div>
             <div class="stat-card">
                 <div class="number">27</div>
                 <div class="label">Projects w/ Codex Activity</div>
             </div>
             <div class="stat-card">
-                <div class="number">23</div>
+                <div class="number">24</div>
                 <div class="label">Active This Month</div>
             </div>
         </div>
@@ -448,48 +448,64 @@
                   <tbody><tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">hypothesis_responder</td>
           <td style="padding:4px 8px;color:#555">every 30 min</td>
-          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
+          <td style="padding:4px 8px"><span style="color:#ef4444;font-weight:700">ERROR</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">0m ago</td>
-          <td style="padding:4px 8px;color:#888">1.3s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-23 12:00:00] ========================================================
-[2026-06-23 12:00:00] responder start (dry=False no_adjust=False token=NO kill_switch=ON)
-[2026-06-23 12:00:01]   [eval-study] 30 annotations; 29 watched, 1 outside
-[2026-06-23 12:00:01]   [eval-study] no new watched comments">[2026-06-23 12:00:01]   [eval-study] no new watched comments</td>
+          <td style="padding:4px 8px;color:#888">0.5s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-25 12:00:00] ========================================================
+[2026-06-25 12:00:00] responder start (dry=False no_adjust=False token=NO kill_switch=ON)
+[2026-06-25 12:00:00]   [eval-study] ERROR fetching: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+[2026-06-25 12:00:01] 1 site(s) failed to fetch this run (likely transient network/DNS); state not advanced for them, next run retries.">[2026-06-25 12:00:01] 1 site(s) failed to fetch this run (likely transient network/DNS); state not advanced for them, next run retries.</td>
         </tr>
 <tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">feedback_sync</td>
           <td style="padding:4px 8px;color:#555">hourly :23</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">37m ago</td>
-          <td style="padding:4px 8px;color:#888">5.5s</td>
+          <td style="padding:4px 8px;color:#888">5.1s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title=""></td>
         </tr>
 <tr>
-          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">beliefs_dashboard</td>
-          <td style="padding:4px 8px;color:#555">Tue+Fri 9:30am</td>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">uj_prioritization</td>
+          <td style="padding:4px 8px;color:#555">Mon+Thu 10am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">2h ago</td>
-          <td style="padding:4px 8px;color:#888">24.9s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title=""></td>
+          <td style="padding:4px 8px;color:#888">168.8s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
+OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
+OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
+OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
+OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}">OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}</td>
+        </tr>
+<tr>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">swim_audio</td>
+          <td style="padding:4px 8px;color:#555">Mon+Thu 9:45am (launchd)</td>
+          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">2h ago</td>
+          <td style="padding:4px 8px;color:#888">218.3s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-25 09:48:06] Selected podcast: Use AI This Election (score=9)
+[2026-06-25 09:48:06] Selected podcast: New Paradigms Won't Save You (score=8)
+[2026-06-25 09:48:06] Selected podcast: Claude Fable 5 and Mythos 5: The System Card (score=8)
+[2026-06-25 09:48:42] Selected podcast: The Hidden History of Evidence-Based Everything (with Helen Pearson) (score=7)
+[2026-06-25 09:48:42] Finished 13 MP3 files.">[2026-06-25 09:48:42] Finished 13 MP3 files.</td>
         </tr>
 <tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">synthesis</td>
           <td style="padding:4px 8px;color:#555">daily 9:17am</td>
           <td style="padding:4px 8px"><span style="color:#ef4444;font-weight:700">ERROR</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">2h ago</td>
-          <td style="padding:4px 8px;color:#888">20.8s</td>
+          <td style="padding:4px 8px;color:#888">21.6s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="  File "/usr/local/lib/python3.9/site-packages/anthropic/_base_client.py", line 1364, in post
     return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
   File "/usr/local/lib/python3.9/site-packages/anthropic/_base_client.py", line 1137, in request
     raise self._make_status_error_from_response(err.response) from None
-anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CcKrvHMTvn4mV9vy6xrwc'}">anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CcKrvHMTvn4mV9vy6xrwc'}</td>
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CcPeYBr5Pr6CiL6ENufPz'}">anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011CcPeYBr5Pr6CiL6ENufPz'}</td>
         </tr>
 <tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">uj_eval_notify</td>
           <td style="padding:4px 8px;color:#555">daily 9am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">3h ago</td>
-          <td style="padding:4px 8px;color:#888">23.9s</td>
+          <td style="padding:4px 8px;color:#888">19.7s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="Feed: 25 items, state has 29 seen GUIDs
 0 new anchor item(s) to broadcast">0 new anchor item(s) to broadcast</td>
         </tr>
@@ -498,19 +514,19 @@ anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type':
           <td style="padding:4px 8px;color:#555">daily 8:43am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">3h ago</td>
-          <td style="padding:4px 8px;color:#888">54.9s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-23 08:43:06] Netlify: enumerated 64 host(s)
-[2026-06-23 08:43:06] Checking 72 URL pattern(s) for outside annotations
-[2026-06-23 08:43:55] Found 190 outside annotation(s) total across all pages
-[2026-06-23 08:43:55] New since last run: 0
-[2026-06-23 08:43:55] Nothing new. Done.">[2026-06-23 08:43:55] Nothing new. Done.</td>
+          <td style="padding:4px 8px;color:#888">52.2s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-25 08:43:07] Netlify: enumerated 64 host(s)
+[2026-06-25 08:43:07] Checking 72 URL pattern(s) for outside annotations
+[2026-06-25 08:43:52] Found 190 outside annotation(s) total across all pages
+[2026-06-25 08:43:52] New since last run: 0
+[2026-06-25 08:43:52] Nothing new. Done.">[2026-06-25 08:43:52] Nothing new. Done.</td>
         </tr>
 <tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">gdrive_notion_sync</td>
           <td style="padding:4px 8px;color:#555">daily 7am</td>
           <td style="padding:4px 8px"><span style="color:#ef4444;font-weight:700">ERROR</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">5h ago</td>
-          <td style="padding:4px 8px;color:#888">0.8s</td>
+          <td style="padding:4px 8px;color:#888">1.0s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="  File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/site-packages/google/oauth2/reauth.py", line 370, in refresh_grant
     _client._handle_error_response(response_data, retryable_error)
   File "/opt/homebrew/Caskroom/miniforge/base/lib/python3.12/site-packages/google/oauth2/_client.py", line 73, in _handle_error_response
@@ -522,19 +538,19 @@ google.auth.exceptions.RefreshError: ('invalid_grant: Bad Request', {'error': 'i
           <td style="padding:4px 8px;color:#555">every 48h 14:30</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">1d ago</td>
-          <td style="padding:4px 8px;color:#888">3.4s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-21 14:30:04] New annotations:       0
-[2026-06-21 14:30:04] #implement requests:   0
-[2026-06-21 14:30:04] 
+          <td style="padding:4px 8px;color:#888">0.3s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-23 14:32:52] New annotations:       0
+[2026-06-23 14:32:52] #implement requests:   0
+[2026-06-23 14:32:52] 
 Done. To review and implement changes, run a Claude Code session and say:
-[2026-06-21 14:30:04]   'Check hypothesis annotations on the impact directory and suggest implementations'">[2026-06-21 14:30:04]   'Check hypothesis annotations on the impact directory and suggest implementations'</td>
+[2026-06-23 14:32:52]   'Check hypothesis annotations on the impact directory and suggest implementations'">[2026-06-23 14:32:52]   'Check hypothesis annotations on the impact directory and suggest implementations'</td>
         </tr>
 <tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">sessions_outline</td>
           <td style="padding:4px 8px;color:#555">every 48h noon</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
           <td style="padding:4px 8px;color:#555;white-space:nowrap">2d ago</td>
-          <td style="padding:4px 8px;color:#888">7.1s</td>
+          <td style="padding:4px 8px;color:#888">16.1s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="git@ssh.github.com: Permission denied (publickey).
 fatal: Could not read from remote repository.
 
@@ -542,10 +558,18 @@ Please make sure you have the correct access rights
 and the repository exists.">and the repository exists.</td>
         </tr>
 <tr>
+          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">beliefs_dashboard</td>
+          <td style="padding:4px 8px;color:#555">Tue+Fri 9:30am</td>
+          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">2d ago</td>
+          <td style="padding:4px 8px;color:#888">24.9s</td>
+          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title=""></td>
+        </tr>
+<tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">ai_wealth_memo_monitor</td>
           <td style="padding:4px 8px;color:#555">manual no-slack smoke</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">3d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">5d ago</td>
           <td style="padding:4px 8px;color:#888">10.6s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-20T10:17:19.707040+00:00] Anthropic news: fetched
 [2026-06-20T10:17:22.102476+00:00] Anthropic company: fetched
@@ -557,40 +581,16 @@ and the repository exists.">and the repository exists.</td>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">author_reluctance_timed_hypothesis_responder</td>
           <td style="padding:4px 8px;color:#555">every 20 min for 7h</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">4d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">6d ago</td>
           <td style="padding:4px 8px;color:#888">0.2s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-18T21:27:00] Window expired at 2026-06-18T19:56:24.527484+00:00; no action
 [2026-06-18T21:27:00] Removed temporary cron entry">[2026-06-18T21:27:00] Removed temporary cron entry</td>
         </tr>
 <tr>
-          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">uj_prioritization</td>
-          <td style="padding:4px 8px;color:#555">Mon+Thu 10am</td>
-          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">8d ago</td>
-          <td style="padding:4px 8px;color:#888">2755.4s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
-OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
-OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
-OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}
-OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}">OpenAI prioritization failed: OpenAI API error: Error code: 400 - {'error': {'code': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.', 'type': 'invalid_request_error', 'param': None}}</td>
-        </tr>
-<tr>
-          <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">swim_audio</td>
-          <td style="padding:4px 8px;color:#555">Mon+Thu 6am</td>
-          <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">12d ago</td>
-          <td style="padding:4px 8px;color:#888">735.8s</td>
-          <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="[2026-06-11 06:05:00] Selected email: Re: [UTEXAS: SUSPECTED SPAM] Re: The Unjournal: Planning evaluation of your paper "Observational price variation in scanner data cannot reproduce experimental price elasticities" (score=34)
-[2026-06-11 06:05:56] Selected podcast: What it's really like to run AGI safety at Google DeepMind (and where I disagree with 'doomers') | Rohin Shah (score=15)
-[2026-06-11 06:09:20] Selected podcast: Alex Imas and Phil Trammell – What remains scarce after AGI? (score=7)
-[2026-06-11 06:10:50] Selected podcast: Hot I.P.O Summer + What Is A.I. Doing to Math? + HatGPT (score=5)
-[2026-06-11 06:12:16] Finished 12 MP3 files.">[2026-06-11 06:12:16] Finished 12 MP3 files.</td>
-        </tr>
-<tr>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">hypothesis_eval_study_monitor</td>
           <td style="padding:4px 8px;color:#555">every 30 min</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">12d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">14d ago</td>
           <td style="padding:4px 8px;color:#888">2.3s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="fetched 30 annotations on site; 29 from watched users (daaronr, unjournal)
 no new watched comments">no new watched comments</td>
@@ -599,7 +599,7 @@ no new watched comments">no new watched comments</td>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">cm_review</td>
           <td style="padding:4px 8px;color:#555">daily 8am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">18d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">20d ago</td>
           <td style="padding:4px 8px;color:#888">27.3s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="⠋ Uploading 3 files
 ✔ Finished uploading 3 assets
@@ -611,7 +611,7 @@ no new watched comments">no new watched comments</td>
           <td style="padding:4px 10px 4px 0;white-space:nowrap;font-weight:600">forum_bot</td>
           <td style="padding:4px 8px;color:#555">Sun 9am</td>
           <td style="padding:4px 8px"><span style="color:#10b981;font-weight:700">OK</span></td>
-          <td style="padding:4px 8px;color:#555;white-space:nowrap">23d ago</td>
+          <td style="padding:4px 8px;color:#555;white-space:nowrap">25d ago</td>
           <td style="padding:4px 8px;color:#888">5144.3s</td>
           <td style="padding:4px 8px;font-family:monospace;font-size:0.78rem;color:#555;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="2026-05-31 10:24:14 [INFO] unjournal_forum_bot.runner:   Found 10 unique candidate posts
 2026-05-31 10:24:14 [INFO] unjournal_forum_bot.runner:   Matches: 0 (A=0, B=0)
@@ -703,8 +703,8 @@ no new watched comments">no new watched comments</td>
                         <div class="summary-meta">
                             <span class="status-badge" style="background: #10b981">active</span>
                             <span class="status-badge" style="background:#000000">Claude+Codex</span>
-                            <span class="last-active">📅 2026-06-23</span>
-                            <span>💬 1481 msgs</span>
+                            <span class="last-active">📅 2026-06-24</span>
+                            <span>💬 1787 msgs</span>
                         </div>
                     </summary>
                     <div class="content">
@@ -720,15 +720,15 @@ Handles public-facing content, evaluator communications, and organizational know
                             </div>
                             <div class="meta-item">
                                 <span class="label">Period (combined):</span>
-                                <span class="value">2026-02-02 → 2026-06-23</span>
+                                <span class="value">2026-02-02 → 2026-06-24</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude msgs:</span>
-                                <span class="value">1330</span>
+                                <span class="value">1636</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude sessions:</span>
-                                <span class="value">12</span>
+                                <span class="value">11</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Codex msgs:</span>
@@ -1424,8 +1424,8 @@ Includes correlation analysis, Quarto presentations, and paper metadata manageme
                         <div class="summary-meta">
                             <span class="status-badge" style="background: #6366f1">development</span>
                             <span class="status-badge" style="background:#000000">Claude+Codex</span>
-                            <span class="last-active">📅 2026-06-22</span>
-                            <span>💬 1401 msgs</span>
+                            <span class="last-active">📅 2026-06-25</span>
+                            <span>💬 1134 msgs</span>
                         </div>
                     </summary>
                     <div class="content">
@@ -1441,11 +1441,11 @@ Allows neighbors to share tools, equipment, and household items.</div>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Period (combined):</span>
-                                <span class="value">2026-05-19 → 2026-06-22</span>
+                                <span class="value">2026-05-27 → 2026-06-25</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude msgs:</span>
-                                <span class="value">1399</span>
+                                <span class="value">1132</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude sessions:</span>
@@ -1659,19 +1659,19 @@ Allows neighbors to share tools, equipment, and household items.</div>
                         <span class="folder-chip" title="~/githubs/UJ_PQ_data_beliefs_project">~/githubs/UJ_PQ_data_beliefs_project</span>
                         <div class="summary-meta">
                             <span class="status-badge" style="background:#000000">Claude+Codex</span>
-                            <span class="last-active">📅 2026-06-23</span>
-                            <span>💬 4061 msgs</span>
+                            <span class="last-active">📅 2026-06-24</span>
+                            <span>💬 4458 msgs</span>
                         </div>
                     </summary>
                     <div class="content">
                         <div class="meta-grid">
                             <div class="meta-item">
                                 <span class="label">Period (combined):</span>
-                                <span class="value">2026-05-03 → 2026-06-23</span>
+                                <span class="value">2026-05-03 → 2026-06-24</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Claude msgs / sessions:</span>
-                                <span class="value">3961 / 10</span>
+                                <span class="value">4358 / 11</span>
                             </div>
                             <div class="meta-item">
                                 <span class="label">Codex msgs / sessions:</span>
@@ -1680,6 +1680,41 @@ Allows neighbors to share tools, equipment, and household items.</div>
                             <div class="meta-item">
                                 <span class="label">Path:</span>
                                 <span class="value"><code>~/githubs/UJ_PQ_data_beliefs_project</code></span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
+                        </p>
+                    </div>
+                </details>
+
+                <details class="project-card">
+                    <summary>
+                        <span class="title">unjournal_shared_files_notes</span>
+                        <span class="folder-chip" title="~/Dropbox/unjournal_shared_files_notes">~/Dropbox/unjournal_shared_files_notes</span>
+                        <div class="summary-meta">
+                            <span class="status-badge" style="background:#000000">Codex</span>
+                            <span class="last-active">📅 2026-06-24</span>
+                            <span>💬 18 msgs</span>
+                        </div>
+                    </summary>
+                    <div class="content">
+                        <div class="meta-grid">
+                            <div class="meta-item">
+                                <span class="label">Period (combined):</span>
+                                <span class="value">2025-11-20 → 2026-06-24</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Claude msgs / sessions:</span>
+                                <span class="value">0 / 0</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Codex msgs / sessions:</span>
+                                <span class="value">18 / 4</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="label">Path:</span>
+                                <span class="value"><code>~/Dropbox/unjournal_shared_files_notes</code></span>
                             </div>
                         </div>
                         <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
@@ -2100,41 +2135,6 @@ Allows neighbors to share tools, equipment, and household items.</div>
                             <div class="meta-item">
                                 <span class="label">Path:</span>
                                 <span class="value"><code>~/githubs/UJ_PQ_data_beliefs_project/beliefs_impact_funders_policy_project_zhuoran_reinstein</code></span>
-                            </div>
-                        </div>
-                        <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
-                            Add this project to <code>sessions_metadata.yaml</code> to include description, goals, and links.
-                        </p>
-                    </div>
-                </details>
-
-                <details class="project-card">
-                    <summary>
-                        <span class="title">unjournal_shared_files_notes</span>
-                        <span class="folder-chip" title="~/Dropbox/unjournal_shared_files_notes">~/Dropbox/unjournal_shared_files_notes</span>
-                        <div class="summary-meta">
-                            <span class="status-badge" style="background:#000000">Codex</span>
-                            <span class="last-active">📅 2026-05-02</span>
-                            <span>💬 15 msgs</span>
-                        </div>
-                    </summary>
-                    <div class="content">
-                        <div class="meta-grid">
-                            <div class="meta-item">
-                                <span class="label">Period (combined):</span>
-                                <span class="value">2025-11-20 → 2026-05-02</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="label">Claude msgs / sessions:</span>
-                                <span class="value">0 / 0</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="label">Codex msgs / sessions:</span>
-                                <span class="value">15 / 3</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="label">Path:</span>
-                                <span class="value"><code>~/Dropbox/unjournal_shared_files_notes</code></span>
                             </div>
                         </div>
                         <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
