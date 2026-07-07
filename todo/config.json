@@ -1,0 +1,29 @@
+{
+  "doc_id": "cCZiJUlIuZ",
+  "table_id": "grid-L2rZP8RdeC",
+  "browser_link": "https://coda.io/d/_dcCZiJUlIuZ",
+  "columns": {
+    "Task": "c-yienhhi-XE",
+    "Status": "c-yQNyHEYExP",
+    "Priority": "c-oJF0RRljvk",
+    "Category": "c-3ThJMU0V0r",
+    "Deadline": "c-KtTV8oZ9Jo",
+    "Notes": "c-W69LCy-SNs",
+    "Created": "c-JpsD4VDjqH",
+    "Source": "c-HXoIC8JWem",
+    "CalEventId": "c-D9Gqrw1xFh"
+  },
+  "categories": ["Unjournal", "Personal", "Admin", "Research", "Comms", "Finance", "Other"],
+  "priorities": ["High", "Medium", "Low"],
+  "statuses": ["Todo", "Doing", "Blocked", "Done"],
+  "mirror": {
+    "slack_env": "/Users/yosemite/githubs/claude_code_misc_work/scripts/.env",
+    "slack_dm_user_id": "U03ENAHJ96Z",
+    "email_to": "daaronr@gmail.com",
+    "email_from": "daaronr@gmail.com",
+    "gmail_token": "/Users/yosemite/.gmail-mcp/credentials.json",
+    "gmail_keys": "/Users/yosemite/.gmail-mcp/gcp-oauth.keys.json",
+    "calendar_token": "/Users/yosemite/.config/google/todo_calendar_token.json",
+    "calendar_id": "primary"
+  }
+}

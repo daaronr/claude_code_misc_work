@@ -1,0 +1,3 @@
+#!/bin/bash
+# Wrapper so `todo ...` works from anywhere. Uses miniforge python (has requests).
+exec /opt/homebrew/Caskroom/miniforge/base/bin/python3 /Users/yosemite/githubs/claude_code_misc_work/todo/todo.py "$@"
