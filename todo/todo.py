@@ -90,6 +90,24 @@ class Coda:
     def col(self, name):
         return self.cols[name]
 
+    def _mutate(self, method, url, **kwargs):
+        """Coda mutation (POST/PUT/DELETE) with retry+backoff on 429 rate-limits.
+
+        Coda throttles writes aggressively; a burst of per-row updates (e.g. the
+        calendar mirror writing back event ids) otherwise 429s and crashes mid-run,
+        leaving orphaned state. Retries honor Retry-After, then exponential backoff.
+        """
+        delay = 2.0
+        for attempt in range(5):
+            r = getattr(self.s, method)(url, **kwargs)
+            if r.status_code == 429 and attempt < 4:
+                wait = float(r.headers.get("Retry-After") or delay)
+                time.sleep(wait)
+                delay = min(delay * 2, 30)
+                continue
+            r.raise_for_status()
+            return r.json()
+
     def rows(self):
         """Return all rows as list of dicts: {id, index, values{colName:val}}."""
         out = []
@@ -114,20 +132,14 @@ class Coda:
 
     def add_row(self, cells: dict):
         payload = {"rows": [{"cells": [{"column": c, "value": v} for c, v in cells.items()]}]}
-        r = self.s.post(f"{API}/docs/{self.doc}/tables/{self.table}/rows", json=payload)
-        r.raise_for_status()
-        return r.json()
+        return self._mutate("post", f"{API}/docs/{self.doc}/tables/{self.table}/rows", json=payload)
 
     def update_row(self, row_id: str, cells: dict):
         payload = {"row": {"cells": [{"column": c, "value": v} for c, v in cells.items()]}}
-        r = self.s.put(f"{API}/docs/{self.doc}/tables/{self.table}/rows/{row_id}", json=payload)
-        r.raise_for_status()
-        return r.json()
+        return self._mutate("put", f"{API}/docs/{self.doc}/tables/{self.table}/rows/{row_id}", json=payload)
 
     def delete_row(self, row_id: str):
-        r = self.s.delete(f"{API}/docs/{self.doc}/tables/{self.table}/rows/{row_id}")
-        r.raise_for_status()
-        return r.json()
+        return self._mutate("delete", f"{API}/docs/{self.doc}/tables/{self.table}/rows/{row_id}")
 
 
 # --------------------------------------------------------------------------- #

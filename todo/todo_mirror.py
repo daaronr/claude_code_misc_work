@@ -143,6 +143,9 @@ def cal_event_body(task, cat, pri, notes, deadline, doc_link):
         "description": "\n".join(desc),
         "start": {"date": deadline},
         "end": {"date": end},
+        # confirmed so a PATCH revives an event that was manually deleted (cancelled)
+        # into a *visible* one, instead of leaving a zombie Coda still references.
+        "status": "confirmed",
         "transparency": "transparent",
         "reminders": {"useDefault": False,
                       "overrides": [{"method": "popup", "minutes": 9 * 60}]},
