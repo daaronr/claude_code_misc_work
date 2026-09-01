@@ -25,6 +25,7 @@ OUTPUT_MD = Path.home() / "githubs" / "CLAUDE_CODE_SESSIONS_OUTLINE.md"
 OUTPUT_HTML = Path.home() / "githubs" / "CLAUDE_CODE_SESSIONS_OUTLINE.html"
 DROPBOX_COPY = Path.home() / "Dropbox" / "unjournal private backups" / "claude_code_sessions_dashboard.html"
 REPO_HTML = SCRIPT_DIR / "sessions_dashboard.html"
+EXCLUSIONS_FILE = SCRIPT_DIR / ".sessions_dashboard_exclusions"
 
 LINODE_JOBS = [
     {
@@ -99,6 +100,17 @@ STATUS_COLORS = {
 def normalize_key(name: str) -> str:
     """Normalize project name for matching."""
     return re.sub(r'[-_/]', '', name.lower())
+
+
+def load_dashboard_exclusions() -> set[str]:
+    """Load project names that must never appear in generated dashboards."""
+    if not EXCLUSIONS_FILE.exists():
+        return set()
+    return {
+        normalize_key(line.strip())
+        for line in EXCLUSIONS_FILE.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    }
 
 
 def decode_project_path(encoded_path: str) -> str:
@@ -398,9 +410,12 @@ def _max_date(*dates):
 def merge_data(live_stats: dict, metadata: dict) -> list:
     """Merge live stats with metadata, organized by category."""
     merged = []
+    exclusions = load_dashboard_exclusions()
 
     for key, stats in live_stats.items():
         repo_name = stats.get("repo_name") or get_repo_name(key)
+        if normalize_key(repo_name) in exclusions:
+            continue
         meta = match_metadata(repo_name, metadata) or {}
 
         combined_last = _max_date(stats.get("last_date"), stats.get("codex_last_date"))
